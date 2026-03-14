@@ -69,7 +69,7 @@
             <p>{{ program.description or 'No description available.' }}</p>
             <div class="program-meta">
                 {% if program.duration %}<span> {{ program.duration }}</span>{% endif %}
-                {% if program.fees %}<span> ${{ "{:,.0f}".format(program.fees) }}/yr</span>{% endif %}
+                {% if program.fees %}<span> NRS {{ "{:,.0f}".format(program.fees) }}/yr</span>{% endif %}
             </div>
         </div>
         {% endfor %}

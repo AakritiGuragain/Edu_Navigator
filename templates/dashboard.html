@@ -76,7 +76,7 @@
             {% endif %}
             <div class="program-meta">
                 {% if rec.duration %}<span> {{ rec.duration }}</span>{% endif %}
-                {% if rec.fees %}<span> ${{ "{:,.0f}".format(rec.fees) }}/yr</span>{% endif %}
+                {% if rec.fees %}<span> NRS {{ "{:,.0f}".format(rec.fees) }}/yr</span>{% endif %}
             </div>
         </div>
         {% endfor %}

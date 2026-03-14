@@ -140,7 +140,7 @@ class ProfileForm(FlaskForm):
                                validators=[Optional()],
                                description='e.g. Computer Science, Engineering, Business')
     location = StringField('Preferred Location', validators=[Optional()])
-    max_fees = StringField('Max Annual Fees (USD)', validators=[Optional()])
+    max_fees = StringField('Max Annual Fees (NRS)', validators=[Optional()])
     submit = SubmitField('Update Profile')
 
 
@@ -161,7 +161,7 @@ def get_recommendations(user, limit=10):
     Scoring:
       +3 per matching keyword in name or description
       +2 if college location matches preferred location
-      -1 per $10,000 over max_fees (penalise expensive programs)
+      # -1 per NRS 100,000 over max_fees (penalise expensive programs)
     Returns a sorted list of top programs as dicts.
     """
     profile = user.get_profile_dict()
@@ -193,7 +193,7 @@ def get_recommendations(user, limit=10):
 
         # Fee penalty
         if max_fees and program.fees and program.fees > max_fees:
-            over = (program.fees - max_fees) / 10000
+            over = (program.fees - max_fees) / 100000
             score -= over
 
         if score > 0 or not preferences:
