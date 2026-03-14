@@ -76,7 +76,10 @@
             {% endif %}
             <div class="program-meta">
                 {% if rec.duration %}<span> {{ rec.duration }}</span>{% endif %}
-                {% if rec.fees %}<span> NRS {{ "{:,.0f}".format(rec.fees) }}/yr</span>{% endif %}
+                {% if rec.fees %}<span> NPR {{ "{:,.0f}".format(rec.fees) }}/yr</span>{% endif %}
+                {% if rec.compatibility_score %}
+                <span style="color:#2ecc71; font-weight:bold;"> Match: {{ rec.compatibility_score }}%</span>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

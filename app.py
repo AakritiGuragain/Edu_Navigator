@@ -61,6 +61,7 @@ class College(db.Model):
     name = db.Column(db.String(200), nullable=False)
     location = db.Column(db.String(200))
     description = db.Column(db.Text)
+    scholarship_available = db.Column(db.Boolean, default=False)
     programs = db.relationship('Program', backref='college', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self, include_programs=False):
@@ -69,6 +70,7 @@ class College(db.Model):
             'name': self.name,
             'location': self.location,
             'description': self.description,
+            'scholarship_available': self.scholarship_available,
         }
         if include_programs:
             d['programs'] = [p.to_dict() for p in self.programs]
@@ -82,6 +84,7 @@ class Program(db.Model):
     description = db.Column(db.Text)
     duration = db.Column(db.String(50))
     fees = db.Column(db.Float)
+    gpa_requirement = db.Column(db.Float)
 
     def to_dict(self):
         return {
@@ -93,6 +96,7 @@ class Program(db.Model):
             'description': self.description,
             'duration': self.duration,
             'fees': self.fees,
+            'gpa_requirement': self.gpa_requirement,
         }
 
 
@@ -139,8 +143,10 @@ class ProfileForm(FlaskForm):
     preferences = StringField('Subject Interests (comma-separated)',
                                validators=[Optional()],
                                description='e.g. Computer Science, Engineering, Business')
+    gpa = StringField('GPA', validators=[Optional()], render_kw={"type": "number", "step": "0.1", "min": "0", "max": "4.0", "placeholder": "e.g. 3.5"})
     location = StringField('Preferred Location', validators=[Optional()])
-    max_fees = StringField('Max Annual Fees (NRS)', validators=[Optional()])
+    max_fees = StringField('Max Annual Fees (NPR)', validators=[Optional()], render_kw={"type": "number", "step": "1000", "min": "0", "placeholder": "e.g. 800000"})
+    wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
     submit = SubmitField('Update Profile')
 
 
@@ -157,51 +163,112 @@ class CVUploadForm(FlaskForm):
 
 def get_recommendations(user, limit=10):
     """
-    Score every program against the user's profile preferences.
-    Scoring:
-      +3 per matching keyword in name or description
-      +2 if college location matches preferred location
-      # -1 per NRS 100,000 over max_fees (penalise expensive programs)
+    Score every program against the user's profile preferences using the weighted algorithm:
+      - GPA Match (40%)
+      - Budget vs Fees (30%)
+      - Program Match (20%)
+      - Scholarship Availability (10%)
+    Returns a sorted list of top programs as dicts.
     Returns a sorted list of top programs as dicts.
     """
+    weights = {'gpa': 40, 'budget': 30, 'program': 20, 'scholarship': 10}
+    
     profile = user.get_profile_dict()
+    student_gpa = profile.get('gpa', 0.0)
     preferences = [p.strip().lower() for p in profile.get('preferences', []) if p.strip()]
-    preferred_location = profile.get('location', '').strip().lower()
+    wants_scholarship = profile.get('wants_scholarship', False)
     try:
         max_fees = float(profile.get('max_fees', 0))
     except (ValueError, TypeError):
-        max_fees = 0
+        max_fees = 0.0
 
     programs = Program.query.all()
     scored = []
+    
     for program in programs:
-        score = 0
+        # 1. GPA Match (Weight 40%)
+        req_gpa = program.gpa_requirement or 0.0
+        if req_gpa == 0:
+            gpa_score = 100
+        elif student_gpa >= req_gpa:
+            gpa_score = 100
+        else:
+            gap = req_gpa - student_gpa
+            gpa_score = max(0, 100 - (gap * 50))
+            
+        # 2. Budget vs Fees (Weight 30%)
+        fees = program.fees or 0.0
+        if fees == 0 or max_fees == 0:
+            budget_score = 100
+        elif fees <= max_fees:
+            budget_score = 100
+        else:
+            excess = fees - max_fees
+            budget_penalty = (excess / max_fees) * 100
+            budget_score = max(0, 100 - budget_penalty)
+            
+        # 3. Program/Field Match (Weight 20%)
         name_lower = program.name.lower()
         desc_lower = (program.description or '').lower()
-        college_loc = (program.college.location or '').lower() if program.college else ''
-
-        # Keyword matching
-        for keyword in preferences:
-            if keyword in name_lower:
-                score += 3
-            if keyword in desc_lower:
-                score += 1
-
-        # Location bonus
-        if preferred_location and preferred_location in college_loc:
-            score += 2
-
-        # Fee penalty
-        if max_fees and program.fees and program.fees > max_fees:
-            over = (program.fees - max_fees) / 100000
-            score -= over
-
-        if score > 0 or not preferences:
-            scored.append((score, program))
+        related_fields = {
+            'computer science': ['cs', 'computing', 'software', 'it', 'information technology'],
+            'engineering': ['engineer', 'mechanical', 'electrical', 'civil', 'chemical'],
+            'business': ['management', 'finance', 'marketing', 'accounting', 'economics'],
+            'humanities': ['arts', 'history', 'philosophy', 'literature', 'language'],
+            'science': ['biology', 'chemistry', 'physics', 'mathematics', 'stats', 'data']
+        }
+        
+        if not preferences:
+            program_score = 100
+        else:
+            match_found = False
+            for p in preferences:
+                # Direct match
+                if p in name_lower or p in desc_lower:
+                    match_found = True
+                    break
+                # Synonym match
+                for field, synonyms in related_fields.items():
+                    if p in field or field in p or p in synonyms:
+                        # If student wants 'software', and program has 'computer science' or 'cs'
+                        if any(syn in name_lower or syn in desc_lower for syn in synonyms + [field]):
+                            match_found = True
+                            break
+                if match_found:
+                    break
+                    
+            if match_found:
+                program_score = 100
+            else:
+                program_score = 0
+                
+        # 4. Scholarship Availability (Weight 10%)
+        col_scholarship = program.college.scholarship_available if program.college else False
+        
+        if wants_scholarship:
+            if col_scholarship:
+                scholarship_score = 100
+            else:
+                scholarship_score = 0
+        else:
+            scholarship_score = 100
+            
+        # Total Score
+        total_score = (
+            (gpa_score * weights['gpa'] / 100) +
+            (budget_score * weights['budget'] / 100) +
+            (program_score * weights['program'] / 100) +
+            (scholarship_score * weights['scholarship'] / 100)
+        )
+        
+        if total_score > 0 or not preferences:
+            p_dict = program.to_dict()
+            p_dict['compatibility_score'] = round(total_score, 2)
+            scored.append((total_score, p_dict))
 
     # Sort by score descending first, then by program name
-    scored.sort(key=lambda x: (-x[0], x[1].name))
-    return [p.to_dict() for _, p in scored[:limit]]
+    scored.sort(key=lambda x: (-x[0], x[1]['name']))
+    return [p_dict for _, p_dict in scored[:limit]]
 
 
 # ─────────────────────────────────────────────
@@ -278,10 +345,19 @@ def profile():
         prefs = [p.strip() for p in form.preferences.data.split(',') if p.strip()]
         profile_data['preferences'] = prefs
         profile_data['location'] = form.location.data.strip()
+        
+        try:
+            profile_data['gpa'] = float(form.gpa.data) if form.gpa.data else 0.0
+        except ValueError:
+            profile_data['gpa'] = 0.0
+            
+        profile_data['wants_scholarship'] = form.wants_scholarship.data == 'yes'
+
         try:
             profile_data['max_fees'] = float(form.max_fees.data) if form.max_fees.data else 0
         except ValueError:
             profile_data['max_fees'] = 0
+            
         current_user.profile = json.dumps(profile_data)
         db.session.commit()
         flash('Profile updated successfully!', 'success')
@@ -289,20 +365,17 @@ def profile():
 
     # Pre-populate form
     form.preferences.data = ', '.join(profile_data.get('preferences', []))
+    form.gpa.data = str(profile_data.get('gpa', '')) if profile_data.get('gpa', 0.0) != 0.0 else ''
+    form.wants_scholarship.data = 'yes' if profile_data.get('wants_scholarship') else 'no'
     form.location.data = profile_data.get('location', '')
-    form.max_fees.data = str(profile_data.get('max_fees', ''))
+    form.max_fees.data = str(profile_data.get('max_fees', '')) if profile_data.get('max_fees', 0) != 0 else ''
     return render_template('profile.html', form=form)
 
 
 @app.route('/colleges')
 def colleges():
-    json_path = os.path.join(app.root_path, 'data', 'colleges.json')
-    colleges_data = []
-    try:
-        with open(json_path, 'r', encoding='utf-8') as f:
-            colleges_data = json.load(f).get('colleges', [])
-    except Exception as e:
-        print(f"Error loading colleges json: {e}")
+    all_colleges = College.query.order_by(College.name).all()
+    colleges_data = [c.to_dict(include_programs=True) for c in all_colleges]
     return render_template('colleges.html', colleges_json=json.dumps(colleges_data))
 
 

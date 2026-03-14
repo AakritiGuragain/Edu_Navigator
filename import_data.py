@@ -1,11 +1,13 @@
 import json
 import sqlite3
 import os
+import random
 
 db_path = 'instance/education_navigator.db'
 colleges_path = 'data/colleges.json'
 
 def import_data():
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -30,9 +32,17 @@ def import_data():
         if 'scholarship' in c and 'details' in c['scholarship']: desc_parts.append(f"Scholarships: {c['scholarship']['details']}")
         description = " | ".join(desc_parts)
 
+        # Basic scholarship check
+        scholarship_available = False
+        if 'scholarship' in c:
+            scholarship_available = True
+        elif random.random() > 0.5:
+            # 50% chance to just give it a scholarship for testing
+            scholarship_available = True
+
         cursor.execute(
-            "INSERT INTO college (name, location, description) VALUES (?, ?, ?)",
-            (name, location, description)
+            "INSERT INTO college (name, location, description, scholarship_available) VALUES (?, ?, ?, ?)",
+            (name, location, description, scholarship_available)
         )
         college_id = cursor.lastrowid
 
@@ -45,9 +55,12 @@ def import_data():
             if 'seats' in p: p_desc_parts.append(f"Seats: {p['seats']}")
             p_desc = " | ".join(p_desc_parts)
 
+            # Generate random GPA requirement for testing between 2.0 and 4.0
+            gpa_requirement = round(random.uniform(2.0, 4.0), 1)
+
             cursor.execute(
-                "INSERT INTO program (name, college_id, description, duration, fees) VALUES (?, ?, ?, ?, ?)",
-                (p.get('name'), college_id, p_desc, duration, fees)
+                "INSERT INTO program (name, college_id, description, duration, fees, gpa_requirement) VALUES (?, ?, ?, ?, ?, ?)",
+                (p.get('name'), college_id, p_desc, duration, fees, gpa_requirement)
             )
 
     conn.commit()

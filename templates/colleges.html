@@ -108,12 +108,17 @@
 
             data.forEach(college => {
                 const name = college.name;
-                const locObj = college.location || {};
-                const locationStr = `${locObj.city || ''}${locObj.city && locObj.district ? ', ' : ''}${locObj.district || ''}`;
-                const coords = locObj.coordinates;
+                let locationStr = '';
+                let coords = null;
+                if (typeof college.location === 'string') {
+                    locationStr = college.location;
+                } else if (college.location) {
+                    locationStr = `${college.location.city || ''}${college.location.city && college.location.district ? ', ' : ''}${college.location.district || ''}`;
+                    coords = college.location.coordinates;
+                }
                 const programs = college.programs || [];
-                const type = college.type || '';
-                const scholarships = college.scholarship ? college.scholarship.total_scholarship_seats : 'Details not available';
+                const type = college.type || 'University';
+                const scholarships = college.scholarship_available ? 'Available' : (college.scholarship ? college.scholarship.total_scholarship_seats : 'Details not available');
                 
                 // Create card
                 const card = document.createElement('div');
@@ -123,7 +128,8 @@
                 
                 let programsHtml = '<div style="margin-top:10px; flex-grow: 1;"><strong>Programs:</strong><ul style="font-size:0.85rem; padding-left: 20px; color:#555;">';
                 programs.slice(0, 3).forEach(p => {
-                    programsHtml += `<li>${p.name} - ${p.total_fee_npr ? 'NPR ' + p.total_fee_npr.toLocaleString() : 'N/A'}</li>`;
+                    const fee = p.fees || p.total_fee_npr;
+                    programsHtml += `<li>${p.name} - ${fee ? 'NPR ' + fee.toLocaleString() : 'N/A'}</li>`;
                 });
                 if(programs.length > 3) {
                     programsHtml += `<li>+ ${programs.length - 3} more</li>`;
@@ -164,7 +170,7 @@
                 const nameMatch = c.name.toLowerCase().includes(q);
                 const progMatch = (c.programs || []).some(p => p.name.toLowerCase().includes(q));
                 
-                const locStr = `${(c.location || {}).city || ''} ${(c.location || {}).district || ''}`.toLowerCase();
+                const locStr = typeof c.location === 'string' ? c.location.toLowerCase() : `${(c.location || {}).city || ''} ${(c.location || {}).district || ''}`.toLowerCase();
                 const locMatch = locStr.includes(loc);
                 
                 return (nameMatch || progMatch) && locMatch;

@@ -67,6 +67,12 @@
                 </div>
 
                 <div class="form-group">
+                    {{ form.gpa.label }}
+                    {{ form.gpa(placeholder="e.g. 3.5") }}
+                    <small>Your current or expected GPA (4.0 scale)</small>
+                </div>
+
+                <div class="form-group">
                     {{ form.location.label }}
                     {{ form.location(placeholder="e.g. Kathmandu, Cambridge, New York") }}
                     <small>Colleges in this city/area will rank higher in recommendations</small>
@@ -74,8 +80,14 @@
 
                 <div class="form-group">
                     {{ form.max_fees.label }}
-                    {{ form.max_fees(placeholder="e.g. 60000") }}
-                    <small>Annual tuition in NRS — programs over this amount are ranked lower</small>
+                    {{ form.max_fees() }}
+                    <small>Annual tuition in NPR — programs over this amount are ranked lower</small>
+                </div>
+
+                <div class="form-group">
+                    {{ form.wants_scholarship.label }}
+                    {{ form.wants_scholarship() }}
+                    <small>Do you need scholarship?</small>
                 </div>
 
                 <button type="submit" class="btn btn-full">Save Preferences</button>
