@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colleges – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 450px;
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            z-index: 1; /* prevent overlapping navbar */
+            border: 2px solid #e0e8f0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                Education Navigator
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Colleges</a>
+                <a href="{{ url_for('programs') }}">Programs</a>
+                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <div class="page-hero" style="padding-top:90px;">
+        <h1>Colleges & Programs Map</h1>
+        <p>Discover top institutions and map your education journey across Nepal</p>
+    </div>
+
+    <!-- MAP CONTAINER -->
+    <div style="padding: 20px 40px;">
+        <div id="map"></div>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search colleges or programs…" oninput="filterDynamicColleges()">
+        <input type="text" id="locationInput" placeholder="Filter by location…" oninput="filterDynamicColleges()">
+        <button class="btn" onclick="clearDynamicFilters()">Clear</button>
+    </div>
+
+    <!-- DYNAMIC COLLEGE CARDS -->
+    <div class="college-cards" id="dynamicCollegeGrid">
+        <!-- Rendered via JS -->
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const collegesData = {{ colleges_json | safe }};
+        const grid = document.getElementById('dynamicCollegeGrid');
+        let map;
+        let markers = [];
+
+        function initMap() {
+            map = L.map('map').setView([28.3949, 84.1240], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+        }
+
+        function renderColleges(data) {
+            grid.innerHTML = '';
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            if(data.length === 0) {
+                grid.innerHTML = `<div class="empty-state" style="width:100%;text-align:center;">
+                    <p>No colleges found. Check back soon!</p>
+                </div>`;
+                return;
+            }
+
+            const bounds = [];
+
+            data.forEach(college => {
+                const name = college.name;
+                const locObj = college.location || {};
+                const locationStr = `${locObj.city || ''}${locObj.city && locObj.district ? ', ' : ''}${locObj.district || ''}`;
+                const coords = locObj.coordinates;
+                const programs = college.programs || [];
+                const type = college.type || '';
+                const scholarships = college.scholarship ? college.scholarship.total_scholarship_seats : 'Details not available';
+                
+                // Create card
+                const card = document.createElement('div');
+                card.className = 'college-card';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                
+                let programsHtml = '<div style="margin-top:10px; flex-grow: 1;"><strong>Programs:</strong><ul style="font-size:0.85rem; padding-left: 20px; color:#555;">';
+                programs.slice(0, 3).forEach(p => {
+                    programsHtml += `<li>${p.name} - ${p.total_fee_npr ? 'NPR ' + p.total_fee_npr.toLocaleString() : 'N/A'}</li>`;
+                });
+                if(programs.length > 3) {
+                    programsHtml += `<li>+ ${programs.length - 3} more</li>`;
+                }
+                programsHtml += '</ul></div>';
+
+                card.innerHTML = `
+                    <h3>${name}</h3>
+                    <div class="location">📍 ${locationStr}</div>
+                    <p style="margin-bottom: 5px;"><strong>Type:</strong> ${type}</p>
+                    <p style="font-size: 0.8rem; color: #777;"><strong>Scholarships:</strong> ${scholarships}</p>
+                    ${programsHtml}
+                    <button class="btn" onclick="focusMap(${coords ? coords.lat : 28.3}, ${coords ? coords.lng : 84.1})" style="width:100%; margin-top:15px; background-color: var(--dark-blue);">View on Map</button>
+                `;
+                grid.appendChild(card);
+
+                // Add to map
+                if(coords && coords.lat && coords.lng) {
+                    const marker = L.marker([coords.lat, coords.lng]).addTo(map);
+                    marker.bindPopup(`<strong>${name}</strong><br>${locationStr}<br><em>${programs.length} Programs</em>`);
+                    markers.push(marker);
+                    bounds.push([coords.lat, coords.lng]);
+                }
+            });
+
+            if(bounds.length > 0 && data.length < collegesData.length) {
+                map.fitBounds(bounds, {padding: [50, 50]});
+            } else if (bounds.length > 0) {
+                 map.fitBounds(bounds);
+            }
+        }
+
+        function filterDynamicColleges() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const loc = document.getElementById('locationInput').value.toLowerCase();
+            
+            const filtered = collegesData.filter(c => {
+                const nameMatch = c.name.toLowerCase().includes(q);
+                const progMatch = (c.programs || []).some(p => p.name.toLowerCase().includes(q));
+                
+                const locStr = `${(c.location || {}).city || ''} ${(c.location || {}).district || ''}`.toLowerCase();
+                const locMatch = locStr.includes(loc);
+                
+                return (nameMatch || progMatch) && locMatch;
+            });
+            renderColleges(filtered);
+        }
+
+        function clearDynamicFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('locationInput').value = '';
+            renderColleges(collegesData);
+            if (markers.length > 0) {
+                const bounds = markers.map(m => m.getLatLng());
+                map.fitBounds(bounds);
+            }
+        }
+
+        function focusMap(lat, lng) {
+            map.flyTo([lat, lng], 14);
+            window.scrollTo({ top: document.getElementById('map').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            renderColleges(collegesData);
+        });
+    </script>
+</body>
+</html>

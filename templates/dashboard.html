@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                Education Navigator
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Colleges</a>
+                <a href="{{ url_for('programs') }}">Programs</a>
+                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                <a href="{{ url_for('profile') }}">Profile</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages" style="padding-top:80px;">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- WELCOME BANNER -->
+    <div class="dashboard-welcome" style="padding-top:90px;">
+        <h1>Welcome back, {{ current_user.username }}! </h1>
+        <p>Your personalized education dashboard — explore colleges, programs, and CV resources.</p>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="dashboard-nav">
+        <a href="{{ url_for('profile') }}"> Edit Profile</a>
+        <a href="{{ url_for('colleges') }}"> Browse Colleges</a>
+        <a href="{{ url_for('programs') }}"> Browse Programs</a>
+        <a href="{{ url_for('cv_templates') }}"> CV Templates</a>
+        <a href="{{ url_for('upload_cv') }}"> Upload CV</a>
+        <a href="{{ url_for('logout') }}" class="danger"> Logout</a>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <h2 class="section-title">Your Recommendations</h2>
+
+    {% if recommendations %}
+    <p class="section-subtitle">Based on your profile preferences</p>
+    <div class="programs-grid">
+        {% for rec in recommendations %}
+        <div class="program-card">
+            <h3>{{ rec.name }}</h3>
+            <div class="college-name"> {{ rec.college }}</div>
+            {% if rec.college_location %}
+            <div style="color:#888;font-size:0.85rem;margin-bottom:8px;"> {{ rec.college_location }}</div>
+            {% endif %}
+            {% if rec.description %}
+            <p>{{ rec.description }}</p>
+            {% endif %}
+            <div class="program-meta">
+                {% if rec.duration %}<span> {{ rec.duration }}</span>{% endif %}
+                {% if rec.fees %}<span> ${{ "{:,.0f}".format(rec.fees) }}/yr</span>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p style="font-size:3rem; margin-bottom:12px;"></p>
+        <p>No recommendations yet. <a href="{{ url_for('profile') }}">Update your profile</a> with subject interests to
+            get personalized suggestions!</p>
+    </div>
+    {% endif %}
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+</body>
+
+</html>

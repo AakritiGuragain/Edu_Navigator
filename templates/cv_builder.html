@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Builder – Education Navigator</title>
+    <!-- Fonts and CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .cv-builder-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .cv-form-panel {
+            flex: 1 1 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .cv-form-panel h3 {
+            margin-bottom: 15px;
+            color: var(--dark-blue);
+            border-bottom: 2px solid var(--medium-blue);
+            padding-bottom: 5px;
+        }
+        .cv-form-group {
+            margin-bottom: 15px;
+        }
+        .cv-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .cv-form-group input, .cv-form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+        }
+        .cv-preview-panel {
+            flex: 2 1 500px;
+            background: #fff;
+            padding: 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .cv-document {
+            padding: 40px;
+            font-family: 'DM Sans', sans-serif;
+            color: #333;
+            min-height: 800px;
+        }
+        .cv-header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .cv-header h1 {
+            color: #111;
+            margin-bottom: 5px;
+        }
+        .cv-section {
+            margin-bottom: 20px;
+        }
+        .cv-section h2 {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            color: #222;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .cv-preview-panel, .cv-preview-panel * {
+                visibility: visible;
+            }
+            .cv-preview-panel {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                Education Navigator
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Colleges</a>
+                <a href="{{ url_for('programs') }}">Programs</a>
+                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-hero" style="padding-top:90px; padding-bottom:20px;">
+        <h1>Online CV Builder</h1>
+        <p>Fill in your details below to instantly generate a professional resume</p>
+    </div>
+
+    <div class="cv-builder-container">
+        <!-- FORM PANEL -->
+        <div class="cv-form-panel">
+            <h3>Personal Information</h3>
+            <div class="cv-form-group">
+                <label>Full Name</label>
+                <input type="text" id="cvFullName" placeholder="e.g. Ram Bahadur" oninput="updateCV()">
+            </div>
+            <div class="cv-form-group">
+                <label>Email</label>
+                <input type="text" id="cvEmail" placeholder="ram@example.com" oninput="updateCV()">
+            </div>
+            <div class="cv-form-group">
+                <label>Phone</label>
+                <input type="text" id="cvPhone" placeholder="+977 9800000000" oninput="updateCV()">
+            </div>
+            <div class="cv-form-group">
+                <label>Address</label>
+                <input type="text" id="cvAddress" placeholder="Kathmandu, Nepal" oninput="updateCV()">
+            </div>
+            <div class="cv-form-group">
+                <label>Professional Summary</label>
+                <textarea id="cvSummary" rows="4" placeholder="Brief statement about your career goals..." oninput="updateCV()"></textarea>
+            </div>
+
+            <h3>Education</h3>
+            <div class="cv-form-group">
+                <label>Latest Qualification</label>
+                <input type="text" id="cvEdu1" placeholder="BSc Computer Science, Tribhuvan University, 2024" oninput="updateCV()">
+            </div>
+            <div class="cv-form-group">
+                <label>Previous Qualification</label>
+                <input type="text" id="cvEdu2" placeholder="+2 Science, St. Xavier's, 2020" oninput="updateCV()">
+            </div>
+
+            <h3>Experience</h3>
+            <div class="cv-form-group">
+                <label>Recent Experience</label>
+                <textarea id="cvExp1" rows="3" placeholder="Intern at XYZ...&#10;- Did this&#10;- Did that" oninput="updateCV()"></textarea>
+            </div>
+
+            <h3>Skills</h3>
+            <div class="cv-form-group">
+                <label>Key Skills (comma separated)</label>
+                <input type="text" id="cvSkills" placeholder="Python, Data Analysis, Communication" oninput="updateCV()">
+            </div>
+
+            <button class="btn btn-full" style="margin-top:20px;" onclick="window.print()">Download / Print CV</button>
+        </div>
+
+        <!-- PREVIEW PANEL -->
+        <div class="cv-preview-panel">
+            <div class="cv-document" id="cvDoc">
+                <div class="cv-header">
+                    <h1 id="outName">Your Name</h1>
+                    <p><span id="outEmail">email@example.com</span> | <span id="outPhone">+977-XXXXXXXXXX</span> | <span id="outAddress">Address</span></p>
+                </div>
+                
+                <div class="cv-section">
+                    <h2>Professional Summary</h2>
+                    <p id="outSummary">Your professional summary will appear here.</p>
+                </div>
+
+                <div class="cv-section">
+                    <h2>Education</h2>
+                    <ul style="list-style-type: disc; margin-left: 20px;">
+                        <li id="outEdu1" style="display:none;"></li>
+                        <li id="outEdu2" style="display:none;"></li>
+                    </ul>
+                </div>
+
+                <div class="cv-section">
+                    <h2>Experience</h2>
+                    <div id="outExp1" style="white-space: pre-wrap;"></div>
+                </div>
+
+                <div class="cv-section">
+                    <h2>Skills</h2>
+                    <ul id="outSkills" style="list-style-type: square; margin-left: 20px;">
+                        <li>Skill 1</li>
+                        <li>Skill 2</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+    <script>
+        function updateCV() {
+            // General Info
+            document.getElementById('outName').innerText = document.getElementById('cvFullName').value || 'Your Name';
+            document.getElementById('outEmail').innerText = document.getElementById('cvEmail').value || 'email@example.com';
+            document.getElementById('outPhone').innerText = document.getElementById('cvPhone').value || '+977-XXXXXXXXXX';
+            document.getElementById('outAddress').innerText = document.getElementById('cvAddress').value || 'Address';
+            document.getElementById('outSummary').innerText = document.getElementById('cvSummary').value || 'Your professional summary will appear here.';
+
+            // Education
+            const edu1 = document.getElementById('cvEdu1').value;
+            const elEdu1 = document.getElementById('outEdu1');
+            if (edu1) { elEdu1.style.display = 'list-item'; elEdu1.innerText = edu1; } else { elEdu1.style.display = 'none'; }
+
+            const edu2 = document.getElementById('cvEdu2').value;
+            const elEdu2 = document.getElementById('outEdu2');
+            if (edu2) { elEdu2.style.display = 'list-item'; elEdu2.innerText = edu2; } else { elEdu2.style.display = 'none'; }
+
+            // Experience
+            document.getElementById('outExp1').innerText = document.getElementById('cvExp1').value || 'Experience details...';
+
+            // Skills
+            const skills = document.getElementById('cvSkills').value;
+            const skList = document.getElementById('outSkills');
+            if (skills) {
+                const arr = skills.split(',');
+                skList.innerHTML = '';
+                arr.forEach(s => {
+                    if(s.trim()) {
+                        const li = document.createElement('li');
+                        li.innerText = s.trim();
+                        skList.appendChild(li);
+                    }
+                });
+            } else {
+                skList.innerHTML = '<li>Skill 1</li><li>Skill 2</li>';
+            }
+        }
+    </script>
+</body>
+</html>

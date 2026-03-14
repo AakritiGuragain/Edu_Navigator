@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CV Template – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                Education Navigator
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <div class="page-hero" style="padding-top:90px;">
+        <h1> Upload CV Template</h1>
+        <p>Share a professional CV template with the community</p>
+    </div>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- FORM -->
+    <div class="form-section">
+        <div class="form-card">
+            <h2>Template Details</h2>
+
+            <div class="hint">
+                Upload a PDF, DOC, or DOCX file (max 10 MB). Your template will be available for all users to download.
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.name.label }}
+                    {{ form.name(placeholder="e.g. Modern Professional CV") }}
+                    {% if form.name.errors %}
+                    <small style="color:#c0392b;">{{ form.name.errors[0] }}</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.description.label }}
+                    {{ form.description(placeholder="Briefly describe this template — style, best use case, etc.",
+                    rows=4) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.file.label }}
+                    {{ form.file(accept=".pdf,.doc,.docx") }}
+                    <small class="file-hint">Accepted formats: PDF, DOC, DOCX — Maximum size: 10 MB</small>
+                    {% if form.file.errors %}
+                    <small style="color:#c0392b;">{{ form.file.errors[0] }}</small>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-full">Upload Template</button>
+            </form>
+        </div>
+
+        <div style="text-align:center; margin-top:20px;">
+            <a href="{{ url_for('cv_templates') }}" style="color:#5B88B2;font-weight:600;text-decoration:none;">← Back
+                to CV Templates</a>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+</body>
+
+</html>

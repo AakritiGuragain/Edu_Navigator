@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Education Navigator</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- HEADER + NAVBAR -->
+<header>
+    <div class="navbar-container">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+            Education Navigator
+        </div>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('colleges') }}">Colleges</a>
+            <a href="{{ url_for('programs') }}">Programs</a>
+            <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+            <a href="{{ url_for('contact') }}">Contact</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero-contact">
+    <h1>Contact Us</h1>
+    <p>Have questions or need help? We’re here to assist you!</p>
+</section>
+
+<!-- CONTACT MAIN -->
+<section class="contact-main">
+    <!-- Left: Info -->
+    <div class="contact-info">
+        <div class="info-box">
+            <h3>Address</h3>
+            <p>Kathmandu, Nepal</p>
+        </div>
+        <div class="info-box">
+            <h3>Phone</h3>
+            <p>+977 01-1234567</p>
+        </div>
+        <div class="info-box">
+            <h3>Email</h3>
+            <p>support@educationnavigator.com</p>
+        </div>
+    </div>
+
+    <!-- Right: Form -->
+    <div class="contact-form-box">
+        <h3>Send Message</h3>
+        <form>
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="subject" placeholder="Subject" required>
+            <textarea name="message" placeholder="Type your Message..." rows="6" required></textarea>
+            <button type="submit" class="btn">Send</button>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>© 2026 Education Navigator</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Navigator</title>
+
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ==============================
+     HEADER + NAVBAR
+============================== -->
+<header>
+    <div class="navbar-container">
+        <!-- Left side: logo + title -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+            Education Navigator
+            
+        </div>
+
+        <!-- Right side: links -->
+        <nav>
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('colleges') }}">Colleges</a>
+    <a href="{{ url_for('programs') }}">Programs</a>
+    <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+    <a href="{{ url_for('contact') }}">Contact</a>
+    <a href="{{ url_for('login') }}">Login</a>
+</nav>
+    </div>
+</header>
+
+<!-- ==============================
+     HERO SECTION
+============================== -->
+<section class="hero">
+    <h1>Navigate Your Education Journey</h1>
+    <p>Find the best Colleges, programs and opportunities in Nepal.</p>
+
+</section>
+
+<!-- ==============================
+     FEATURES SECTION
+============================== -->
+<section class="features">
+    <div class="card">
+        <h3>Find Colleges</h3>
+        <p>Search top colleges in Nepal.</p>
+    </div>
+
+    <div class="card">
+        <h3>Programs</h3>
+        <p>Explore academic programs.</p>
+    </div>
+
+    <div class="card">
+        <h3>Scholarships</h3>
+        <p>Discover funding opportunities.</p>
+    </div>
+</section>
+
+<!-- ==============================
+     ABOUT US
+============================== -->
+<section class="about-us">
+    <div class="about-content">
+        <h2>Why Choose Education Navigator?</h2>
+        <p>We simplify the college selection process by providing accurate, up-to-date data on programs, scholarships, and admission requirements. Our platform connects students with the best opportunities across Nepal, empowering them to make informed decisions about their academic future.</p>
+    </div>
+</section>
+
+<!-- ==============================
+     QUICK STATS
+============================== -->
+<section class="stats-section">
+    <div class="stat-box">
+        <h3>50+</h3>
+        <p>Top Colleges</p>
+    </div>
+    <div class="stat-box">
+        <h3>100+</h3>
+        <p>Academic Programs</p>
+    </div>
+    <div class="stat-box">
+        <h3>1000+</h3>
+        <p>Scholarship Seats</p>
+    </div>
+</section>
+
+<!-- ==============================
+     HOW IT WORKS
+============================== -->
+<section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps-container">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h3>Search</h3>
+            <p>Filter colleges based on location, programs, and your preferences.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h3>Compare</h3>
+            <p>Evaluate fees, facilities, and available scholarships side-by-side.</p>
+        </div>
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h3>Apply</h3>
+            <p>Use our CV builder to prepare your application and contact colleges directly.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==============================
+     FOOTER
+============================== -->
+<footer>
+    <p>© 2026 Education Navigator</p>
+</footer>
+
+</body>
+</html>

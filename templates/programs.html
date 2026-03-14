@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programs – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                Education Navigator
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Colleges</a>
+                <a href="{{ url_for('programs') }}">Programs</a>
+                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <div class="page-hero" style="padding-top:90px;">
+        <h1> Programs</h1>
+        <p>Explore academic programs across all colleges</p>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search programs…" oninput="filterPrograms()">
+        <select id="collegeSelect" onchange="applyCollegeFilter()">
+            <option value="">All Colleges</option>
+            {% for college in colleges %}
+            <option value="{{ college.id }}" {% if selected_college_id==college.id %}selected{% endif %}>
+                {{ college.name }}
+            </option>
+            {% endfor %}
+        </select>
+        <button class="btn" onclick="clearFilters()">Clear</button>
+    </div>
+
+    <!-- PROGRAMS GRID -->
+    <div class="programs-grid" id="programsGrid">
+        {% if programs %}
+        {% for program in programs %}
+        <div class="program-card" data-name="{{ program.name|lower }}" data-college="{{ program.college.name|lower }}">
+            <h3>{{ program.name }}</h3>
+            <div class="college-name"> {{ program.college.name }}</div>
+            {% if program.college.location %}
+            <div style="color:#888;font-size:0.85rem;margin-bottom:8px;"> {{ program.college.location }}</div>
+            {% endif %}
+            <p>{{ program.description or 'No description available.' }}</p>
+            <div class="program-meta">
+                {% if program.duration %}<span> {{ program.duration }}</span>{% endif %}
+                {% if program.fees %}<span> ${{ "{:,.0f}".format(program.fees) }}/yr</span>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state" style="width:100%;text-align:center;padding:60px 20px;">
+            <p style="font-size:2.5rem;"></p>
+            <p>No programs found. <a href="{{ url_for('programs') }}">Clear filters</a> to see all programs.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+    <script>
+        function filterPrograms() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.program-card').forEach(card => {
+                card.style.display = card.dataset.name.includes(q) ? '' : 'none';
+            });
+        }
+        function applyCollegeFilter() {
+            const collegeId = document.getElementById('collegeSelect').value;
+            if (collegeId) {
+                window.location.href = `/programs?college_id=${collegeId}`;
+            } else {
+                window.location.href = `/programs`;
+            }
+        }
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('collegeSelect').value = '';
+            window.location.href = '/programs';
+        }
+    </script>
+
+</body>
+
+</html>
