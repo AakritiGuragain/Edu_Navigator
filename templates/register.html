@@ -17,9 +17,11 @@
         <div class="auth-card">
             <!-- Logo -->
             <div style="text-align:center; margin-bottom:24px;">
-                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo"
-                    style="height:64px;width:64px;border-radius:50%;object-fit:cover;margin-bottom:8px;">
-                <h2 style="color:#122C4F;font-size:1.4rem;font-weight:700;">Create Account</h2>
+                <a href="{{ url_for('index') }}" style="text-decoration:none;">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo"
+                        style="height:64px;width:64px;border-radius:50%;object-fit:cover;margin-bottom:8px;">
+                    <h2 style="color:#122C4F;font-size:1.4rem;font-weight:700;">Create Account</h2>
+                </a>
                 <p style="color:#666;font-size:0.9rem;">Join Education Navigator today</p>
             </div>
 
@@ -69,8 +71,19 @@
             <div class="auth-link" style="margin-top:8px;">
                 <a href="{{ url_for('index') }}" style="color:#888;font-weight:400;">← Back to Home</a>
             </div>
+            <div class="theme-toggle-wrapper" style="position:fixed; top:20px; right:20px; z-index:1001;">
+                <span class="theme-toggle-label">DARKMODE</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeCheckbox">
+                    <span class="slider">
+                        <span class="slider-text"></span>
+                    </span>
+                </label>
+            </div>
         </div>
     </div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
 <footer>
     <p>© 2026 Education Navigator</p>

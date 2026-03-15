@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Colleges – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .compare-container {
+            max-width: 1200px;
+            margin: 100px auto 40px;
+            padding: 0 20px;
+        }
+        .compare-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .compare-table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        th, td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 700;
+            color: #1e3a8a;
+            width: 200px;
+        }
+        .college-header-cell {
+            text-align: center;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .college-img {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            background: #f1f5f9;
+        }
+        .college-name {
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+        .remove-btn {
+            color: #ef4444;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .feature-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            background: #f1f5f9;
+        }
+        .yes-check { color: #22c55e; font-weight: bold; }
+        .no-cross { color: #ef4444; font-weight: bold; }
+        
+        .empty-compare {
+            text-align: center;
+            padding: 100px 20px;
+        }
+    </style>
+</head>
+<body>
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Institutions</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
+                <div class="dropdown">
+                    <a href="#">Resources ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Home</a>
+                        <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
+                        <a href="{{ url_for('events') }}">Upcoming Events</a>
+                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                        <a href="{{ url_for('contact') }}">Contact Us</a>
+                        <a href="{{ url_for('compare') }}" class="active">Compare</a>
+                    </div>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">DARKMODE</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeCheckbox">
+                        <span class="slider">
+                            <span class="slider-text"></span>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <div class="compare-container">
+        <div class="compare-header">
+            <h1>Compare Institutions</h1>
+            <p>Side-by-side analysis of fees, facilities, and programs.</p>
+        </div>
+
+        <div id="compare-content">
+            <div class="loading" style="text-align: center; padding: 50px;">
+                <p>Analyzing colleges...</p>
+            </div>
+        </div>
+    </div>
+
+    {% include 'chat_widget.html' %}
+    
+    <script>
+        const collegeIds = "{{ college_ids }}".split(',').filter(id => id.length > 0);
+        
+        async function fetchCompareData() {
+            if (collegeIds.length === 0) {
+                renderEmpty();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/compare?ids=${collegeIds.join(',')}`);
+                const data = await response.json();
+                renderTable(data);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('compare-content').innerHTML = '<p style="color:red; text-align:center;">Failed to load comparison data.</p>';
+            }
+        }
+
+        function renderEmpty() {
+            document.getElementById('compare-content').innerHTML = `
+                <div class="empty-compare">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">⚖️</div>
+                    <h2>Your compare list is empty</h2>
+                    <p>Go to the Colleges page and click "Add to Compare" to seeinstitutions side-by-side.</p>
+                    <a href="{{ url_for('colleges') }}" class="btn" style="margin-top: 20px; display: inline-block; text-decoration: none;">Browse Colleges</a>
+                </div>
+            `;
+        }
+
+        function renderTable(colleges) {
+            const content = document.getElementById('compare-content');
+            
+            let html = `<div class="compare-table-wrapper"><table><thead><tr><th>Feature</th>`;
+            
+            // Header: College Names and Images
+            colleges.forEach(c => {
+                html += `
+                    <td class="college-header-cell">
+                        <img src="${c.image_url || 'https://via.placeholder.com/300x150?text=No+Image'}" class="college-img" onerror="this.src='https://via.placeholder.com/300x150?text=Campus'">
+                        <div class="college-name">${c.name}</div>
+                        <button class="remove-btn" onclick="removeCollege(${c.id})">Remove</button>
+                    </td>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            // Row: Location
+            html += `<tr><th>Location</th>`;
+            colleges.forEach(c => {
+                html += `<td>📍 ${c.location.city || c.location.address || 'Nepal'}</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Affiliation
+            html += `<tr><th>Affiliation</th>`;
+            colleges.forEach(c => {
+                html += `<td>${c.affiliation || 'University of Nepal'}</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Type
+            html += `<tr><th>Institution Type</th>`;
+            colleges.forEach(c => {
+                html += `<td>${c.type || 'Private'}</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Fees Range
+            html += `<tr><th>Starting Fees (approx)</th>`;
+            colleges.forEach(c => {
+                const fees = c.programs.map(p => p.fees).filter(f => f > 0);
+                const minFee = fees.length ? Math.min(...fees) : 0;
+                html += `<td>${minFee > 0 ? 'NRS ' + minFee.toLocaleString() : 'N/A'}</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Hostel
+            html += `<tr><th>Hostel Facilities</th>`;
+            colleges.forEach(c => {
+                const h = c.hostel;
+                const status = h && h.available ? `<span class="yes-check">✓ Available</span><br><small>${h.on_campus ? 'On-Campus' : 'Off-Campus'}</small>` : `<span class="no-cross">✗ Not Available</span>`;
+                html += `<td>${status}</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Popularity
+            html += `<tr><th>Student Rating</th>`;
+            colleges.forEach(c => {
+                const stars = '⭐'.repeat(Math.round(c.popularity_score / 20) || 1);
+                html += `<td>${stars} (${c.popularity_score}/100)</td>`;
+            });
+            html += `</tr>`;
+
+            // Row: Programs
+            html += `<tr><th>Top Programs</th>`;
+            colleges.forEach(c => {
+                const progs = c.programs.slice(0, 4).map(p => `<li>${p.name}</li>`).join('');
+                html += `<td><ul style="padding-left:15px; font-size:0.85rem;">${progs}</ul></td>`;
+            });
+            html += `</tr>`;
+
+            html += `</tbody></table></div>`;
+            content.innerHTML = html;
+        }
+
+        function removeCollege(id) {
+            const newIds = collegeIds.filter(cid => cid != id);
+            window.location.href = `/compare?ids=${newIds.join(',')}`;
+        }
+
+        fetchCompareData();
+    </script>
+</body>
+</html>

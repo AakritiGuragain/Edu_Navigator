@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrance Prep – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Institutions</a>
+                <a href="{{ url_for('exams') }}" class="active">Exams</a>
+                <div class="dropdown">
+                    <a href="#">Resources ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Home</a>
+                        <a href="{{ url_for('scholarships') }}">Scholarships</a>
+                        <a href="{{ url_for('events') }}">Events</a>
+                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                        <a href="{{ url_for('contact') }}">Contact</a>
+                    </div>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">DARKMODE</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeCheckbox">
+                        <span class="slider">
+                            <span class="slider-text"></span>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="premium-exam-hero">
+        <span class="sub-tag">Entrance Exams</span>
+        <h1 class="premium-title">Your exam roadmap,<br><em>clearly laid out</em></h1>
+        <p class="premium-subtitle">Syllabi, past papers, schedules, and preparation guides for IOE, CMAT, PAHS and every major entrance exam in Nepal.</p>
+    </div>
+
+    <div class="premium-exam-grid">
+        {% for id, exam in exams.items() %}
+        <div class="p-exam-card">
+            <div class="p-exam-icon">
+                {% if id == 'ioe' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l10 5-10 5-10-5 10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                {% elif id == 'cmat' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                {% elif id == 'pahs' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/></svg>
+                {% else %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                {% endif %}
+            </div>
+            
+            <div class="p-exam-content">
+                <span class="p-exam-tag">{{ exam.tag }}</span>
+                <h2 class="p-exam-title">{{ exam.name }}</h2>
+                <p class="p-exam-desc">{{ exam.description }}</p>
+                
+                <div class="p-exam-stats">
+                    {% if exam.conducted_by %}
+                    <div class="stat-row">
+                        <span class="label">Conducted by</span>
+                        <span class="value">{{ exam.conducted_by }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.exam_date %}
+                    <div class="stat-row">
+                        <span class="label">Exam date</span>
+                        <span class="value">{{ exam.exam_date }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.programs_covered %}
+                    <div class="stat-row">
+                        <span class="label">Programs</span>
+                        <span class="value">{{ exam.programs_covered }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.total_marks %}
+                    <div class="stat-row">
+                        <span class="label">Total marks</span>
+                        <span class="value">{{ exam.total_marks }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.app_fee %}
+                    <div class="stat-row">
+                        <span class="label">Application fee</span>
+                        <span class="value">{{ exam.app_fee }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.stat_label %}
+                    <div class="stat-row">
+                        <span class="label">{{ exam.stat_label }}</span>
+                        <span class="value" {% if id == 'pahs' or id == 'cmat' %}style="color:#22c55e;"{% endif %}>{{ exam.stat_value }}</span>
+                    </div>
+                    {% endif %}
+                    {% if exam.competition %}
+                    <div class="stat-row">
+                        <span class="label">Competition</span>
+                        <span class="value" style="color:#ef4444;">{{ exam.competition }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="p-exam-footer">
+                <a href="{{ url_for('exam_detail', exam_type=id) }}" class="roadmap-btn">
+                    View roadmap 
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+                <span class="comp-badge {{ exam.competition_level }}">
+                    {{ exam.competition_level|replace('-', ' ')|title }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <p class="bottom-hint">Click any card to explore syllabus, past papers, and preparation guides</p>
+
+    <footer>
+        <div style="display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; opacity: 0.6; font-size: 0.85rem;">
+            <span>© 2026 Education Navigator</span>
+            <span>Built for students of Nepal</span>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

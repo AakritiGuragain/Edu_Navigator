@@ -20,6 +20,48 @@
             z-index: 1; /* prevent overlapping navbar */
             border: 2px solid #e0e8f0;
         }
+        .compare-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e3a8a;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: none;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10000;
+        }
+        .compare-bar span { font-weight: bold; }
+        .compare-bar a {
+            background: #22c55e;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .add-compare-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: #f1f5f9;
+            color: #1e3a8a;
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .add-compare-btn.active {
+            background: #1e3a8a;
+            color: white;
+        }
     </style>
 </head>
 
@@ -29,29 +71,50 @@
     <header class="inner-header">
         <div class="navbar-container">
             <div class="logo">
-                <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
-                Education Navigator
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
             </div>
             <nav>
                 <a href="{{ url_for('index') }}">Home</a>
-                <a href="{{ url_for('colleges') }}">Colleges</a>
-                <a href="{{ url_for('programs') }}">Programs</a>
-                <a href="{{ url_for('cv_templates') }}">CV Templates</a>
-                <a href="{{ url_for('contact') }}">Contact</a>
+                <a href="{{ url_for('colleges') }}" class="active">Institutions</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
+                <div class="dropdown">
+                    <a href="#">Resources ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Home</a>
+                        <a href="{{ url_for('scholarships') }}">Scholarships</a>
+                        <a href="{{ url_for('events') }}">Events</a>
+                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                        <a href="{{ url_for('contact') }}">Contact</a>
+                    </div>
+                </div>
                 {% if current_user.is_authenticated %}
                 <a href="{{ url_for('dashboard') }}">Dashboard</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
                 {% else %}
                 <a href="{{ url_for('login') }}">Login</a>
                 {% endif %}
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">DARKMODE</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeCheckbox">
+                        <span class="slider">
+                            <span class="slider-text"></span>
+                        </span>
+                    </label>
+                </div>
             </nav>
         </div>
     </header>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
     <!-- PAGE HERO -->
     <div class="page-hero" style="padding-top:90px;">
-        <h1>Colleges & Programs Map</h1>
-        <p>Discover top institutions and map your education journey across Nepal</p>
+        <h1>Colleges & Programs</h1>
+        <p>Explore institutions across Nepal and their offered programs in one place</p>
     </div>
 
     <!-- MAP CONTAINER -->
@@ -71,6 +134,13 @@
         <!-- Rendered via JS -->
     </div>
 
+    <div id="compareBar" class="compare-bar">
+        <span><span id="compareCount">0</span> Colleges Selected</span>
+        <a href="#" id="compareLink">Compare Now⚖️</a>
+        <button onclick="clearCompareSelection()" style="background:none; border:none; color:#cbd5e1; cursor:pointer; text-decoration:underline; font-size:0.8rem;">Clear</button>
+    </div>
+
+    {% include 'chat_widget.html' %}
     <!-- FOOTER -->
     <footer>
         <p>© 2026 Education Navigator</p>
@@ -79,10 +149,13 @@
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Pass server-side JSON to client-side safely
         const collegesData = {{ colleges_json | safe }};
+        console.log("Colleges Data loaded:", collegesData);
         const grid = document.getElementById('dynamicCollegeGrid');
         let map;
         let markers = [];
+        let compareList = [];
 
         function initMap() {
             map = L.map('map').setView([28.3949, 84.1240], 7);
@@ -118,31 +191,72 @@
                 }
                 const programs = college.programs || [];
                 const type = college.type || 'University';
-                const scholarships = college.scholarship_available ? 'Available' : (college.scholarship ? college.scholarship.total_scholarship_seats : 'Details not available');
                 
+                // Quality Badges
+                const popularityStars = '⭐'.repeat(Math.round(college.popularity_score / 20) || 1);
+                
+                // Hostel Badge
+                let hostelBadge = '';
+                if (college.hostel && college.hostel.available) {
+                    hostelBadge = `<span class="badge hostel-badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 10px;">🏠 Hostel</span>`;
+                }
+
                 // Create card
                 const card = document.createElement('div');
                 card.className = 'college-card';
-                card.style.display = 'flex';
-                card.style.flexDirection = 'column';
                 
-                let programsHtml = '<div style="margin-top:10px; flex-grow: 1;"><strong>Programs:</strong><ul style="font-size:0.85rem; padding-left: 20px; color:#555;">';
-                programs.slice(0, 3).forEach(p => {
-                    const fee = p.fees || p.total_fee_npr;
-                    programsHtml += `<li>${p.name} - ${fee ? 'NPR ' + fee.toLocaleString() : 'N/A'}</li>`;
-                });
-                if(programs.length > 3) {
-                    programsHtml += `<li>+ ${programs.length - 3} more</li>`;
+                // Only show image if it exists and looks like a valid external URL
+                let imageHtml = '';
+                if (college.image_url && college.image_url.startsWith('http')) {
+                    imageHtml = `
+                    <div class="college-image-container" style="position:relative;">
+                        <img src="${college.image_url}" alt="${name}" class="college-image" onerror="this.parentElement.style.display='none'">
+                        <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:white; padding:4px 8px; border-radius:4px; font-size:0.8rem;">
+                            ${popularityStars}
+                        </div>
+                    </div>`;
+                }
+
+                let programsHtml = '<div style="margin-top:10px; flex-grow: 1;"><strong>Top Programs:</strong><ul style="font-size:0.85rem; padding-left: 20px; color:#555; margin-top:5px;">';
+                if (programs.length > 0) {
+                    programs.slice(0, 3).forEach(p => {
+                        const feeStr = p.fees > 0 ? ` (NPR ${Number(p.fees).toLocaleString()})` : '';
+                        programsHtml += `<li>${p.name}${feeStr}</li>`;
+                    });
+                } else {
+                    programsHtml += '<li>Information coming soon</li>';
                 }
                 programsHtml += '</ul></div>';
 
+                const tourBtn = college.virtual_tour_url ? 
+                    `<a href="${college.virtual_tour_url}" target="_blank" class="btn" style="width:100%; margin-top:10px; background-color: #5B88B2; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; color: white;">
+                        <span style="font-size:1.2rem;">🌐</span> Virtual Tour
+                    </a>` : '';
+
                 card.innerHTML = `
-                    <h3>${name}</h3>
-                    <div class="location">📍 ${locationStr}</div>
-                    <p style="margin-bottom: 5px;"><strong>Type:</strong> ${type}</p>
-                    <p style="font-size: 0.8rem; color: #777;"><strong>Scholarships:</strong> ${scholarships}</p>
-                    ${programsHtml}
-                    <button class="btn" onclick="focusMap(${coords ? coords.lat : 28.3}, ${coords ? coords.lng : 84.1})" style="width:100%; margin-top:15px; background-color: var(--dark-blue);">View on Map</button>
+                    ${imageHtml}
+                    <div style="padding: 20px; display:flex; flex-direction:column; flex-grow: 1;">
+                        <h3 style="margin-bottom:5px; display:flex; align-items:center; justify-content:space-between; font-size: 1.1rem;">
+                            ${name}
+                            ${hostelBadge}
+                        </h3>
+                        <div class="location" style="color: #666; font-size: 0.85rem; margin-bottom:10px;">📍 ${locationStr}</div>
+                        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap: wrap;">
+                            <span style="font-size:0.75rem; background:#f0f4f8; padding:2px 8px; border-radius:12px; color: #475569;">${type}</span>
+                            <span style="font-size:0.75rem; background:#fef9c3; padding:2px 8px; border-radius:12px; color: #854d0e;">${college.affiliation || 'University affiliated'}</span>
+                        </div>
+                        <p style="font-size: 0.82rem; color: #444; margin-bottom:10px; line-height: 1.4;">${college.description ? college.description.substring(0, 100) + '...' : ''}</p>
+                        ${programsHtml}
+                        <div style="margin-top:auto; display: flex; flex-direction: column; gap: 8px; padding-top: 15px;">
+                            <button class="add-compare-btn ${compareList.includes(college.id.toString()) ? 'active' : ''}" 
+                                    onclick="toggleCompare(${college.id})">
+                                ${compareList.includes(college.id.toString()) ? '✓ Selected' : '+ Add to Compare'}
+                            </button>
+                            <button class="btn" onclick="focusMap(${coords ? coords.lat : 28.3}, ${coords ? coords.lng : 84.1})" 
+                                    style="width:100%; background-color: var(--dark-blue); color: white;">📍 View on Map</button>
+                            ${tourBtn}
+                        </div>
+                    </div>
                 `;
                 grid.appendChild(card);
 
@@ -160,6 +274,38 @@
             } else if (bounds.length > 0) {
                  map.fitBounds(bounds);
             }
+        }
+
+        // --- Comparison Logic ---
+        function updateCompareBar() {
+            const bar = document.getElementById('compareBar');
+            const count = document.getElementById('compareCount');
+            const link = document.getElementById('compareLink');
+            
+            count.innerText = compareList.length;
+            bar.style.display = compareList.length > 0 ? 'flex' : 'none';
+            link.href = `/compare?ids=${compareList.join(',')}`;
+        }
+
+        function toggleCompare(id) {
+            const sId = id.toString();
+            if (compareList.includes(sId)) {
+                compareList = compareList.filter(i => i !== sId);
+            } else {
+                if (compareList.length >= 3) {
+                    alert("You can compare up to 3 colleges at once.");
+                    return;
+                }
+                compareList.push(sId);
+            }
+            updateCompareBar();
+            renderColleges(collegesData); // Re-render to update button states
+        }
+
+        function clearCompareSelection() {
+            compareList = [];
+            updateCompareBar();
+            renderColleges(collegesData);
         }
 
         function filterDynamicColleges() {

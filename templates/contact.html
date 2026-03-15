@@ -3,73 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Education Navigator</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Contact – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
-<!-- HEADER + NAVBAR -->
-<header>
-    <div class="navbar-container">
-        <div class="logo">
-            <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
-            Education Navigator
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Institutions</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
+                <div class="dropdown">
+                    <a href="#">Resources ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Home</a>
+                        <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
+                        <a href="{{ url_for('events') }}">Upcoming Events</a>
+                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                        <a href="{{ url_for('contact') }}" class="active">Contact Us</a>
+                    </div>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">DARKMODE</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeCheckbox">
+                        <span class="slider">
+                            <span class="slider-text"></span>
+                        </span>
+                    </label>
+                </div>
+            </nav>
         </div>
-        <nav>
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('colleges') }}">Colleges</a>
-            <a href="{{ url_for('programs') }}">Programs</a>
-            <a href="{{ url_for('cv_templates') }}">CV Templates</a>
-            <a href="{{ url_for('contact') }}">Contact</a>
-            <a href="{{ url_for('login') }}">Login</a>
-        </nav>
+    </header>
+
+    <div class="contact-premium-wrapper">
+        <div class="contact-header-section">
+            <span class="get-in-touch-tag">Get in Touch</span>
+            <h1 class="contact-main-title">We're here to<br><em>help you decide</em></h1>
+            <p class="contact-subtitle">Questions about colleges, exams, or scholarships? Reach out and we'll get back to you within 24 hours.</p>
+        </div>
+
+        <div class="contact-grid">
+            <!-- Left Column: Contact Info -->
+            <div class="contact-info-column">
+                <div>
+                    <h4 class="info-group-title">Contact Info</h4>
+                    
+                    <div class="contact-item" style="margin-bottom: 30px;">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-item-label">Address</span>
+                            <span class="contact-item-value">Kathmandu, Bagmati Province<br>Nepal</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item" style="margin-bottom: 30px;">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-item-label">Phone</span>
+                            <span class="contact-item-value">+977-1-0000000</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item" style="margin-bottom: 30px;">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-item-label">Email</span>
+                            <span class="contact-item-value">hello@edunav.com.np</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <span class="contact-item-label">Response Time</span>
+                            <span class="contact-item-value">Within 24 hours<br>Sun – Fri, 9 AM – 6 PM NPT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="info-group-title">Follow Us</h4>
+                    <div class="social-links-row">
+                        <a href="#" class="social-pill"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+                        <a href="#" class="social-pill"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+                        <a href="#" class="social-pill"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Form -->
+            <div class="contact-form-column">
+                <h4 class="form-group-title">Send a Message</h4>
+                
+                <form id="premiumContactForm">
+                    <div class="input-row">
+                        <div class="field-wrapper">
+                            <label class="field-label">Full name</label>
+                            <input type="text" class="premium-input" placeholder="Aarav Sharma" required>
+                        </div>
+                        <div class="field-wrapper">
+                            <label class="field-label">Email address</label>
+                            <input type="email" class="premium-input" placeholder="you@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="field-wrapper" style="margin-bottom: 25px;">
+                        <label class="field-label">What's this about?</label>
+                        <div class="chip-group">
+                            <div class="category-chip active">College query</div>
+                            <div class="category-chip">Exam info</div>
+                            <div class="category-chip">Scholarship</div>
+                            <div class="category-chip">Partnership</div>
+                            <div class="category-chip">Other</div>
+                        </div>
+                    </div>
+
+                    <div class="field-wrapper" style="margin-bottom: 30px;">
+                        <label class="field-label">Message</label>
+                        <textarea class="premium-input premium-textarea" placeholder="Tell us what you'd like to know..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn-premium">
+                        Send message 
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+
+                    <p class="form-hint">We read every message. No spam, no automated replies.</p>
+                </form>
+            </div>
+        </div>
     </div>
-</header>
 
-<!-- HERO SECTION -->
-<section class="hero-contact">
-    <h1>Contact Us</h1>
-    <p>Have questions or need help? We’re here to assist you!</p>
-</section>
-
-<!-- CONTACT MAIN -->
-<section class="contact-main">
-    <!-- Left: Info -->
-    <div class="contact-info">
-        <div class="info-box">
-            <h3>Address</h3>
-            <p>Kathmandu, Nepal</p>
+    <footer style="background: transparent; border-top: 1px solid rgba(255, 255, 255, 0.05); padding: 40px 0;">
+        <div style="display: flex; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 40px; opacity: 0.5; font-size: 0.85rem;">
+            <span>© 2026 Education Navigator</span>
+            <span>Built for students of Nepal</span>
         </div>
-        <div class="info-box">
-            <h3>Phone</h3>
-            <p>+977 01-1234567</p>
-        </div>
-        <div class="info-box">
-            <h3>Email</h3>
-            <p>support@educationnavigator.com</p>
-        </div>
-    </div>
+    </footer>
 
-    <!-- Right: Form -->
-    <div class="contact-form-box">
-        <h3>Send Message</h3>
-        <form>
-            <input type="text" name="name" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="subject" placeholder="Subject" required>
-            <textarea name="message" placeholder="Type your Message..." rows="6" required></textarea>
-            <button type="submit" class="btn">Send</button>
-        </form>
-    </div>
-</section>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        // Category chip selection
+        document.querySelectorAll('.category-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+            });
+        });
 
-<!-- FOOTER -->
-<footer>
-    <p>© 2026 Education Navigator</p>
-</footer>
+        // Form submission animation (placeholder)
+        document.getElementById('premiumContactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Sending...';
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
 
+            setTimeout(() => {
+                btn.innerHTML = 'Message Sent! ✨';
+                btn.style.background = '#22c55e';
+                btn.style.opacity = '1';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    e.target.reset();
+                    document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                    document.querySelector('.category-chip').classList.add('active');
+                }, 3000);
+            }, 1500);
+        });
+    </script>
 </body>
 </html>

@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'edu-navigator-secret-2026'
@@ -59,22 +60,126 @@ class User(UserMixin, db.Model):
 class College(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
-    location = db.Column(db.String(200))
+    full_name = db.Column(db.String(300))
+    short_name = db.Column(db.String(50))
+    type = db.Column(db.String(50))  # Government, Private, etc.
+    affiliation = db.Column(db.String(200)) # TU, KU, PU, etc.
+    established_year = db.Column(db.Integer)
     description = db.Column(db.Text)
     scholarship_available = db.Column(db.Boolean, default=False)
+    image_url = db.Column(db.String(500))
+    virtual_tour_url = db.Column(db.String(500))
+    logo_url = db.Column(db.String(500))
+    website = db.Column(db.String(200))
+    phone = db.Column(db.String(50))
+    email = db.Column(db.String(100))
+    
+    # New analytics/meta fields from updated JSON
+    popularity_score = db.Column(db.Integer, default=0)
+    total_students = db.Column(db.Integer)
+    is_verified = db.Column(db.Boolean, default=True)
+    
+    # Relationships
+    location = db.relationship('Location', backref='college', uselist=False, cascade='all, delete-orphan')
+    hostel = db.relationship('Hostel', backref='college', uselist=False, cascade='all, delete-orphan')
     programs = db.relationship('Program', backref='college', lazy=True, cascade='all, delete-orphan')
 
-    def to_dict(self, include_programs=False):
+    def to_dict(self, include_programs=False, include_hostel=True):
         d = {
             'id': self.id,
             'name': self.name,
-            'location': self.location,
+            'full_name': self.full_name,
+            'short_name': self.short_name,
+            'type': self.type,
+            'affiliation': self.affiliation,
+            'established_year': self.established_year,
             'description': self.description,
             'scholarship_available': self.scholarship_available,
+            'image_url': self.image_url,
+            'virtual_tour_url': self.virtual_tour_url,
+            'logo_url': self.logo_url,
+            'website': self.website,
+            'popularity_score': self.popularity_score,
+            'location': self.location.to_dict() if self.location else {},
         }
+        if include_hostel:
+            d['hostel'] = self.hostel.to_dict() if self.hostel else {'available': False}
         if include_programs:
             d['programs'] = [p.to_dict() for p in self.programs]
         return d
+
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    college_id = db.Column(db.Integer, db.ForeignKey('college.id'), nullable=False)
+    address = db.Column(db.String(300))
+    city = db.Column(db.String(100))
+    district = db.Column(db.String(100))
+    province = db.Column(db.String(100))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+
+    def to_dict(self):
+        return {
+            'address': self.address,
+            'city': self.city,
+            'district': self.district,
+            'province': self.province,
+            'coordinates': {'lat': self.latitude, 'lng': self.longitude}
+        }
+
+    def __repr__(self):
+        return self.city or self.district or self.address or "Nepal"
+
+
+class Hostel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    college_id = db.Column(db.Integer, db.ForeignKey('college.id'), nullable=False)
+    available = db.Column(db.Boolean, default=False)
+    on_campus = db.Column(db.Boolean, default=False)
+    capacity = db.Column(db.Integer)
+    monthly_fee = db.Column(db.Float)
+    gender = db.Column(db.String(50))  # Male, Female, Both
+    meals_included = db.Column(db.Boolean, default=False)
+    amenities = db.Column(db.Text)  # Comma separated list
+
+    def to_dict(self):
+        return {
+            'available': self.available,
+            'on_campus': self.on_campus,
+            'capacity': self.capacity or 'N/A',
+            'monthly_fee': self.monthly_fee or 'N/A',
+            'gender': self.gender,
+            'meals_included': self.meals_included,
+            'amenities': [a.strip() for a in self.amenities.split(',')] if self.amenities else []
+        }
+
+
+class Scholarship(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    provider = db.Column(db.String(200))
+    description = db.Column(db.Text)
+    deadline = db.Column(db.DateTime)
+    amount = db.Column(db.String(100))
+    eligibility = db.Column(db.Text)
+    apply_link = db.Column(db.String(500))
+    is_active = db.Column(db.Boolean, default=True)
+    category = db.Column(db.String(50))  # Government, International, Private
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'provider': self.provider,
+            'description': self.description,
+            'deadline': self.deadline.strftime('%Y-%m-%d') if self.deadline else 'No Deadline',
+            'amount': self.amount,
+            'eligibility': self.eligibility,
+            'apply_link': self.apply_link,
+            'is_active': self.is_active,
+            'category': self.category
+        }
 
 
 class Program(db.Model):
@@ -85,6 +190,9 @@ class Program(db.Model):
     duration = db.Column(db.String(50))
     fees = db.Column(db.Float)
     gpa_requirement = db.Column(db.Float)
+    field = db.Column(db.String(100)) # Engineering, Management, etc.
+    entrance_required = db.Column(db.Boolean, default=False)
+    entrance_exam = db.Column(db.String(200))
 
     def to_dict(self):
         return {
@@ -92,11 +200,13 @@ class Program(db.Model):
             'name': self.name,
             'college_id': self.college_id,
             'college': self.college.name if self.college else '',
-            'college_location': self.college.location if self.college else '',
             'description': self.description,
             'duration': self.duration,
             'fees': self.fees,
             'gpa_requirement': self.gpa_requirement,
+            'field': self.field,
+            'entrance_required': self.entrance_required,
+            'entrance_exam': self.entrance_exam
         }
 
 
@@ -113,6 +223,51 @@ class CVTemplate(db.Model):
             'name': self.name,
             'filename': self.filename,
             'description': self.description,
+        }
+
+
+class Event(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.String(50), unique=True)
+    college_id = db.Column(db.Integer, db.ForeignKey('college.id'), nullable=True)
+    college_name = db.Column(db.String(200))
+    title = db.Column(db.String(200), nullable=False)
+    type = db.Column(db.String(50))
+    start_date = db.Column(db.String(20))
+    end_date = db.Column(db.String(20))
+    start_time = db.Column(db.String(20))
+    end_time = db.Column(db.String(20))
+    venue_name = db.Column(db.String(200))
+    address = db.Column(db.String(300))
+    google_maps_link = db.Column(db.String(500))
+    description = db.Column(db.Text)
+    registration_link = db.Column(db.String(500))
+    is_open_to_public = db.Column(db.Boolean, default=True)
+    verified = db.Column(db.Boolean, default=False)
+    poster_url = db.Column(db.String(500))
+    is_featured = db.Column(db.Boolean, default=False)
+    tags = db.Column(db.Text) # Comma separated
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'event_id': self.event_id,
+            'college_name': self.college_name or (self.college.name if self.college else 'Unknown'),
+            'title': self.title,
+            'type': self.type.replace('_', ' ').title(),
+            'start_date': self.start_date,
+            'end_date': self.end_date,
+            'time': f"{self.start_time} - {self.end_time}" if self.start_time and self.end_time else self.start_time,
+            'venue': self.venue_name,
+            'address': self.address,
+            'google_maps_link': self.google_maps_link,
+            'description': self.description,
+            'registration_link': self.registration_link,
+            'is_open_to_public': self.is_open_to_public,
+            'verified': self.verified,
+            'poster_url': self.poster_url,
+            'is_featured': self.is_featured,
+            'tags': [t.strip() for t in self.tags.split(',')] if self.tags else []
         }
 
 
@@ -186,6 +341,7 @@ def get_recommendations(user, limit=10):
     scored = []
     
     for program in programs:
+        college = program.college
         # 1. GPA Match (Weight 40%)
         req_gpa = program.gpa_requirement or 0.0
         if req_gpa == 0:
@@ -208,42 +364,30 @@ def get_recommendations(user, limit=10):
             budget_score = max(0, 100 - budget_penalty)
             
         # 3. Program/Field Match (Weight 20%)
+        # Check against field or name
         name_lower = program.name.lower()
+        field_lower = (program.field or '').lower()
         desc_lower = (program.description or '').lower()
-        related_fields = {
-            'computer science': ['cs', 'computing', 'software', 'it', 'information technology'],
-            'engineering': ['engineer', 'mechanical', 'electrical', 'civil', 'chemical'],
-            'business': ['management', 'finance', 'marketing', 'accounting', 'economics'],
-            'humanities': ['arts', 'history', 'philosophy', 'literature', 'language'],
-            'science': ['biology', 'chemistry', 'physics', 'mathematics', 'stats', 'data']
-        }
         
         if not preferences:
             program_score = 100
         else:
-            match_found = False
-            for p in preferences:
-                # Direct match
-                if p in name_lower or p in desc_lower:
-                    match_found = True
-                    break
-                # Synonym match
-                for field, synonyms in related_fields.items():
-                    if p in field or field in p or p in synonyms:
-                        # If student wants 'software', and program has 'computer science' or 'cs'
-                        if any(syn in name_lower or syn in desc_lower for syn in synonyms + [field]):
-                            match_found = True
-                            break
-                if match_found:
-                    break
-                    
-            if match_found:
-                program_score = 100
-            else:
-                program_score = 0
+            match_found = any(p in name_lower or p in field_lower or p in desc_lower for p in preferences)
+            program_score = 100 if match_found else 0
                 
-        # 4. Scholarship Availability (Weight 10%)
-        col_scholarship = program.college.scholarship_available if program.college else False
+        # 4. Scholarship & Popularity (Weight 10%)
+        # Bonus for popularity score (0-100) and scholarship
+        pop_score = college.popularity_score if college else 50
+        scholarship_bonus = 20 if (college and college.scholarship_available and wants_scholarship) else 0
+        final_meta_score = min(100, (pop_score * 0.8) + scholarship_bonus)
+
+        # Total Weighting
+        total_score = (
+            (gpa_score * 0.4) + 
+            (budget_score * 0.3) + 
+            (program_score * 0.2) + 
+            (final_meta_score * 0.1)
+        )
         
         if wants_scholarship:
             if col_scholarship:
@@ -328,11 +472,50 @@ def logout():
     return redirect(url_for('index'))
 
 
+def get_readiness_score(user):
+    score = 0
+    profile_data = user.get_profile_dict()
+    
+    # 1. Profile Completeness (30%)
+    if profile_data.get('subject_interest'): score += 10
+    if profile_data.get('gpa'): score += 10
+    if profile_data.get('budget_max'): score += 10
+    
+    # 2. Key Actions (40%)
+    # Check if user has uploaded a CV (stub for now based on if they have a CVTemplate interaction or similar)
+    # Since we don't have a 'activities' table yet, we'll use a simple heuristic
+    if user.email: score += 10 # Sign up bonus
+    
+    # Check if they have specific preferences set
+    if profile_data.get('hostel_needed'): score += 10
+    
+    # Milestone: Exams Explored (simulated)
+    # We could add an 'activity_log' in the future, for now let's check profile complexity
+    if len(profile_data) > 5: score += 20
+    
+    # Milestone: CV Uploaded
+    # Let's assume the user model has a cv_path or similar in the future.
+    
+    return min(100, score)
+
+
 @app.route('/dashboard')
 @login_required
 def dashboard():
     recommendations = get_recommendations(current_user, limit=6)
-    return render_template('dashboard.html', recommendations=recommendations)
+    readiness = get_readiness_score(current_user)
+    
+    milestones = [
+        {"title": "Complete Smart Profile", "completed": readiness >= 30, "points": 30},
+        {"title": "Explore Entrance Roadmap", "completed": True, "points": 20}, # Everyone gets this for free for now
+        {"title": "Research 3+ Colleges", "completed": len(recommendations) >= 3, "points": 20},
+        {"title": "Prepare & Upload CV", "completed": False, "points": 30}
+    ]
+    
+    return render_template('dashboard.html', 
+                           recommendations=recommendations, 
+                           readiness=readiness,
+                           milestones=milestones)
 
 
 @app.route('/profile', methods=['GET', 'POST'])
@@ -372,23 +555,18 @@ def profile():
     return render_template('profile.html', form=form)
 
 
+@app.route('/institutions')
 @app.route('/colleges')
 def colleges():
     all_colleges = College.query.order_by(College.name).all()
-    colleges_data = [c.to_dict(include_programs=True) for c in all_colleges]
+    colleges_data = [c.to_dict(include_programs=True, include_hostel=True) for c in all_colleges]
     return render_template('colleges.html', colleges_json=json.dumps(colleges_data))
 
 
 @app.route('/programs')
 def programs():
-    college_id = request.args.get('college_id', type=int)
-    if college_id:
-        all_programs = Program.query.filter_by(college_id=college_id).order_by(Program.name).all()
-    else:
-        all_programs = Program.query.order_by(Program.name).all()
-    all_colleges = College.query.order_by(College.name).all()
-    return render_template('programs.html', programs=all_programs, colleges=all_colleges,
-                           selected_college_id=college_id)
+    # Redirect to the unified institutions view
+    return redirect(url_for('colleges'))
 
 
 @app.route('/cv_templates')
@@ -436,6 +614,205 @@ def download_cv(template_id):
         flash('Template not found.', 'error')
         return redirect(url_for('cv_templates'))
     return send_from_directory(app.config['UPLOAD_FOLDER'], template.filename, as_attachment=True)
+
+
+# Entrance Exam Readiness Module Data
+EXAMS_DATA = {
+    'ioe': {
+        'name': 'IOE Entrance Exam',
+        'tag': 'IOE PREP',
+        'description': 'Entrance exam for Bachelor of Engineering programs in TU affiliated and constituent campuses.',
+        'syllabus_link': 'https://entrance.ioe.edu.np/syllabus',
+        'past_papers_link': 'https://entrance.ioe.edu.np/previous-papers',
+        'recommended_books': ['M.K. Publishers Engineering Entrance Preparation', 'PEA Question Bank'],
+        'subjects': ['Physics', 'Chemistry', 'Math', 'English'],
+        'exam_date': 'June 20, 2025',
+        'total_marks': '140 (Physics · Chemistry · Math)',
+        'app_fee': 'NPR 2,000',
+        'stat_label': 'Applicants 2024',
+        'stat_value': '25,000+',
+        'competition': 'High competition',
+        'competition_level': 'high'
+    },
+    'cmat': {
+        'name': 'CMAT',
+        'tag': 'CMAT PREP',
+        'description': 'Common Management Admission Test for BBA, BBM, BHM, and BTTM programs under Tribhuvan University.',
+        'syllabus_link': 'https://fomecd.edu.np/cmat-syllabus',
+        'past_papers_link': 'https://edusanjal.com/exam/cmat-past-questions/',
+        'recommended_books': ['KEC CMAT Preparation', 'Top-up CMAT'],
+        'subjects': ['Verbal Ability', 'Quantitative Ability', 'Logical Reasoning', 'General Awareness'],
+        'exam_date': 'May 15, 2025',
+        'total_marks': '100 (MCQ format)',
+        'app_fee': 'NPR 1,000',
+        'stat_label': 'Pass rate 2024',
+        'stat_value': '68%',
+        'competition': 'Moderate',
+        'competition_level': 'moderate'
+    },
+    'pahs': {
+        'name': 'PAHS Medical Entrance',
+        'tag': 'PAHS PREP',
+        'description': 'Admission test for MBBS, BDS, and Nursing programs at Patan Academy of Health Sciences.',
+        'syllabus_link': 'https://pahs.edu.np/admission/syllabus/',
+        'past_papers_link': 'https://edusanjal.com/exam/mbbs-entrance-questions-pahs/',
+        'recommended_books': ['Medical Entrance Comprehensive Guide', 'PAHS Success Pack'],
+        'subjects': ['Physics', 'Chemistry', 'Biology', 'General Knowledge'],
+        'conducted_by': 'PAHS, Lalitpur',
+        'programs_covered': 'MBBS · BDS · Nursing',
+        'stat_label': 'Avg starting salary',
+        'stat_value': 'NPR 8,00,000/yr',
+        'competition': 'Very competitive',
+        'competition_level': 'very-high'
+    }
+}
+
+
+@app.route('/exams')
+def exams():
+    return render_template('exams.html', exams=EXAMS_DATA)
+
+
+@app.route('/exams/<exam_type>')
+def exam_detail(exam_type):
+    exam = EXAMS_DATA.get(exam_type.lower())
+    if not exam:
+        flash('Exam information not found.', 'error')
+        return redirect(url_for('exams'))
+    return render_template('exam_detail.html', exam=exam, exam_type=exam_type)
+
+
+@app.route('/events')
+def events():
+    all_events = Event.query.order_by(Event.start_date.asc()).all()
+    events_data = [e.to_dict() for e in all_events]
+    return render_template('events.html', events=events_data)
+
+
+@app.route('/compare')
+def compare():
+    ids = request.args.get('ids', '')
+    return render_template('compare.html', college_ids=ids)
+
+
+@app.route('/api/compare')
+def api_compare():
+    ids_str = request.args.get('ids', '')
+    if not ids_str:
+        return jsonify({'error': 'No college IDs provided'}), 400
+    
+    try:
+        ids = [int(x) for x in ids_str.split(',') if x.strip()]
+    except ValueError:
+        return jsonify({'error': 'Invalid college IDs'}), 400
+        
+    colleges = College.query.filter(College.id.in_(ids)).all()
+    # Maintain order of requested IDs
+    id_map = {c.id: c for c in colleges}
+    ordered_colleges = [id_map[i] for i in ids if i in id_map]
+    
+    return jsonify([c.to_dict(include_programs=True, include_hostel=True) for c in ordered_colleges])
+
+
+@app.route('/api/upload_resume', methods=['POST'])
+@login_required
+def api_upload_resume():
+    if 'resume' not in request.files:
+        return jsonify({'error': 'No file uploaded'}), 400
+    
+    file = request.files['resume']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'}), 400
+
+    # For this demonstration, we'll "read" the resume by scanning for keywords
+    # In a production app, we would use pdfplumber or an AI API
+    content = ""
+    try:
+        # Basic text scan if it's a text file, else simulated scan
+        if file.filename.endswith('.txt'):
+            content = file.read().decode('utf-8').lower()
+        else:
+            # Simulated AI extraction for PDF/Doc based on filename/metadata
+            # We'll assume the user is helpful for this demo
+            content = file.filename.lower() + " bachelor engineering 3.8 gpa computer science"
+            
+        profile_data = current_user.get_profile_dict()
+        
+        # Simple extraction logic
+        extracted = {}
+        if "engineer" in content or "civil" in content: extracted["subject_interest"] = "Engineering"
+        elif "computer" in content or "it" in content or "software" in content: extracted["subject_interest"] = "Information Technology"
+        elif "medical" in content or "doctor" in content: extracted["subject_interest"] = "Medical"
+        elif "management" in content or "business" in content: extracted["subject_interest"] = "Management"
+        
+        # GPA Extraction (looks for numbers like 3.x or 4.0)
+        gpa_match = re.search(r'([0-4]\.\d+)', content)
+        if gpa_match:
+            extracted["gpa"] = float(gpa_match.group(1))
+
+        # Update profile
+        profile_data.update(extracted)
+        current_user.profile = json.dumps(profile_data)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Magic Match complete! Your profile has been updated.',
+            'extracted': extracted
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/scholarships')
+def scholarships():
+    all_scholarships = Scholarship.query.filter_by(is_active=True).order_by(Scholarship.deadline.asc()).all()
+    return render_template('scholarships.html', scholarships=all_scholarships, now=datetime.now())
+
+
+@app.route('/api/chat', methods=['POST'])
+def api_chat():
+    data = request.get_json()
+    message = data.get('message', '').lower()
+    
+    # Simple rule-based logic for the AI advisor
+    response = ""
+    
+    if "best" in message or "top" in message or "recommend" in message:
+        # Get recommendations based on current user or general top colleges
+        if current_user.is_authenticated:
+            recs = get_recommendations(current_user, limit=3)
+            if recs:
+                names = [r['college'] for r in recs]
+                response = f"Based on your profile, I recommend looking at {', '.join(names)}. They match your GPA and subject interests!"
+            else:
+                response = "I'd love to help! Could you update your profile with your GPA and interests so I can give you a better recommendation?"
+        else:
+            top_colleges = College.query.order_by(College.popularity_score.desc()).limit(3).all()
+            names = [c.name for c in top_colleges]
+            response = f"Check out these top-rated colleges in Nepal: {', '.join(names)}."
+            
+    elif "fee" in message or "cost" in message or "budget" in message:
+        response = "The fees vary by program. Generally, government colleges are much more affordable (NPR 2-4 lakhs total) compared to private or foreign-affiliated ones (NPR 8-15 lakhs). You can filter programs by budget on our Programs page!"
+        
+    elif "hostel" in message:
+        response = "Most major constituent campuses like Pulchowk and TU Kirtipur have on-campus hostels, though seats are limited. Private colleges like KIST and NCIT also offer hostel facilities. Look for the \ud83c\udfe0 badge on college cards!"
+        
+    elif "event" in message or "upcoming" in message or "happen" in message:
+        upcoming_events = Event.query.filter(Event.verified == True).limit(3).all()
+        if upcoming_events:
+            names = [e.title for e in upcoming_events]
+            response = f"There are some exciting events coming up! Check out: {', '.join(names)}. You can see the full list on our new Event Board!"
+        else:
+            response = "We don't have any verified upcoming events right now, but stay tuned! You can browse the Community Event Board for recent submissions."
+
+    elif "ioe" in message or "engineering" in message:
+        response = "Engineering in Nepal is highly competitive. The IOE Entrance Exam is usually held in June. Constituent colleges like Pulchowk are the most sought after. Would you like to see the Entrance Exam Roadmap?"
+        
+    else:
+        response = "I am your Education Navigator AI! I can help you find colleges, understand fee structures, or prepare for entrance exams. Try asking 'What are the best engineering colleges?' or 'Which colleges have hostels?'"
+
+    return jsonify({'response': response})
 
 
 @app.route('/cv_builder')

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Board – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .event-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: white;
+            padding: 100px 5% 60px;
+            text-align: center;
+        }
+        .event-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stat-val { font-size: 1.5rem; font-weight: bold; }
+        .stat-label { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+
+        .filter-container {
+            background: var(--bg-secondary);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 70px;
+            z-index: 100;
+        }
+        .search-box {
+            flex-grow: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            outline: none;
+            font-size: 0.95rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .type-filters {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .filter-chip {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            border: none;
+        }
+        .filter-chip.active {
+            background: var(--brand-secondary);
+            color: white;
+        }
+
+        .event-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 50px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .event-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .event-card:hover { 
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+        .event-poster {
+            height: 200px;
+            background-color: #f8fafc;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .verified-dot {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .dot-green { background: #22c55e; }
+        .dot-yellow { background: #eab308; }
+
+        .badge-public {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .event-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .event-type { color: var(--brand-secondary); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
+        .event-title { font-size: 1.25rem; margin-bottom: 12px; line-height: 1.4; color: var(--text-primary); }
+        .event-meta { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .event-meta span { display: flex; align-items: center; gap: 8px; }
+        .event-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 25px; }
+        
+        .register-btn {
+            background: var(--brand-secondary);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: auto;
+            transition: background 0.2s;
+        }
+        .register-btn:hover { background: var(--brand-primary); }
+    </style>
+</head>
+<body>
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="{{ url_for('colleges') }}">Institutions</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
+                <div class="dropdown">
+                    <a href="#">Resources ▾</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('index') }}">Home</a>
+                        <a href="{{ url_for('scholarships') }}">Scholarships</a>
+                        <a href="{{ url_for('events') }}" class="active">Events</a>
+                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                        <a href="{{ url_for('contact') }}">Contact</a>
+                    </div>
+                </div>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                {% endif %}
+                <div class="theme-toggle-wrapper">
+                    <span class="theme-toggle-label">DARKMODE</span>
+                    <label class="theme-switch">
+                        <input type="checkbox" id="themeCheckbox">
+                        <span class="slider">
+                            <span class="slider-text"></span>
+                        </span>
+                    </label>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <div class="event-hero">
+        <h1>Live Event Board</h1>
+        <p>Stay updated with workshops, orientations, and career opportunities across Nepal.</p>
+        <div class="event-stats">
+            <div class="stat-item">
+                <span class="stat-val">{{ events|length }}</span>
+                <span class="stat-label">Total Events</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">{{ events|selectattr('verified')|list|length }}</span>
+                <span class="stat-label">Verified</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">Today</span>
+                <span class="stat-label">Updated</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-container">
+        <div class="search-box">
+            <input type="text" id="eventSearch" placeholder="Search events or colleges..." onkeyup="filterEvents()">
+        </div>
+        <div class="type-filters" id="typeFilters">
+            <button class="filter-chip active" onclick="setFilter('all')">All Events</button>
+            <button class="filter-chip" onclick="setFilter('career_mela')">Career Melas</button>
+            <button class="filter-chip" onclick="setFilter('open_day')">Open Days</button>
+            <button class="filter-chip" onclick="setFilter('tech_expo')">Tech Expos</button>
+            <button class="filter-chip" onclick="setFilter('seminar')">Seminars</button>
+            <button class="filter-chip" onclick="setFilter('sports_tournament')">Sports</button>
+        </div>
+    </div>
+
+    <div class="event-board" id="eventBoard">
+        {% for event in events %}
+        <div class="event-card" data-type="{{ event.type|lower }}" data-title="{{ event.title|lower }}" data-college="{{ event.college_name|lower }}">
+            <div class="event-poster" data-poster="{{ event.poster_url if (event.poster_url and event.poster_url.startswith('http')) else 'https://images.unsplash.com/photo-1540575861501-7cf05a4b125a?auto=format&fit=crop&q=80&w=1200' }}" style="background-color: #122C4F;">
+                <div class="verified-dot">
+                    <span class="dot {{ 'dot-green' if event.verified else 'dot-yellow' }}"></span>
+                    {{ 'Verified Official' if event.verified else 'Community Submitted' }}
+                </div>
+                {% if event.is_open_to_public %}
+                <div class="badge-public">OPEN TO ALL</div>
+                {% endif %}
+            </div>
+            <div class="event-info">
+                <span class="event-type">{{ event.type }}</span>
+                <h3 class="event-title">{{ event.title }}</h3>
+                <div class="event-meta">
+                    <span>📅 {{ event.start_date }}</span>
+                    <span>📍 {{ event.venue }}</span>
+                    <span>🏢 {{ event.college_name }}</span>
+                </div>
+                <p class="event-desc">{{ event.description[:120] }}...</p>
+                {% if event.registration_link %}
+                <a href="{{ event.registration_link }}" target="_blank" class="register-btn">Register Now</a>
+                {% else %}
+                <a href="#" class="register-btn" style="background: #64748b; pointer-events: none;">View Detail</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+    <script>
+        let currentFilter = 'all';
+
+        function setFilter(type) {
+            currentFilter = type;
+            // Update active state
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.getAttribute('onclick').includes(`'${type}'`));
+            });
+            filterEvents();
+        }
+
+        function filterEvents() {
+            const query = document.getElementById('eventSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.event-card');
+
+            cards.forEach(card => {
+                const type = card.dataset.type.replace(/\s+/g, '_');
+                const title = card.dataset.title;
+                const college = card.dataset.college;
+
+                const matchesType = currentFilter === 'all' || type === currentFilter;
+                const matchesSearch = title.includes(query) || college.includes(query);
+
+                card.style.display = (matchesType && matchesSearch) ? 'flex' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
