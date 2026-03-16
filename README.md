@@ -95,11 +95,3 @@ python app.py
 ```
 
 The application will be accessible in your web browser at `http://localhost:5001/` (or `http://0.0.0.0:5001/`).
-
-## Contributing
-
-Contributions are welcome! Please fork the repository and submit a pull request for any improvements or bug fixes.
-
-## License
-
-© 2026 Education Navigator. All rights reserved.
