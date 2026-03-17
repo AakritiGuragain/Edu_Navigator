@@ -194,7 +194,9 @@
                     locationStr = `${college.location.city || ''}${college.location.city && college.location.district ? ', ' : ''}${college.location.district || ''}`;
                     coords = college.location.coordinates;
                 }
-                const programs = college.programs || [];
+                const rawPrograms = college.programs || [];
+                // Filter out empty/invalid program entries
+                const programs = rawPrograms.filter(p => p && typeof p.name === 'string' && p.name.trim());
                 const type = college.type || 'University';
                 
                 // Quality Badges
@@ -203,7 +205,7 @@
                 // Hostel Badge
                 let hostelBadge = '';
                 if (college.hostel && college.hostel.available) {
-                    hostelBadge = `<span class="badge hostel-badge" style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; margin-left: 10px;">🏠 Hostel</span>`;
+                    hostelBadge = `<span class="badge badge-hostel">🏠 Hostel</span>`;
                 }
 
                 // Create card
@@ -222,43 +224,66 @@
                     </div>`;
                 }
 
-                let programsHtml = '<div style="margin-top:10px; flex-grow: 1;"><strong>Top Programs:</strong><ul style="font-size:0.85rem; padding-left: 20px; color:#555; margin-top:5px;">';
+                const typeLower = (type || '').toLowerCase();
+                const typeClass = typeLower.includes('government') ? 'badge-gov'
+                    : typeLower.includes('private') && typeLower.includes('foreign') ? 'badge-foreign'
+                    : typeLower.includes('private') ? 'badge-private'
+                    : typeLower.includes('autonomous') || typeLower.includes('semi') ? 'badge-autonomous'
+                    : 'badge-affiliation';
+
+                const affiliationText = college.affiliation || 'Affiliated';
+                const affiliationLower = (affiliationText || '').toLowerCase();
+                const affiliationClass = affiliationLower.includes('university') && affiliationLower.includes('uk') ? 'badge-foreign-uni'
+                    : affiliationLower.match(/\b(tu|ku|pu|bu|ntu|lbu)\b/i) ? 'badge-uni'
+                    : 'badge-affiliation';
+
+                const typeBadge = `<span class="badge ${typeClass}">${type}</span>`;
+                const affiliationBadge = `<span class="badge ${affiliationClass}">${affiliationText}</span>`;
+
+                // Ensure each card has a consistent programs area height by showing placeholders
+                let programItems = [];
                 if (programs.length > 0) {
-                    programs.slice(0, 3).forEach(p => {
-                        const feeStr = p.fees > 0 ? ` (NPR ${Number(p.fees).toLocaleString()})` : '';
-                        programsHtml += `<li>${p.name}${feeStr}</li>`;
+                    programItems = programs.slice(0, 3).map(p => {
+                        const feeStr = p.fees > 0 ? `<span class="fee">(NPR ${Number(p.fees).toLocaleString()})</span>` : '';
+                        return `<li><span class="program-name">${p.name}</span> ${feeStr}</li>`;
                     });
                 } else {
-                    programsHtml += '<li>Information coming soon</li>';
+                    programItems = ['<li class="placeholder">Information coming soon</li>'];
                 }
-                programsHtml += '</ul></div>';
 
-                const tourBtn = college.virtual_tour_url ? 
-                    `<a href="${college.virtual_tour_url}" target="_blank" class="btn" style="width:100%; margin-top:10px; background-color: #5B88B2; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; color: white;">
+                const tourBtn = college.virtual_tour_url ?
+                    `<a href="${college.virtual_tour_url}" target="_blank" class="btn btn-secondary" style="display:flex; align-items:center; justify-content:center; gap:8px;">
                         <span style="font-size:1.2rem;">🌐</span> Virtual Tour
                     </a>` : '';
 
                 card.innerHTML = `
                     ${imageHtml}
-                    <div style="padding: 20px; display:flex; flex-direction:column; flex-grow: 1;">
-                        <h3 style="margin-bottom:5px; display:flex; align-items:center; justify-content:space-between; font-size: 1.1rem;">
-                            ${name}
+                    <div class="college-card-body">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h3>${name}</h3>
+                            </div>
                             ${hostelBadge}
-                        </h3>
-                        <div class="location" style="color: #666; font-size: 0.85rem; margin-bottom:10px;">📍 ${locationStr}</div>
-                        <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap: wrap;">
-                            <span style="font-size:0.75rem; background:#f0f4f8; padding:2px 8px; border-radius:12px; color: #475569;">${type}</span>
-                            <span style="font-size:0.75rem; background:#fef9c3; padding:2px 8px; border-radius:12px; color: #854d0e;">${college.affiliation || 'University affiliated'}</span>
                         </div>
-                        <p style="font-size: 0.82rem; color: #444; margin-bottom:10px; line-height: 1.4;">${college.description ? college.description.substring(0, 100) + '...' : ''}</p>
-                        ${programsHtml}
-                        <div style="margin-top:auto; display: flex; flex-direction: column; gap: 8px; padding-top: 15px;">
-                            <button class="add-compare-btn ${compareList.includes(college.id.toString()) ? 'active' : ''}" 
-                                    onclick="toggleCompare(${college.id})">
+                        <div class="location">📍 ${locationStr}</div>
+                        <div class="badge-row">
+                            ${typeBadge}
+                            ${affiliationBadge}
+                        </div>
+                        <p class="description">${college.description ? college.description.substring(0, 120) + '...' : ''}</p>
+                        <div>
+                            <strong>Top Programs</strong>
+                            <ul class="program-list">
+                                ${programItems.join('')}
+                            </ul>
+                        </div>
+                        <div class="card-actions">
+                            <button class="add-compare-btn ${compareList.includes(college.id.toString()) ? 'active' : ''}" onclick="toggleCompare(${college.id})">
                                 ${compareList.includes(college.id.toString()) ? '✓ Selected' : '+ Add to Compare'}
                             </button>
-                            <button class="btn" onclick="focusMap(${coords ? coords.lat : 28.3}, ${coords ? coords.lng : 84.1})" 
-                                    style="width:100%; background-color: var(--dark-blue); color: white;">📍 View on Map</button>
+                            <button class="btn" onclick="focusMap(${coords ? coords.lat : 28.3}, ${coords ? coords.lng : 84.1})">
+                                📍 View on Map
+                            </button>
                             ${tourBtn}
                         </div>
                     </div>

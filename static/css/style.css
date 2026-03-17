@@ -320,7 +320,7 @@ input:checked + .slider .slider-text:after {
     color: var(--light-cream);
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
     transition: all 0.3s ease;
@@ -330,10 +330,20 @@ input:checked + .slider .slider-text:after {
     background-color: var(--dark-blue);
 }
 
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: var(--dark-blue);
+    border: 1px solid rgba(18, 44, 79, 0.15);
+}
+
+.btn-secondary:hover {
+    background-color: #e2e8f0;
+}
+
 /* ==============================
    FEATURES CARDS
 ============================== */
-.features, .college-cards, .cv-templates {
+.features, .cv-templates {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -341,16 +351,159 @@ input:checked + .slider .slider-text:after {
     gap: 20px;
 }
 
+/* College cards use a responsive grid to keep 3-4 columns on larger screens */
+.college-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 40px 20px;
+    justify-items: stretch;
+    max-width: none; /* Allow grid to stretch edge-to-edge */
+    margin: 0; /* Remove auto side margins */
+}
+
+@media (max-width: 1200px) {
+    .college-cards {
+        grid-template-columns: repeat(3, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .college-cards {
+        grid-template-columns: repeat(2, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .college-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
 .card, .college-card, .cv-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 30px;
-    flex: 1 1 250px;
-    max-width: 320px;
-    text-align: center;
+    padding: 24px;
+    text-align: left;
     transition: transform 0.3s ease, background-color 0.3s, border-color 0.3s;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Force uniform height across college cards and ensure action buttons stay at the bottom */
+.college-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 420px;
+    overflow: hidden;
+    padding: 24px;
+}
+
+.college-card .college-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.college-card .card-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.college-card .card-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.college-card .card-title h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.2;
+}
+
+.college-card .card-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Badge styles */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.badge-gov { background: #dae8ff; color: #1e3a8a; }
+.badge-private { background: #f3f4f6; color: #334155; }
+.badge-foreign { background: #ede9fe; color: #5b21b6; }
+.badge-autonomous { background: #d1fae5; color: #065f46; }
+.badge-uni { background: #fef3c7; color: #b45309; }
+.badge-foreign-uni { background: #ffedd5; color: #c2410c; }
+.badge-affiliation { background: #f1f3f5; color: #475569; }
+.badge-hostel { background: #22c55e; color: white; }
+
+/* Program list styling */
+.college-card ul.program-list {
+    margin: 8px 0 0 0;
+    padding-left: 20px;
+    color: var(--text-secondary);
+}
+
+.college-card ul.program-list li {
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.college-card ul.program-list li span.fee {
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Badge container */
+.college-card .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+/* Ensure buttons are full width */
+.college-card .btn {
+    width: 100%;
+}
+
+/* Lower priority typography adjustments */
+.college-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.college-card .location {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.college-card .description {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
 }
 
 .card h3, .college-card h3, .cv-card h3 {
@@ -376,10 +529,16 @@ input:checked + .slider .slider-text:after {
     margin-bottom: 5px;
 }
 
-/* Buttons inside cards */
-.card button, .college-card button, .cv-card button {
+/* Buttons inside generic cards (not college cards) */
+.card button, .cv-card button {
     margin-top: 10px;
     width: 45%;
+}
+
+/* College card actions should span full width */
+.college-card button {
+    margin-top: 10px;
+    width: 100%;
 }
 
 /* ==============================
@@ -911,9 +1070,11 @@ footer {
     background: #fff;
     border: 1px solid #e0e8f0;
     border-radius: 16px;
-    padding: 0; /* padding handled in card.innerHTML */
-    flex: 1 1 300px;
-    max-width: 350px;
+    padding: 24px;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     text-align: left;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
