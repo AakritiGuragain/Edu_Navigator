@@ -16,9 +16,12 @@ app.config['SECRET_KEY'] = 'edu-navigator-secret-2026'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///education_navigator.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
+AVATAR_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'avatars')
+os.makedirs(AVATAR_FOLDER, exist_ok=True)
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB max upload
 
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+AVATAR_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'webp'}
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -32,6 +35,10 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def allowed_avatar(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in AVATAR_EXTENSIONS
 
 
 # ─────────────────────────────────────────────
@@ -297,6 +304,7 @@ class RegisterForm(FlaskForm):
 
 
 class ProfileForm(FlaskForm):
+    photo = FileField('Profile Photo', validators=[Optional()])
     preferences = StringField('Subject Interests (comma-separated)',
                                validators=[Optional()],
                                description='e.g. Computer Science, Engineering, Business')
@@ -461,6 +469,16 @@ def profile():
     profile_data = current_user.get_profile_dict()
 
     if form.validate_on_submit():
+        if form.photo.data and form.photo.data.filename:
+            file = form.photo.data
+            if allowed_avatar(file.filename):
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"user_{current_user.id}_{datetime.now().strftime('%Y%m%d%H%M')}.{ext}"
+                filepath = os.path.join(AVATAR_FOLDER, filename)
+                file.save(filepath)
+                profile_data['photo_url'] = f"uploads/avatars/{filename}"
+            else:
+                flash('Photo must be JPG, PNG, GIF or WebP.', 'error')
         raw_prefs = form.preferences.data or ''
         prefs = [p.strip() for p in str(raw_prefs).split(',') if p.strip()]
         profile_data['preferences'] = prefs

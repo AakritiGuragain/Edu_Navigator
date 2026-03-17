@@ -10,6 +10,54 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color, #e2e8f0);
+            text-align: center;
+        }
+        .profile-photo-wrap {
+            flex-shrink: 0;
+        }
+        .profile-photo-img,
+        .profile-photo-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .profile-photo-placeholder {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .profile-name-wrap {
+            min-width: 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .profile-name {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--text-primary, #0f172a);
+        }
+        .profile-email {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary, #64748b);
+        }
         .profile-ai-match-cta {
             max-width: 680px;
             margin: 24px auto 0;
@@ -80,7 +128,7 @@
     <!-- PAGE HERO -->
     <div class="page-hero" style="padding-top:90px;">
         <h1>Your Profile</h1>
-        <p>Set your preferences to get personalized college & program recommendations</p>
+        <p>Set your preferences to get personalized college and program recommendations</p>
     </div>
 
     <!-- Flash messages -->
@@ -97,15 +145,38 @@
     <!-- FORM -->
     <div class="form-section">
         <div class="form-card">
-            <h2>📋 Preferences</h2>
+            <div class="profile-header">
+                <div class="profile-photo-wrap">
+                    {% set photo_url = current_user.get_profile_dict().get('photo_url') %}
+                    {% if photo_url %}
+                    <img src="{{ url_for('static', filename=photo_url) }}" alt="Profile photo" class="profile-photo-img">
+                    {% else %}
+                    <div class="profile-photo-placeholder">
+                        {{ current_user.username[0]|upper if current_user.username else '?' }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="profile-name-wrap">
+                    <h2 class="profile-name">{{ current_user.username }}</h2>
+                    <p class="profile-email">{{ current_user.email }}</p>
+                </div>
+            </div>
+
+            <h2>Preferences</h2>
 
             <div class="hint">
                 Fill in your interests and preferences below. These are used to generate personalized recommendations on
                 your dashboard.
             </div>
 
-            <form method="POST" novalidate>
+            <form method="POST" novalidate enctype="multipart/form-data">
                 {{ form.hidden_tag() }}
+
+                <div class="form-group">
+                    {{ form.photo.label }}
+                    {{ form.photo(accept=".jpg,.jpeg,.png,.gif,.webp") }}
+                    <small>Optional. JPG, PNG, GIF or WebP. Max 5MB.</small>
+                </div>
 
                 <div class="form-group">
                     {{ form.preferences.label }}
