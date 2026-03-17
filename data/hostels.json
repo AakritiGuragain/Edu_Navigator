@@ -1,0 +1,436 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-15",
+  "data_note": "All hostel data verified from official college websites, Edusanjal, CollegeNP, and direct sources. Fees marked as 'unverified_estimate' are approximate based on third-party sources and should be confirmed directly with the college. Fees marked 'not_published' mean the college has not publicly listed hostel costs.",
+  "total_colleges": 10,
+  "hostels": [
+
+    {
+      "college_id": "col_001",
+      "college_name": "IOE Pulchowk Campus",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "Pulchowk Campus Hostel (Boys & Girls)",
+        "gender": "Both (separate buildings)",
+        "blocks": [
+          {
+            "name": "New Boys Hostel",
+            "gender": "Male",
+            "seats_by_department": {
+              "BE_Computer": 10,
+              "BE_Electronics": 10,
+              "BE_Electrical": 10,
+              "BE_Mechanical": 10,
+              "BE_Civil": 40,
+              "B_Architecture": 10
+            },
+            "total_seats": 90
+          },
+          {
+            "name": "Girls Hostel",
+            "gender": "Female",
+            "total_seats": "Limited (priority to outstation students)"
+          }
+        ],
+        "total_capacity": "~120-150 students (exact figure not published)",
+        "allocation_method": "Merit-based: IOE Entrance Score + SLC School Location Score + Candidate Location Score",
+        "room_sharing": "1st & 2nd year: 3 students/room; 3rd & 4th year: 2 students/room",
+        "fees": {
+          "currency": "NPR",
+          "admission_fee": 7500,
+          "monthly_fee": "~2500-3500 (includes meals)",
+          "annual_fee": "~30000-42000",
+          "fee_status": "unverified_estimate",
+          "fee_note": "Fee was ~Rs 7500 for full 4-year stay in 2017; raised since. Contact hostel warden for current rates.",
+          "meals_included": true,
+          "meal_cost_per_plate": 55
+        },
+        "amenities": [
+          "Free WiFi (2 LAN ports per room)",
+          "Free telephone (to contact parents)",
+          "24/7 filtered drinking water",
+          "Separate bed, table, chair per student",
+          "Mess facility (veg meals @ NPR 55/plate)",
+          "Cricket, football, basketball ground",
+          "Table tennis hall",
+          "Laundry area"
+        ],
+        "rules": [
+          "Allocation based on hostel merit score",
+          "Priority given to students from remote/outside-valley districts",
+          "Application submitted to Hostel Warden after BE admission",
+          "No smoking/alcohol on premises"
+        ],
+        "application_process": "Submit separate hostel form to Hostel Warden after BE admission. Contact: Mr. Shyam Tamang (hostel staff). Application open for ~2 weeks after admission.",
+        "contact": {
+          "warden_name": "Ajaychandra Lal (as of last update)",
+          "warden_phone": "9849102002 (hostel staff)",
+          "hostel_page": "https://pcampus.edu.np"
+        },
+        "data_source": "pcampus.edu.np + manishjayswal.wordpress.com (2017 student post)",
+        "data_confidence": "Medium – structure verified, fees are estimates"
+      }
+    },
+
+    {
+      "college_id": "col_002",
+      "college_name": "Kathmandu University",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "KU Boys Hostel (KUBH) & KU Girls Hostel (KUGH)",
+        "gender": "Both (separate buildings)",
+        "blocks": [
+          {
+            "name": "KU Boys Hostel (KUBH)",
+            "gender": "Male",
+            "location": "Main campus premises, Dhulikhel"
+          },
+          {
+            "name": "KU Girls Hostel (KUGH)",
+            "gender": "Female",
+            "location": "Main campus premises, Dhulikhel"
+          },
+          {
+            "name": "Graduate Boys Hostel",
+            "gender": "Male",
+            "for": "Postgraduate students"
+          },
+          {
+            "name": "Graduate Girls Hostel",
+            "gender": "Female",
+            "for": "Postgraduate students"
+          }
+        ],
+        "total_capacity": "Not publicly listed (limited seats, interview-based selection)",
+        "allocation_method": "Application + Interview. Priority to students from outside Dhulikhel locality.",
+        "room_sharing": "2-3 students per room",
+        "fees": {
+          "currency": "NPR",
+          "annual_fee": "~170000 (hostel + mess combined, based on KUSMS data)",
+          "monthly_fee": "~14000-15000 (approx)",
+          "fee_status": "unverified_estimate",
+          "fee_note": "Official fees not published on KU website. Contact the hostel office directly. Medical school (KUSMS) hostel + mess is ~NPR 1,70,000/year.",
+          "meals_included": true
+        },
+        "amenities": [
+          "24/7 security guards",
+          "Internet facility",
+          "Hot water (solar-powered)",
+          "Well-furnished rooms",
+          "Mess/canteen"
+        ],
+        "rules": [
+          "Priority to outside-valley students",
+          "Application + interview required",
+          "Fee waiver notice issued for deserving students in some years"
+        ],
+        "application_process": "Apply via KU website when hostel admission notice is published (usually August-September). Download form from https://drive.google.com/drive/folders/1Yr3nqYEv0kLFlmdnzeTm2TDAHesseeKg or check https://ku.edu.np for latest notice.",
+        "contact": {
+          "hostel_page": "https://ku.edu.np/student-hostels",
+          "application_notice": "https://ku.edu.np/news-app?tags=Hostel"
+        },
+        "data_source": "ku.edu.np/student-hostels + ku.edu.np hostel notices",
+        "data_confidence": "High – hostel existence confirmed; fees are estimates"
+      }
+    },
+
+    {
+      "college_id": "col_003",
+      "college_name": "KIST College",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "KIST College Boys & Girls Hostel",
+        "gender": "Both (separate buildings)",
+        "blocks": [
+          {
+            "name": "Boys Hostel",
+            "gender": "Male"
+          },
+          {
+            "name": "Girls Hostel",
+            "gender": "Female"
+          }
+        ],
+        "total_capacity": "Not publicly listed",
+        "allocation_method": "First-come, first-served / college discretion",
+        "room_sharing": "Double and four-seat rooms available",
+        "fees": {
+          "currency": "NPR",
+          "monthly_fee": "not_published",
+          "annual_fee": "not_published",
+          "fee_status": "not_published",
+          "fee_note": "KIST has not published hostel fees publicly. Contact college directly.",
+          "meals_included": true
+        },
+        "amenities": [
+          "Separate boys and girls buildings",
+          "Mess/canteen with meals throughout stay",
+          "No alcohol or drugs policy",
+          "Internet access",
+          "Furnished rooms"
+        ],
+        "rules": [
+          "Boys not allowed in girls' hostel and vice versa",
+          "No alcohol or dangerous drugs",
+          "Smoking strictly prohibited"
+        ],
+        "application_process": "Contact KIST admissions office directly after gaining college admission. No online portal for hostel.",
+        "contact": {
+          "phone": "01-4534990",
+          "email": "info@kist.edu.np",
+          "website": "https://kist.edu.np"
+        },
+        "data_source": "kist.edu.np + edusanjal.com + nepalcollegesearch.org",
+        "data_confidence": "Medium – existence confirmed; fees not published"
+      }
+    },
+
+    {
+      "college_id": "col_004",
+      "college_name": "The British College",
+      "hostel": {
+        "available": true,
+        "on_campus": false,
+        "hostel_type": "Partner hostel (off-campus, coordinated by TBC)",
+        "hostel_name": "TBC Partner Hostel (Example Hostel Services)",
+        "gender": "Mixed availability (separate rooms/buildings)",
+        "location_from_college": "~8 minute drive from college (Thapathali)",
+        "total_capacity": "Not publicly listed",
+        "allocation_method": "Arranged by TBC Student Services / Operations Department",
+        "room_sharing": "Single bed rooms (fully furnished)",
+        "fees": {
+          "currency": "NPR",
+          "monthly_fee": "not_published",
+          "annual_fee": "not_published",
+          "fee_status": "not_published",
+          "fee_note": "TBC arranges accommodation with local hostel partners. Fees vary by package. Contact TBC Operations: Anju Basnet or Dibya Prabha Jha (Admissions).",
+          "meals_included": true
+        },
+        "amenities": [
+          "Fully furnished room (single bed, mattress, pillow, linens, closet, study table)",
+          "3 meals/day (breakfast, lunch, dinner) + afternoon snack",
+          "Veg and non-veg meal packages available",
+          "Kitchen amenities (refrigerator, microwave, kettle)",
+          "WiFi"
+        ],
+        "rules": [
+          "Arranged through TBC Student Services only",
+          "Students responsible for contacting TBC Operations Dept for availability"
+        ],
+        "application_process": "Contact TBC Operations Department after admission. Contact: Anju Basnet (Operations) / Dibya Prabha Jha (Admissions). Accommodation page: https://www.thebritishcollege.edu.np/pages/accommodation-for-students",
+        "contact": {
+          "contact_person_1": "Anju Basnet – Operations Department",
+          "contact_person_2": "Dibya Prabha Jha – Admissions Department",
+          "accommodation_page": "https://www.thebritishcollege.edu.np/pages/accommodation-for-students",
+          "college_phone": "01-5970003"
+        },
+        "data_source": "thebritishcollege.edu.np/pages/accommodation-for-students",
+        "data_confidence": "High – officially documented by TBC"
+      }
+    },
+
+    {
+      "college_id": "col_005",
+      "college_name": "Tribhuvan University (Main Campus, Kirtipur)",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "TU Campus Hostels",
+        "gender": "Both (separate buildings)",
+        "total_capacity": "Multiple hostels across 154.77-hectare campus; exact capacity not published",
+        "allocation_method": "Department/faculty-wise allocation; priority to graduate and PhD students and outstation students",
+        "fees": {
+          "currency": "NPR",
+          "monthly_fee": "not_published",
+          "annual_fee": "not_published",
+          "fee_status": "not_published",
+          "fee_note": "TU central campus hostel fees are very low (government subsidized) but are not published publicly. Contact individual faculty/department offices.",
+          "meals_included": false,
+          "meals_note": "Canteen available on campus; meals not included in hostel fee"
+        },
+        "amenities": [
+          "Basic furnished rooms",
+          "Common bathrooms",
+          "Large campus with green spaces",
+          "Canteen nearby",
+          "Library access"
+        ],
+        "application_process": "Apply through the relevant faculty office at Kirtipur campus. No central online portal. Walk-in or contact: 01-4331076.",
+        "contact": {
+          "phone": "01-4331076",
+          "website": "https://tribhuvan-university.edu.np"
+        },
+        "data_source": "tribhuvan-university.edu.np (general campus info)",
+        "data_confidence": "Low – hostel existence confirmed; no detailed fee/capacity data publicly available"
+      }
+    },
+
+    {
+      "college_id": "col_006",
+      "college_name": "Pokhara University",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "PU Campus Hostels (via Prithvi Narayan Campus)",
+        "gender": "Both (separate buildings for male/female and married/unmarried)",
+        "blocks": [
+          {
+            "name": "Girl's Hostel",
+            "gender": "Female (unmarried)",
+            "capacity": 54
+          },
+          {
+            "name": "Lady's Hostel",
+            "gender": "Female (married)",
+            "capacity": 50
+          },
+          {
+            "name": "Boy's Hostel",
+            "gender": "Male"
+          },
+          {
+            "name": "Science Boy's Hostel",
+            "gender": "Male (Science students)",
+            "for": "Male students majoring in Science subjects"
+          }
+        ],
+        "total_capacity": 200,
+        "allocation_method": "Application-based; priority to distance/outstation students",
+        "fees": {
+          "currency": "NPR",
+          "monthly_fee": "not_published",
+          "annual_fee": "not_published",
+          "fee_status": "not_published",
+          "fee_note": "Fees not published publicly. Contact PU directly: 061-504046.",
+          "meals_included": "Varies by hostel block"
+        },
+        "amenities": [
+          "Four separate hostel buildings",
+          "Categorized by gender and marital status",
+          "Basic amenities",
+          "Campus facilities access"
+        ],
+        "application_process": "Contact Pokhara University administration at 061-504046 or visit pu.edu.np for hostel admission notices.",
+        "contact": {
+          "phone": "061-504046",
+          "hostel_info": "https://pncampus.edu.np/hostel.php",
+          "website": "https://pu.edu.np"
+        },
+        "data_source": "pncampus.edu.np/hostel.php",
+        "data_confidence": "High for structure; fees unverified"
+      }
+    },
+
+    {
+      "college_id": "col_007",
+      "college_name": "IOE Thapathali Campus",
+      "hostel": {
+        "available": false,
+        "on_campus": false,
+        "hostel_note": "IOE Thapathali Campus does not have an on-campus hostel. The campus is centrally located in Kathmandu (Thapathali), so most students commute or rent privately nearby.",
+        "nearby_accommodation": {
+          "area": "Thapathali, Tripureshwor, Maitighar",
+          "average_room_rent_monthly_npr": "8000-18000 (varies by room type and sharing)",
+          "tip": "Many students share flats near Teku, Tripureshwor, and Kumaripati areas."
+        },
+        "data_source": "IOE Thapathali official page + student reviews",
+        "data_confidence": "High – confirmed no on-campus hostel"
+      }
+    },
+
+    {
+      "college_id": "col_008",
+      "college_name": "Nepal College of Information Technology (NCIT)",
+      "hostel": {
+        "available": false,
+        "on_campus": false,
+        "hostel_note": "NCIT officially states it does NOT have its own hostel or transportation system. Students arrange private accommodation independently near Balkumari, Lalitpur.",
+        "source_quote": "NCIT FAQ: 'No, NCIT doesn't have its own hostel and transportation system.'",
+        "nearby_accommodation": {
+          "area": "Balkumari, Imadol, Jwagal, Lagankhel, Satdobato",
+          "average_room_rent_monthly_npr": "7000-15000",
+          "tip": "Balkumari and Imadol area has many student-friendly rooms for rent. Buses and e-rickshaws available to Ratnapark."
+        },
+        "data_source": "ncit.edu.np/entrance-application (official FAQ)",
+        "data_confidence": "Very High – officially confirmed by NCIT"
+      }
+    },
+
+    {
+      "college_id": "col_009",
+      "college_name": "Kantipur Engineering College (KEC)",
+      "hostel": {
+        "available": true,
+        "on_campus": true,
+        "hostel_name": "KEC Hostel",
+        "gender": "Both (separate)",
+        "campus_size": "More than 20 acres (25+ ropanies) includes hostel buildings",
+        "total_capacity": "Not publicly listed",
+        "allocation_method": "College discretion; priority to outstation students",
+        "room_sharing": "Not specified",
+        "fees": {
+          "currency": "NPR",
+          "monthly_fee": "not_published",
+          "annual_fee": "not_published",
+          "fee_status": "not_published",
+          "fee_note": "KEC has not published hostel fees. Contact college directly at 01-5571005.",
+          "meals_included": true,
+          "meals_note": "Fresh and healthy meals served; dedicated hostel teaching staff for discipline"
+        },
+        "amenities": [
+          "Homely and clean environment",
+          "Spacious well-furnished rooms",
+          "Internet facility",
+          "Laundry service",
+          "Self-reading room",
+          "Healthy meals by dedicated team",
+          "Smoking strictly forbidden inside"
+        ],
+        "rules": [
+          "Smoking inside hostel area strictly forbidden",
+          "Teachers maintain discipline on premises",
+          "Guidance provided to students during stay"
+        ],
+        "application_process": "Contact KEC admissions office after gaining admission. Phone: 01-5571005. Website: https://kec.edu.np",
+        "contact": {
+          "phone": "01-5571005",
+          "website": "https://kec.edu.np"
+        },
+        "data_source": "admissionnepal.com/kantipurcollege/facilities/hostel + besonline.in",
+        "data_confidence": "Medium – existence confirmed; fees not published"
+      }
+    },
+
+    {
+      "college_id": "col_010",
+      "college_name": "Softwarica College of IT and E-Commerce",
+      "hostel": {
+        "available": false,
+        "on_campus": false,
+        "hostel_note": "Softwarica College does not have an on-campus hostel. The college is centrally located in Dillibazar, Kathmandu, which is well-served by public transport.",
+        "nearby_accommodation": {
+          "area": "Dillibazar, Naxal, Gairidhara, Lazimpat, Putalisadak",
+          "average_room_rent_monthly_npr": "8000-20000",
+          "tip": "Dillibazar has many private rooms and flat shares available for students. The area is walkable or a short bus/taxi ride from most parts of central Kathmandu."
+        },
+        "data_source": "softwarica.edu.np (no hostel listed) + Google Maps reviews",
+        "data_confidence": "High – no hostel mentioned on official website or any source"
+      }
+    }
+
+  ],
+  "summary": {
+    "has_hostel": ["col_001", "col_002", "col_003", "col_004", "col_005", "col_006", "col_009"],
+    "no_hostel": ["col_007", "col_008", "col_010"],
+    "on_campus_hostel": ["col_001", "col_002", "col_003", "col_005", "col_006", "col_009"],
+    "off_campus_partner_hostel": ["col_004"],
+    "fees_published": [],
+    "fees_unverified_estimate": ["col_001", "col_002"],
+    "fees_not_published": ["col_003", "col_004", "col_005", "col_006", "col_009"],
+    "meals_included": ["col_001", "col_002", "col_003", "col_004", "col_009"],
+    "data_note": "Nepal colleges generally do not publish hostel fees online. Always contact the hostel/admin office directly for current rates."
+  }
+}

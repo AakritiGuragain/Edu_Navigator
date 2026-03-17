@@ -1,0 +1,742 @@
+{
+  "version": "2.1",
+  "last_updated": "2026-03-15",
+  "total_colleges": 800,
+  "notes": {
+    "virtual_tour_sources": "Three tiers: (1) Official 360° virtual tour from college website, (2) Google Maps Street View (launched Nepal Aug 2025), (3) YouTube campus walkthrough video",
+    "image_strategy": "Use Google Places Photos API with place_id to fetch real college photos dynamically. Endpoint: https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=PHOTO_REF&key=YOUR_API_KEY. Get photo_reference from Places Details API using place_id."
+  },
+  "colleges": [
+    {
+      "id": "col_001",
+      "basic_info": {
+        "name": "Tribhuvan University - Pulchowk Campus (IOE)",
+        "full_name": "Institute of Engineering, Pulchowk Campus",
+        "short_name": "IOE Pulchowk",
+        "type": "Government",
+        "affiliation": "TU",
+        "established_year": 1972,
+        "accreditation": ["UGC Nepal", "NBA"],
+        "logo_url": "/assets/logos/ioe_pulchowk.png",
+        "banner_url": "/assets/banners/ioe_pulchowk.jpg"
+      },
+      "location": {
+        "address": "M8MC+54H, Pulchowk, Lalitpur 44600",
+        "district": "Lalitpur",
+        "province": "Bagmati",
+        "municipality": "Lalitpur Metropolitan City",
+        "ward_no": 3,
+        "latitude": 27.6811,
+        "longitude": 85.3185,
+        "google_maps_place_id": "ChIJt5649ssZ6zkR7OMzx4o8G5U",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJt5649ssZ6zkR7OMzx4o8G5U",
+        "google_street_view_link": "https://www.google.com/maps/@27.6811,85.3185,3a,75y,90t/data=!3m1!1e3",
+        "distance_from_ratna_park_km": 5.2,
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6811,85.3185,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=IOE+Pulchowk+Campus+tour",
+        "facebook_tour_url": "https://www.facebook.com/IOEPulchowkEntranceHelpDesk/videos/pulchowk-campus-tour-2020/2010730879061347/",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Use Google Street View (available in Nepal since Aug 2025) or Facebook campus tour video."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJt5649ssZ6zkR7OMzx4o8G5U",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJt5649ssZ6zkR7OMzx4o8G5U&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Pulchowk_Campus%2C_IOE.jpg/1200px-Pulchowk_Campus%2C_IOE.jpg",
+          "https://pcampus.edu.np/wp-content/uploads/2020/01/IOE-Gate.jpg"
+        ]
+      },
+      "contact": {
+        "website": "https://pcampus.edu.np",
+        "email": "sysadmin@ioe.edu.np",
+        "phone": "01-5543078",
+        "phone_alternate": "01-5421260",
+        "facebook": "https://www.facebook.com/IOE.Pulchowk/",
+        "office_hours": "10 AM - 8 PM (Sun-Fri)"
+      },
+      "facilities": {
+        "has_hostel": true,
+        "hostel_info": {
+          "available": true,
+          "capacity": 500,
+          "monthly_fee": 3000,
+          "annual_fee": 30000,
+          "gender": "Male & Female (separate)",
+          "meals_included": true,
+          "application_process": "Separate hostel form after admission"
+        },
+        "has_library": true,
+        "library_info": {
+          "books_count": 50000,
+          "digital_access": true,
+          "reading_hours": "6 AM - 10 PM"
+        },
+        "has_canteen": true,
+        "has_sports": true,
+        "sports_facilities": ["Football", "Basketball", "Volleyball", "Cricket"],
+        "has_wifi": true,
+        "wifi_coverage": "Campus-wide",
+        "has_lab": true,
+        "lab_types": ["Computer", "Physics", "Chemistry", "Engineering"],
+        "has_computer_lab": true,
+        "has_auditorium": true,
+        "has_medical_facility": true,
+        "has_transportation": false,
+        "parking_available": true,
+        "disabled_friendly": true,
+        "other_facilities": ["ATM", "Photocopying", "Stationery Shop"]
+      },
+      "programs": [
+        {
+          "program_id": "prog_001",
+          "name": "Bachelor of Engineering in Computer Engineering",
+          "short_name": "BE Computer",
+          "level": "Bachelor",
+          "field": "Engineering",
+          "specialization": "Computer Engineering",
+          "duration_years": 4,
+          "duration_semesters": 8,
+          "curriculum_type": "Semester",
+          "delivery_mode": "Full-time",
+          "medium": "English",
+          "admission": {
+            "min_gpa": null,
+            "min_percentage": 45,
+            "board": ["NEB", "CBSE", "+2 Science"],
+            "entrance_exam_required": true,
+            "entrance_exam_name": "IOE Entrance Exam",
+            "entrance_exam_date": "2025-06-20",
+            "entrance_exam_syllabus_link": "https://entrance.ioe.edu.np/syllabus",
+            "entrance_fee": 2000,
+            "application_start": "2025-05-01",
+            "application_deadline": "2025-06-10",
+            "admission_start_date": "2025-08-01",
+            "required_documents": [
+              "SEE Certificate",
+              "+2 Transcript",
+              "Character Certificate",
+              "Passport Size Photos (4 copies)",
+              "Citizenship Certificate"
+            ]
+          },
+          "fees": {
+            "currency": "NPR",
+            "admission_fee": 15000,
+            "semester_fee": 25000,
+            "annual_fee": 50000,
+            "total_program_fee": 215000,
+            "exam_fee_per_semester": 2000,
+            "other_fees": {
+              "library_fee": 1000,
+              "id_card_fee": 500,
+              "sports_fee": 500
+            },
+            "fee_structure_link": "https://ioe.edu.np/fees"
+          },
+          "seats": {
+            "total_seats": 120,
+            "open_seats": 66,
+            "reserved_seats": {
+              "women": 16,
+              "dalit": 12,
+              "janajati": 11,
+              "madhesi": 5,
+              "disabled": 2,
+              "remote_area": 8
+            }
+          },
+          "outcomes": {
+            "average_placement_rate": 85,
+            "average_starting_salary": 600000,
+            "top_recruiters": ["Deerwalk", "CloudFactory", "F1Soft", "eSewa"],
+            "further_study_percentage": 30,
+            "popular_countries_for_study": ["USA", "Australia", "Germany"]
+          },
+          "is_active": true
+        }
+      ],
+      "scholarships_available": [
+        {
+          "scholarship_id": "sch_002",
+          "name": "IOE Merit Scholarship",
+          "seats": 30,
+          "coverage": "Full tuition",
+          "eligibility": "Top 25% of entrance exam rankers"
+        },
+        {
+          "scholarship_id": "sch_001",
+          "name": "45% Constitutional Reserved Quota",
+          "seats": 54,
+          "coverage": "Full fee waiver"
+        }
+      ],
+      "entrance_exam_info": {
+        "exam_name": "IOE Entrance Exam",
+        "exam_date": "2025-06-20",
+        "exam_centers": ["Kathmandu", "Pokhara", "Birgunj", "Biratnagar"],
+        "exam_duration": "3 hours",
+        "total_marks": 140,
+        "subjects": ["Physics", "Chemistry", "Math"],
+        "syllabus_link": "https://entrance.ioe.edu.np/syllabus",
+        "previous_papers_link": "https://entrance.ioe.edu.np/previous-papers",
+        "application_fee": 2000,
+        "admit_card_download": "https://entrance.ioe.edu.np/admit-card"
+      },
+      "ratings": {
+        "overall_rating": 4.4,
+        "academic_rating": 4.7,
+        "faculty_rating": 4.6,
+        "facilities_rating": 4.2,
+        "placement_rating": 4.5,
+        "total_reviews": 698
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Official pcampus.edu.np + Google Maps",
+        "scraped_at": "2026-03-15",
+        "popularity_score": 98,
+        "total_students": 3500,
+        "faculty_count": 250,
+        "student_faculty_ratio": 14
+      }
+    },
+    {
+      "id": "col_002",
+      "basic_info": {
+        "name": "Kathmandu University",
+        "full_name": "Kathmandu University",
+        "short_name": "KU",
+        "type": "Autonomous Public",
+        "affiliation": "KU",
+        "established_year": 1991,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/ku.png",
+        "banner_url": "/assets/banners/ku.jpg"
+      },
+      "location": {
+        "address": "JG9Q+PGG, Dhulikhel 45200",
+        "district": "Kavrepalanchok",
+        "province": "Bagmati",
+        "municipality": "Dhulikhel Municipality",
+        "latitude": 27.6194,
+        "longitude": 85.5388,
+        "google_maps_place_id": "ChIJK9BkTtQJ6zkRGw3pfr6jef4",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJK9BkTtQJ6zkRGw3pfr6jef4",
+        "google_street_view_link": "https://www.google.com/maps/@27.6194,85.5388,3a,75y,90t/data=!3m1!1e3",
+        "distance_from_ratna_park_km": 30,
+        "is_outside_valley": true
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6194,85.5388,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=Kathmandu+University+Dhulikhel+campus+tour",
+        "facebook_tour_url": "https://www.facebook.com/kathmanduniversity/",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Use Google Street View or KU Facebook page for campus photos/videos."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJK9BkTtQJ6zkRGw3pfr6jef4",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJK9BkTtQJ6zkRGw3pfr6jef4&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": [
+          "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Kathmandu_University.jpg/1200px-Kathmandu_University.jpg"
+        ]
+      },
+      "contact": {
+        "website": "https://ku.edu.np",
+        "email": "admission@ku.edu.np",
+        "phone": "011-415005",
+        "facebook": "https://www.facebook.com/kathmanduniversity/",
+        "office_hours": "9 AM - 5 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.3,
+        "total_reviews": 96
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + ku.edu.np"
+      }
+    },
+    {
+      "id": "col_003",
+      "basic_info": {
+        "name": "KIST College",
+        "full_name": "KIST College",
+        "short_name": "KIST",
+        "type": "Private",
+        "affiliation": "TU",
+        "established_year": 1995,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/kist.png",
+        "banner_url": "/assets/banners/kist.jpg"
+      },
+      "location": {
+        "address": "Kamalpokhari Marg, Kathmandu 44600",
+        "district": "Kathmandu",
+        "province": "Bagmati",
+        "latitude": 27.7118,
+        "longitude": 85.3253,
+        "google_maps_place_id": "ChIJazJxSg8Z6zkRxhLQkJLGVB4",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJazJxSg8Z6zkRxhLQkJLGVB4",
+        "google_street_view_link": "https://www.google.com/maps/@27.7118,85.3253,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": true,
+        "official_tour_url": "https://kist.edu.np/collegevirtualtour/",
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.7118,85.3253,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=KIST+College+Nepal+campus+tour",
+        "tour_type": "official_360",
+        "note": "Has official 360° virtual tour on kist.edu.np"
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJazJxSg8Z6zkRxhLQkJLGVB4",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJazJxSg8Z6zkRxhLQkJLGVB4&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://kist.edu.np",
+        "email": "info@kist.edu.np",
+        "phone": "01-4534990",
+        "office_hours": "6:30 AM - 6 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 3.9,
+        "total_reviews": 213
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + kist.edu.np"
+      }
+    },
+    {
+      "id": "col_004",
+      "basic_info": {
+        "name": "The British College",
+        "full_name": "The British College, Kathmandu",
+        "short_name": "TBC",
+        "type": "Private",
+        "affiliation": "UK Universities (Leeds Beckett, University of the West of England)",
+        "established_year": 2009,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/tbc.png",
+        "banner_url": "/assets/banners/tbc.jpg"
+      },
+      "location": {
+        "address": "Trade Tower, Thapathali Road, Kathmandu 44600",
+        "district": "Kathmandu",
+        "province": "Bagmati",
+        "latitude": 27.6921,
+        "longitude": 85.3195,
+        "google_maps_place_id": "ChIJX1WVkrEZ6zkR3pcPMUtf_qs",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJX1WVkrEZ6zkR3pcPMUtf_qs",
+        "google_street_view_link": "https://www.google.com/maps/@27.6921,85.3195,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": true,
+        "official_tour_url": "https://virtualtour.thebritishcollege.edu.np/",
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6921,85.3195,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=The+British+College+Kathmandu+campus+tour",
+        "tour_type": "official_360",
+        "note": "Has official 360° virtual tour at virtualtour.thebritishcollege.edu.np"
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJX1WVkrEZ6zkR3pcPMUtf_qs",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJX1WVkrEZ6zkR3pcPMUtf_qs&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://thebritishcollege.edu.np",
+        "email": "info@thebritishcollege.edu.np",
+        "phone": "01-5970003",
+        "office_hours": "9 AM - 5 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.6,
+        "total_reviews": 1456
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + thebritishcollege.edu.np"
+      }
+    },
+    {
+      "id": "col_005",
+      "basic_info": {
+        "name": "Tribhuvan University (Main Campus)",
+        "full_name": "Tribhuvan University, Kirtipur",
+        "short_name": "TU Kirtipur",
+        "type": "Government",
+        "affiliation": "TU",
+        "established_year": 1959,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/tu.png",
+        "banner_url": "/assets/banners/tu.jpg"
+      },
+      "location": {
+        "address": "Kirtipur, Kathmandu 44600",
+        "district": "Kathmandu",
+        "province": "Bagmati",
+        "latitude": 27.6802,
+        "longitude": 85.2890,
+        "google_maps_place_id": "ChIJC3ba0RQY6zkRqpR2eFCT0ts",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJC3ba0RQY6zkRqpR2eFCT0ts",
+        "google_street_view_link": "https://www.google.com/maps/@27.6802,85.2890,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6802,85.2890,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=Tribhuvan+University+Kirtipur+campus+tour",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Google Street View available since Aug 2025."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJC3ba0RQY6zkRqpR2eFCT0ts",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJC3ba0RQY6zkRqpR2eFCT0ts&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://tribhuvan-university.edu.np",
+        "email": "info@tribhuvan-university.edu.np",
+        "phone": "01-4331076",
+        "office_hours": "9:30 AM - 5:30 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.1,
+        "total_reviews": 1685
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + tribhuvan-university.edu.np"
+      }
+    },
+    {
+      "id": "col_006",
+      "basic_info": {
+        "name": "Pokhara University",
+        "full_name": "Pokhara University",
+        "short_name": "PU",
+        "type": "Government",
+        "affiliation": "PU",
+        "established_year": 1997,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/pu.png",
+        "banner_url": "/assets/banners/pu.jpg"
+      },
+      "location": {
+        "address": "43WJ+VWR, Pokhara 33700",
+        "district": "Kaski",
+        "province": "Gandaki",
+        "latitude": 28.1472,
+        "longitude": 84.0823,
+        "google_maps_place_id": "ChIJL2-M5z69lTkRM_-3ljsP0hY",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJL2-M5z69lTkRM_-3ljsP0hY",
+        "google_street_view_link": "https://www.google.com/maps/@28.1472,84.0823,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": true
+      },
+      "virtual_tour": {
+        "has_official_360_tour": true,
+        "official_tour_url": "http://tour.virtualedufairnepal.com/pokharauniversity/",
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@28.1472,84.0823,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=Pokhara+University+campus+tour",
+        "tour_type": "official_360",
+        "note": "360° tour available via VirtualEdufairNepal platform."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJL2-M5z69lTkRM_-3ljsP0hY",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJL2-M5z69lTkRM_-3ljsP0hY&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://pu.edu.np",
+        "email": "info@pu.edu.np",
+        "phone": "061-504046",
+        "office_hours": "10 AM - 5 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.1,
+        "total_reviews": 480
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + pu.edu.np"
+      }
+    },
+    {
+      "id": "col_007",
+      "basic_info": {
+        "name": "IOE Thapathali Campus",
+        "full_name": "Institute of Engineering, Thapathali Campus",
+        "short_name": "IOE Thapathali",
+        "type": "Government",
+        "affiliation": "TU",
+        "established_year": 1966,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/ioe_thapathali.png",
+        "banner_url": "/assets/banners/ioe_thapathali.jpg"
+      },
+      "location": {
+        "address": "Thapathali, Kathmandu 44600",
+        "district": "Kathmandu",
+        "province": "Bagmati",
+        "latitude": 27.6940,
+        "longitude": 85.3188,
+        "google_maps_place_id": "ChIJ2WjACK4Z6zkRDAZt9tG-dQQ",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJ2WjACK4Z6zkRDAZt9tG-dQQ",
+        "google_street_view_link": "https://www.google.com/maps/@27.6940,85.3188,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6940,85.3188,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=IOE+Thapathali+Campus+tour",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Google Street View available."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJ2WjACK4Z6zkRDAZt9tG-dQQ",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJ2WjACK4Z6zkRDAZt9tG-dQQ&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://thapathali.edu.np",
+        "email": "info@thapathali.edu.np",
+        "phone": "01-4246465",
+        "office_hours": "10 AM - 5 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.4,
+        "total_reviews": 283
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps"
+      }
+    },
+    {
+      "id": "col_008",
+      "basic_info": {
+        "name": "Nepal College of Information Technology (NCIT)",
+        "full_name": "Nepal College of Information Technology",
+        "short_name": "NCIT",
+        "type": "Private",
+        "affiliation": "PU",
+        "established_year": 2001,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/ncit.png",
+        "banner_url": "/assets/banners/ncit.jpg"
+      },
+      "location": {
+        "address": "Balkumari Road, Lalitpur 44600",
+        "district": "Lalitpur",
+        "province": "Bagmati",
+        "latitude": 27.6714,
+        "longitude": 85.3387,
+        "google_maps_place_id": "ChIJ419Kr-gZ6zkRtsZ49M0APZY",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJ419Kr-gZ6zkRtsZ49M0APZY",
+        "google_street_view_link": "https://www.google.com/maps/@27.6714,85.3387,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6714,85.3387,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=NCIT+Nepal+College+Information+Technology+campus",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Google Street View available."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJ419Kr-gZ6zkRtsZ49M0APZY",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJ419Kr-gZ6zkRtsZ49M0APZY&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://ncit.edu.np",
+        "email": "info@ncit.edu.np",
+        "phone": "01-5186354",
+        "office_hours": "8 AM - 6 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.3,
+        "total_reviews": 304
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + ncit.edu.np"
+      }
+    },
+    {
+      "id": "col_009",
+      "basic_info": {
+        "name": "Kantipur Engineering College",
+        "full_name": "Kantipur Engineering College",
+        "short_name": "KEC",
+        "type": "Private",
+        "affiliation": "TU",
+        "established_year": 1998,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/kec.png",
+        "banner_url": "/assets/banners/kec.jpg"
+      },
+      "location": {
+        "address": "Dhapakhel, Lalitpur 44700",
+        "district": "Lalitpur",
+        "province": "Bagmati",
+        "latitude": 27.6373,
+        "longitude": 85.3332,
+        "google_maps_place_id": "ChIJ47H4vWoX6zkRa8Sp99dEWL4",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJ47H4vWoX6zkRa8Sp99dEWL4",
+        "google_street_view_link": "https://www.google.com/maps/@27.6373,85.3332,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.6373,85.3332,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=Kantipur+Engineering+College+Nepal+campus+tour",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Google Street View available."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJ47H4vWoX6zkRa8Sp99dEWL4",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJ47H4vWoX6zkRa8Sp99dEWL4&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://kec.edu.np",
+        "email": "info@kec.edu.np",
+        "phone": "01-5571005",
+        "office_hours": "7 AM - 3:20 PM (Sun-Thu)"
+      },
+      "ratings": {
+        "overall_rating": 4.2,
+        "total_reviews": 227
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + kec.edu.np"
+      }
+    },
+    {
+      "id": "col_010",
+      "basic_info": {
+        "name": "Softwarica College of IT and E-Commerce",
+        "full_name": "Softwarica College of IT and E-Commerce",
+        "short_name": "Softwarica",
+        "type": "Private",
+        "affiliation": "Coventry University (UK)",
+        "established_year": 2011,
+        "accreditation": ["UGC Nepal"],
+        "logo_url": "/assets/logos/softwarica.png",
+        "banner_url": "/assets/banners/softwarica.jpg"
+      },
+      "location": {
+        "address": "Mahakavi Marg, Dillibazar, Kathmandu 44600",
+        "district": "Kathmandu",
+        "province": "Bagmati",
+        "latitude": 27.7061,
+        "longitude": 85.3300,
+        "google_maps_place_id": "ChIJIx-qdAoZ6zkRFVwOrYLv63Q",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJIx-qdAoZ6zkRFVwOrYLv63Q",
+        "google_street_view_link": "https://www.google.com/maps/@27.7061,85.3300,3a,75y,90t/data=!3m1!1e3",
+        "is_outside_valley": false
+      },
+      "virtual_tour": {
+        "has_official_360_tour": false,
+        "official_tour_url": null,
+        "has_google_street_view": true,
+        "google_street_view_url": "https://www.google.com/maps/@27.7061,85.3300,3a,75y,90t/data=!3m1!1e3",
+        "has_youtube_tour": true,
+        "youtube_tour_url": "https://www.youtube.com/results?search_query=Softwarica+College+Nepal+campus+tour",
+        "tour_type": "google_street_view",
+        "note": "No official 360° tour. Google Street View available."
+      },
+      "images": {
+        "strategy": "google_places_photos",
+        "google_place_id": "ChIJIx-qdAoZ6zkRFVwOrYLv63Q",
+        "fetch_url": "https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJIx-qdAoZ6zkRFVwOrYLv63Q&fields=photos&key=YOUR_API_KEY",
+        "static_fallback_urls": []
+      },
+      "contact": {
+        "website": "https://softwarica.edu.np",
+        "email": "info@softwarica.edu.np",
+        "phone": "01-4537385",
+        "office_hours": "9 AM - 5 PM (Sun-Fri)"
+      },
+      "ratings": {
+        "overall_rating": 4.0,
+        "total_reviews": 351
+      },
+      "meta": {
+        "is_verified": true,
+        "is_active": true,
+        "last_verified_at": "2026-03-15",
+        "data_source": "Google Maps + softwarica.edu.np"
+      }
+    }
+  ],
+  "image_api_guide": {
+    "title": "How to fetch real college photos in your app",
+    "method": "Google Places Photos API",
+    "step_1": "Call Place Details API: GET https://maps.googleapis.com/maps/api/place/details/json?place_id={PLACE_ID}&fields=photos&key={YOUR_API_KEY}",
+    "step_2": "Extract photo_reference values from the response photos array",
+    "step_3": "Load photo: GET https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference={PHOTO_REF}&key={YOUR_API_KEY}",
+    "free_quota": "Google Maps Platform gives 200 USD/month free credit (~1000 photo requests/month free)",
+    "alternative": "Wikipedia Commons has free photos for TU, KU, IOE Pulchowk — search https://commons.wikimedia.org"
+  }
+}

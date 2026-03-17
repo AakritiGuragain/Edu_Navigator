@@ -1,0 +1,251 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03",
+  "total_scholarships": 12,
+  "scholarships": [
+    {
+      "id": "sch_001",
+      "name": "45% Constitutional Reserved Quota",
+      "provider": "Government of Nepal",
+      "level": "Bachelor",
+      "programs_covered": "All programs at all universities",
+      "seats": "45% of all seats nationwide",
+      "coverage": "Full fee waiver / Partial depending on category",
+      "eligibility": {
+        "categories": [
+          "Women",
+          "Dalit",
+          "Janajati",
+          "Madhesi",
+          "Muslim",
+          "Disabled",
+          "Remote Area"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Passed +2/A-levels"
+      },
+      "selection_method": "Entrance exam + quota category declaration",
+      "application": "Declare category at university/college admission; provide caste/category certificate",
+      "website": "Applied via each university admission portal"
+    },
+    {
+      "id": "sch_002",
+      "name": "IOE Merit Scholarship",
+      "provider": "Tribhuvan University – Institute of Engineering",
+      "level": "Bachelor",
+      "programs_covered": "BE (all branches) at TU-IOE constituent campuses",
+      "seats": "Up to 25% of regular students per campus",
+      "coverage": "Full or Partial tuition fee waiver",
+      "eligibility": {
+        "categories": [
+          "General",
+          "All"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Top rank in IOE Entrance Exam"
+      },
+      "selection_method": "Automatic based on IOE entrance exam rank",
+      "application": "No separate application; rank determines award",
+      "website": "ioe.edu.np"
+    },
+    {
+      "id": "sch_003",
+      "name": "KU Need-Based Scholarship",
+      "provider": "Kathmandu University",
+      "level": "Bachelor",
+      "programs_covered": "All KU undergraduate programs",
+      "seats": "1 per 24 fee-paying students (~4% per batch)",
+      "coverage": "Full or Partial tuition",
+      "eligibility": {
+        "categories": [
+          "Need-based",
+          "Merit"
+        ],
+        "nationality": "Any (preference Nepali)",
+        "min_qualification": "Admitted to KU; CGPA 3.3+ to continue"
+      },
+      "selection_method": "Financial need assessment + academic merit",
+      "application": "Submit Financial Aid Form at admission; KU Admission & Exam Committee decides",
+      "website": "ku.edu.np/scholarship"
+    },
+    {
+      "id": "sch_004",
+      "name": "Pokhara University Bachelor Scholarships",
+      "provider": "Pokhara University",
+      "level": "Bachelor",
+      "programs_covered": "BE, BBA, BCA, BHM, BIT, BCIS, BDevStudies, Humanities",
+      "seats": 1328,
+      "coverage": "Full tuition waiver",
+      "eligibility": {
+        "categories": [
+          "General",
+          "Merit"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Passed +2 with minimum marks; pass PU scholarship written exam"
+      },
+      "selection_method": "Written exam (3 hours, subjective) at PU Academic Complex, Pokhara; ~July-August annually",
+      "application": "Online at scholarship.pu.edu.np; application window July-August",
+      "website": "scholarship.pu.edu.np"
+    },
+    {
+      "id": "sch_005",
+      "name": "Government MBBS/BDS/BSc Nursing Scholarship (MECEE-BL)",
+      "provider": "Government of Nepal / Medical Education Commission (MEC)",
+      "level": "Bachelor",
+      "programs_covered": "MBBS, BDS, BSc Nursing, BPhysio",
+      "seats": "691 MBBS + BDS + Nursing govt seats nationwide",
+      "coverage": "Full scholarship (MEC-regulated fees covered)",
+      "eligibility": {
+        "categories": [
+          "General Merit",
+          "Reserved"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Passed +2 Science (Biology); pass MECEE-BL"
+      },
+      "selection_method": "MECEE-BL merit rank + category",
+      "application": "Apply via MEC portal; sit MECEE-BL entrance exam; medportal.mec.edu.np",
+      "website": "mec.edu.np"
+    },
+    {
+      "id": "sch_006",
+      "name": "UGC Nepal Scholarship",
+      "provider": "University Grants Commission Nepal",
+      "level": "Bachelor + Master",
+      "programs_covered": "All recognized university programs",
+      "seats": "Varies annually",
+      "coverage": "Partial tuition support",
+      "eligibility": {
+        "categories": [
+          "Disabilities",
+          "Dalit",
+          "Mukta Kamlari",
+          "Martyrs Children",
+          "Muslim Women",
+          "Economically Disadvantaged"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Enrolled in recognized university program"
+      },
+      "selection_method": "Application + document verification",
+      "application": "Apply via UGC portal; deadline ~March annually",
+      "website": "ugcnepal.edu.np"
+    },
+    {
+      "id": "sch_007",
+      "name": "MOEST Bilateral Government Scholarship",
+      "provider": "Ministry of Education, Science & Technology Nepal",
+      "level": "Bachelor + Master",
+      "programs_covered": "Various programs in China, India, Bangladesh, Russia, Pakistan, Japan, Cuba, and more",
+      "seats": "Varies by country agreement",
+      "coverage": "Fully funded (tuition + accommodation + airfare + stipend)",
+      "eligibility": {
+        "categories": [
+          "General Merit"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Strong +2/SEE grades; country-specific requirements"
+      },
+      "selection_method": "Academic performance + interview + MOEST selection",
+      "application": "Apply via MOEST; country-specific annual cycles",
+      "website": "moest.gov.np"
+    },
+    {
+      "id": "sch_008",
+      "name": "TU Community School Mandatory Scholarship",
+      "provider": "Tribhuvan University (TU) – Policy Mandate",
+      "level": "Bachelor",
+      "programs_covered": "BBA, BBS at all TU affiliated colleges",
+      "seats": "2 seats per TU-affiliated college",
+      "coverage": "Up to 50% tuition fee waiver",
+      "eligibility": {
+        "categories": [
+          "Community School Graduates"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Completed SEE from community school; passed CMAT"
+      },
+      "selection_method": "CMAT score + community school SEE certificate",
+      "application": "Declare eligibility at TU-affiliated college admission time",
+      "website": "tuexam.edu.np"
+    },
+    {
+      "id": "sch_009",
+      "name": "PAHS Rural Bonding Scholarship",
+      "provider": "Patan Academy of Health Sciences (PAHS)",
+      "level": "Bachelor",
+      "programs_covered": "MBBS at PAHS",
+      "seats": "Significant portion of MBBS seats",
+      "coverage": "Full fees + rural service stipend",
+      "eligibility": {
+        "categories": [
+          "Rural Background",
+          "Service Willing"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Pass MECEE-BL; willing to sign rural service bond (5+ years in rural Nepal post-graduation)"
+      },
+      "selection_method": "MECEE-BL + PAHS specific selection",
+      "application": "Apply via MECEE-BL + PAHS admission process",
+      "website": "pahs.edu.np"
+    },
+    {
+      "id": "sch_010",
+      "name": "KU Geomatics Engineering Government Scholarship",
+      "provider": "Government of Nepal / Kathmandu University",
+      "level": "Bachelor",
+      "programs_covered": "BE Geomatics Engineering at KU",
+      "seats": "21 seats (3 per province)",
+      "coverage": "33% of total tuition fee",
+      "eligibility": {
+        "categories": [
+          "Province-wise Merit"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Pass KUCAT; rank in Geomatics Engineering"
+      },
+      "selection_method": "KUCAT rank within Geomatics Engineering by province",
+      "application": "Automatic via KUCAT; province-based selection",
+      "website": "ku.edu.np"
+    },
+    {
+      "id": "sch_011",
+      "name": "India Embassy – Mahatma Gandhi Scholarship",
+      "provider": "Embassy of India, Kathmandu",
+      "level": "Bachelor",
+      "programs_covered": "MBBS, BDS, BAMS, Engineering, BA in India",
+      "seats": "Varies annually",
+      "coverage": "Partially or fully funded",
+      "eligibility": {
+        "categories": [
+          "General Merit"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Strong +2 grades; financial need statement"
+      },
+      "selection_method": "Merit + financial need + Embassy interview",
+      "application": "Apply via Embassy of India, Kathmandu; annual cycle",
+      "website": "ambassadyofindiakathmandu.gov.in"
+    },
+    {
+      "id": "sch_012",
+      "name": "KU Female Engineering Scholarship (Jasutara Memorial / E&T)",
+      "provider": "Jasutara Memorial Foundation / E&T Fund",
+      "level": "Bachelor",
+      "programs_covered": "BE Mechanical Engineering at KU SoE",
+      "seats": "1-2 female students per year",
+      "coverage": "25–50% tuition fee waiver",
+      "eligibility": {
+        "categories": [
+          "Female Students"
+        ],
+        "nationality": "Nepali Citizen",
+        "min_qualification": "Admitted to KU BE Mechanical Engineering"
+      },
+      "selection_method": "KU SoE selection committee",
+      "application": "Apply through KU School of Engineering at admission",
+      "website": "soe.ku.edu.np"
+    }
+  ]
+}

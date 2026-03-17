@@ -1,0 +1,690 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-15",
+  "total_events": 8,
+  "event_types": [
+    "career_mela",
+    "orientation",
+    "open_day",
+    "concert",
+    "cultural_show",
+    "hackathon",
+    "sports_tournament",
+    "seminar",
+    "workshop",
+    "scholarship_notice",
+    "entrance_exam_notice",
+    "college_anniversary",
+    "tech_expo",
+    "blood_donation",
+    "other"
+  ],
+  "events": [
+    {
+      "event_id": "evt_001",
+      "college_id": "col_001",
+      "college_name": "IOE Pulchowk Campus",
+      "college_short_name": "IOE Pulchowk",
+      "college_logo_url": "/assets/logos/ioe_pulchowk.png",
+
+      "title": "Engineering Career Mela 2025",
+      "slug": "engineering-career-mela-2025-ioe-pulchowk",
+      "type": "career_mela",
+      "tags": ["career", "engineering", "recruitment", "networking"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-09-15",
+        "end_date": "2025-09-15",
+        "start_time": "10:00",
+        "end_time": "16:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": false
+      },
+
+      "venue": {
+        "name": "IOE Pulchowk Campus Premises",
+        "address": "Pulchowk, Lalitpur",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJt5649ssZ6zkR7OMzx4o8G5U",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "Annual career fair hosted by IOE Pulchowk Campus featuring 50+ companies actively recruiting engineering graduates and final-year students. Fields include software, civil, electrical, and mechanical engineering.",
+        "highlights": [
+          "50+ companies participating",
+          "On-spot interviews",
+          "CV review booths",
+          "Networking sessions"
+        ],
+        "target_audience": ["Final year students", "Recent graduates", "All BE students"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": "Formal",
+        "entry_fee": null,
+        "registration_required": true,
+        "registration_link": "https://pcampus.edu.np/career-mela-2025",
+        "registration_deadline": "2025-09-12",
+        "contact_person": "IOE Student Welfare Office",
+        "contact_phone": "01-5543078",
+        "contact_email": "info@pcampus.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_001_poster.jpg",
+        "banner_url": "/assets/events/evt_001_banner.jpg",
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "official_website",
+        "source_url": "https://pcampus.edu.np/notices",
+        "facebook_post_url": null,
+        "submitted_by": "admin",
+        "verified": true,
+        "verified_at": "2025-08-20"
+      },
+
+      "meta": {
+        "created_at": "2025-08-20",
+        "updated_at": "2025-08-20",
+        "views": 0,
+        "saves": 0,
+        "is_featured": true,
+        "is_active": true,
+        "expiry_date": "2025-09-15"
+      }
+    },
+
+    {
+      "event_id": "evt_002",
+      "college_id": "col_002",
+      "college_name": "Kathmandu University",
+      "college_short_name": "KU",
+      "college_logo_url": "/assets/logos/ku.png",
+
+      "title": "KU Open Day 2025 – Explore Your Future",
+      "slug": "ku-open-day-2025",
+      "type": "open_day",
+      "tags": ["open_day", "admission", "campus_tour", "counseling"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-08-10",
+        "end_date": "2025-08-10",
+        "start_time": "09:00",
+        "end_time": "15:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": false
+      },
+
+      "venue": {
+        "name": "Kathmandu University Main Campus",
+        "address": "Dhulikhel, Kavrepalanchok",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJK9BkTtQJ6zkRGw3pfr6jef4",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "KU Open Day gives prospective students and parents a chance to explore the campus, meet faculty, attend program briefings, and get answers about admission, scholarships, and hostel facilities.",
+        "highlights": [
+          "Campus guided tour",
+          "Program briefings by department heads",
+          "Q&A with current students",
+          "Scholarship information session",
+          "Hostel tour"
+        ],
+        "target_audience": ["+2 students", "SEE graduates", "Parents"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": null,
+        "entry_fee": null,
+        "registration_required": false,
+        "registration_link": null,
+        "registration_deadline": null,
+        "contact_person": "KU Admissions Office",
+        "contact_phone": "011-415005",
+        "contact_email": "admission@ku.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_002_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "facebook",
+        "source_url": "https://facebook.com/kathmanduniversity",
+        "facebook_post_url": "https://facebook.com/kathmanduniversity/posts/xyz",
+        "submitted_by": "admin",
+        "verified": true,
+        "verified_at": "2025-07-25"
+      },
+
+      "meta": {
+        "created_at": "2025-07-25",
+        "updated_at": "2025-07-25",
+        "views": 0,
+        "saves": 0,
+        "is_featured": false,
+        "is_active": true,
+        "expiry_date": "2025-08-10"
+      }
+    },
+
+    {
+      "event_id": "evt_003",
+      "college_id": "col_004",
+      "college_name": "The British College",
+      "college_short_name": "TBC",
+      "college_logo_url": "/assets/logos/tbc.png",
+
+      "title": "TBC Freshers' Orientation 2025",
+      "slug": "tbc-freshers-orientation-2025",
+      "type": "orientation",
+      "tags": ["orientation", "freshers", "welcome", "new_students"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-09-01",
+        "end_date": "2025-09-02",
+        "start_time": "09:00",
+        "end_time": "17:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": true
+      },
+
+      "venue": {
+        "name": "The British College, Trade Tower",
+        "address": "Thapathali Road, Kathmandu",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJX1WVkrEZ6zkR3pcPMUtf_qs",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "Two-day freshers' orientation program for all new students joining TBC for the academic year 2025. Covers college systems, student life, UK university progression routes, and introduction to clubs and societies.",
+        "highlights": [
+          "Welcome address by Principal",
+          "Introduction to UK university partners",
+          "Campus facilities tour (VR lab, IoT lab, gaming zone)",
+          "Student club fair",
+          "Meet your academic advisor"
+        ],
+        "target_audience": ["New TBC students only"],
+        "is_open_to_public": false,
+        "open_to_other_colleges": false,
+        "dress_code": "Smart casual",
+        "entry_fee": null,
+        "registration_required": true,
+        "registration_link": "https://thebritishcollege.edu.np/orientation",
+        "registration_deadline": "2025-08-28",
+        "contact_person": "TBC Student Affairs",
+        "contact_phone": "01-5970003",
+        "contact_email": "info@thebritishcollege.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_003_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "official_website",
+        "source_url": "https://thebritishcollege.edu.np/events",
+        "facebook_post_url": null,
+        "submitted_by": "admin",
+        "verified": true,
+        "verified_at": "2025-08-15"
+      },
+
+      "meta": {
+        "created_at": "2025-08-15",
+        "updated_at": "2025-08-15",
+        "views": 0,
+        "saves": 0,
+        "is_featured": true,
+        "is_active": true,
+        "expiry_date": "2025-09-02"
+      }
+    },
+
+    {
+      "event_id": "evt_004",
+      "college_id": "col_009",
+      "college_name": "Kantipur Engineering College",
+      "college_short_name": "KEC",
+      "college_logo_url": "/assets/logos/kec.png",
+
+      "title": "KEC TechFest 2025 – InnovatioN",
+      "slug": "kec-techfest-2025",
+      "type": "tech_expo",
+      "tags": ["tech", "hackathon", "robotics", "innovation", "engineering"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-10-05",
+        "end_date": "2025-10-06",
+        "start_time": "09:00",
+        "end_time": "18:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": true
+      },
+
+      "venue": {
+        "name": "KEC Campus, Dhapakhel",
+        "address": "Dhapakhel, Lalitpur",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJ47H4vWoX6zkRa8Sp99dEWL4",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "Annual technical festival at Kantipur Engineering College featuring robotics competitions, hackathons, project exhibitions, and tech talks by industry professionals.",
+        "highlights": [
+          "Robotics competition",
+          "24-hour hackathon",
+          "Final year project exhibition",
+          "Industry tech talks",
+          "Prize pool NPR 1,00,000+"
+        ],
+        "target_audience": ["Engineering students", "Tech enthusiasts", "General public"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": null,
+        "entry_fee": 200,
+        "entry_fee_currency": "NPR",
+        "registration_required": true,
+        "registration_link": "https://kec.edu.np/techfest",
+        "registration_deadline": "2025-09-30",
+        "contact_person": "KEC Student Council",
+        "contact_phone": "01-5571005",
+        "contact_email": "info@kec.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_004_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "college_submission",
+        "source_url": "https://kec.edu.np",
+        "facebook_post_url": null,
+        "submitted_by": "college_admin",
+        "verified": true,
+        "verified_at": "2025-09-01"
+      },
+
+      "meta": {
+        "created_at": "2025-09-01",
+        "updated_at": "2025-09-01",
+        "views": 0,
+        "saves": 0,
+        "is_featured": true,
+        "is_active": true,
+        "expiry_date": "2025-10-06"
+      }
+    },
+
+    {
+      "event_id": "evt_005",
+      "college_id": "col_003",
+      "college_name": "KIST College",
+      "college_short_name": "KIST",
+      "college_logo_url": "/assets/logos/kist.png",
+
+      "title": "KIST Annual Cultural Night 2025",
+      "slug": "kist-annual-cultural-night-2025",
+      "type": "concert",
+      "tags": ["cultural", "concert", "dance", "music", "entertainment"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-11-20",
+        "end_date": "2025-11-20",
+        "start_time": "17:00",
+        "end_time": "21:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": false
+      },
+
+      "venue": {
+        "name": "KIST College Premises",
+        "address": "Kamalpokhari, Kathmandu",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJazJxSg8Z6zkRxhLQkJLGVB4",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "KIST College's annual cultural night showcasing student talent in music, dance, comedy, and drama. Guest performances by popular Nepali artists.",
+        "highlights": [
+          "Student band performances",
+          "Classical and modern dance",
+          "Stand-up comedy",
+          "Guest artist performance",
+          "Best costume award"
+        ],
+        "target_audience": ["KIST students", "Alumni", "Guests"],
+        "is_open_to_public": false,
+        "open_to_other_colleges": false,
+        "dress_code": "Traditional or formal",
+        "entry_fee": null,
+        "registration_required": false,
+        "registration_link": null,
+        "registration_deadline": null,
+        "contact_person": "KIST Student Union",
+        "contact_phone": "01-4534990",
+        "contact_email": "info@kist.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_005_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "facebook",
+        "source_url": "https://facebook.com/kistcollege",
+        "facebook_post_url": null,
+        "submitted_by": "admin",
+        "verified": false,
+        "verified_at": null
+      },
+
+      "meta": {
+        "created_at": "2025-10-15",
+        "updated_at": "2025-10-15",
+        "views": 0,
+        "saves": 0,
+        "is_featured": false,
+        "is_active": true,
+        "expiry_date": "2025-11-20"
+      }
+    },
+
+    {
+      "event_id": "evt_006",
+      "college_id": "col_001",
+      "college_name": "IOE Pulchowk Campus",
+      "college_short_name": "IOE Pulchowk",
+      "college_logo_url": "/assets/logos/ioe_pulchowk.png",
+
+      "title": "IOE Entrance Exam 2025 – Official Notice",
+      "slug": "ioe-entrance-exam-notice-2025",
+      "type": "entrance_exam_notice",
+      "tags": ["entrance_exam", "IOE", "engineering", "admission", "important"],
+      "status": "active",
+
+      "schedule": {
+        "start_date": "2025-06-20",
+        "end_date": "2025-06-20",
+        "start_time": "07:00",
+        "end_time": "10:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": false,
+        "application_open_date": "2025-05-15",
+        "application_deadline": "2025-06-10"
+      },
+
+      "venue": {
+        "name": "Multiple centers: Kathmandu, Pokhara, Birgunj, Biratnagar",
+        "address": "Various",
+        "google_maps_link": null,
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "Official notice for IOE Entrance Examination 2025 for admission to BE programs at IOE constituent campuses including Pulchowk, Thapathali, Purwanchal, and Western Region Campus.",
+        "highlights": [
+          "140 marks total (Physics 40, Chemistry 40, Math 60)",
+          "3-hour paper-based exam",
+          "Negative marking applies",
+          "Admit card required"
+        ],
+        "target_audience": ["+2 Science graduates", "Students aspiring for engineering"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": null,
+        "entry_fee": 2000,
+        "entry_fee_currency": "NPR",
+        "registration_required": true,
+        "registration_link": "https://entrance.ioe.edu.np",
+        "registration_deadline": "2025-06-10",
+        "contact_person": "IOE Entrance Office",
+        "contact_phone": "01-5525555",
+        "contact_email": "entrance@ioe.edu.np"
+      },
+
+      "media": {
+        "poster_url": null,
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "official_website",
+        "source_url": "https://entrance.ioe.edu.np",
+        "facebook_post_url": null,
+        "submitted_by": "admin",
+        "verified": true,
+        "verified_at": "2025-05-15"
+      },
+
+      "meta": {
+        "created_at": "2025-05-15",
+        "updated_at": "2025-05-15",
+        "views": 0,
+        "saves": 0,
+        "is_featured": true,
+        "is_active": true,
+        "expiry_date": "2025-06-20"
+      }
+    },
+
+    {
+      "event_id": "evt_007",
+      "college_id": "col_006",
+      "college_name": "Pokhara University",
+      "college_short_name": "PU",
+      "college_logo_url": "/assets/logos/pu.png",
+
+      "title": "PU Inter-College Sports Tournament 2025",
+      "slug": "pu-inter-college-sports-2025",
+      "type": "sports_tournament",
+      "tags": ["sports", "football", "basketball", "cricket", "inter_college"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-10-15",
+        "end_date": "2025-10-25",
+        "start_time": "07:00",
+        "end_time": "18:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": true
+      },
+
+      "venue": {
+        "name": "Pokhara University Sports Ground",
+        "address": "Pokhara, Kaski",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJL2-M5z69lTkRM_-3ljsP0hY",
+        "is_online": false,
+        "online_link": null
+      },
+
+      "details": {
+        "description": "Annual inter-college sports tournament open to all PU-affiliated colleges. Events include football, cricket, basketball, and volleyball.",
+        "highlights": [
+          "Football, cricket, basketball, volleyball",
+          "Open to all PU-affiliated colleges",
+          "Trophy + cash prize for winners",
+          "Refreshments provided"
+        ],
+        "target_audience": ["Students of PU-affiliated colleges"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": "Sports attire",
+        "entry_fee": null,
+        "registration_required": true,
+        "registration_link": "https://pu.edu.np/sports-tournament",
+        "registration_deadline": "2025-10-10",
+        "contact_person": "PU Sports Committee",
+        "contact_phone": "061-504046",
+        "contact_email": "info@pu.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_007_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "college_submission",
+        "source_url": "https://pu.edu.np",
+        "facebook_post_url": null,
+        "submitted_by": "college_admin",
+        "verified": true,
+        "verified_at": "2025-09-20"
+      },
+
+      "meta": {
+        "created_at": "2025-09-20",
+        "updated_at": "2025-09-20",
+        "views": 0,
+        "saves": 0,
+        "is_featured": false,
+        "is_active": true,
+        "expiry_date": "2025-10-25"
+      }
+    },
+
+    {
+      "event_id": "evt_008",
+      "college_id": "col_010",
+      "college_name": "Softwarica College",
+      "college_short_name": "Softwarica",
+      "college_logo_url": "/assets/logos/softwarica.png",
+
+      "title": "Cybersecurity Seminar: Ethical Hacking for Beginners",
+      "slug": "softwarica-cybersecurity-seminar-2025",
+      "type": "seminar",
+      "tags": ["cybersecurity", "ethical_hacking", "IT", "workshop", "seminar"],
+      "status": "upcoming",
+
+      "schedule": {
+        "start_date": "2025-09-25",
+        "end_date": "2025-09-25",
+        "start_time": "11:00",
+        "end_time": "14:00",
+        "timezone": "Asia/Kathmandu",
+        "is_multi_day": false
+      },
+
+      "venue": {
+        "name": "Softwarica College Seminar Hall",
+        "address": "Mahakavi Marg, Dillibazar, Kathmandu",
+        "google_maps_link": "https://www.google.com/maps/place/?q=place_id:ChIJIx-qdAoZ6zkRFVwOrYLv63Q",
+        "is_online": true,
+        "online_link": "https://zoom.us/j/softwarica-seminar-2025"
+      },
+
+      "details": {
+        "description": "Free seminar on Ethical Hacking and Cybersecurity fundamentals, open to all IT students in Nepal. Conducted by Softwarica faculty and guest speaker from the cybersecurity industry.",
+        "highlights": [
+          "Introduction to ethical hacking",
+          "Live demo: penetration testing basics",
+          "Career paths in cybersecurity",
+          "Free certificate for attendees",
+          "Available both in-person and online"
+        ],
+        "target_audience": ["IT students", "Computer Science students", "Cybersecurity enthusiasts"],
+        "is_open_to_public": true,
+        "open_to_other_colleges": true,
+        "dress_code": null,
+        "entry_fee": null,
+        "registration_required": true,
+        "registration_link": "https://softwarica.edu.np/seminar-register",
+        "registration_deadline": "2025-09-23",
+        "contact_person": "Softwarica Student Affairs",
+        "contact_phone": "01-4537385",
+        "contact_email": "info@softwarica.edu.np"
+      },
+
+      "media": {
+        "poster_url": "/assets/events/evt_008_poster.jpg",
+        "banner_url": null,
+        "gallery_urls": []
+      },
+
+      "source": {
+        "source_type": "facebook",
+        "source_url": "https://facebook.com/softwarica",
+        "facebook_post_url": null,
+        "submitted_by": "admin",
+        "verified": false,
+        "verified_at": null
+      },
+
+      "meta": {
+        "created_at": "2025-09-05",
+        "updated_at": "2025-09-05",
+        "views": 0,
+        "saves": 0,
+        "is_featured": false,
+        "is_active": true,
+        "expiry_date": "2025-09-25"
+      }
+    }
+
+  ],
+
+  "google_form_field_mapping": {
+    "note": "This maps Google Form field names to JSON fields for automated pipeline",
+    "fields": {
+      "College Name": "college_name",
+      "Event Title": "title",
+      "Event Type": "type",
+      "Event Date (Start)": "schedule.start_date",
+      "Event Date (End)": "schedule.end_date",
+      "Start Time": "schedule.start_time",
+      "End Time": "schedule.end_time",
+      "Venue / Location": "venue.name",
+      "Is this an online event?": "venue.is_online",
+      "Online Link (if any)": "venue.online_link",
+      "Short Description": "details.description",
+      "Open to public?": "details.is_open_to_public",
+      "Open to other colleges?": "details.open_to_other_colleges",
+      "Entry Fee (NPR, write 0 if free)": "details.entry_fee",
+      "Registration Required?": "details.registration_required",
+      "Registration Link": "details.registration_link",
+      "Registration Deadline": "details.registration_deadline",
+      "Contact Person Name": "details.contact_person",
+      "Contact Phone": "details.contact_phone",
+      "Contact Email": "details.contact_email",
+      "Source URL (Facebook post / website link)": "source.source_url",
+      "Poster Image URL (Google Drive link)": "media.poster_url",
+      "Tags (comma separated)": "tags",
+      "Submitted By": "source.submitted_by"
+    }
+  },
+
+  "pipeline_note": {
+    "step_1": "Google Form submissions saved to Google Sheets",
+    "step_2": "Apps Script or Make.com reads new rows every hour",
+    "step_3": "Auto-generates event_id (evt_XXX), slug, and created_at timestamp",
+    "step_4": "POST to your backend API endpoint: POST /api/events",
+    "step_5": "Backend validates required fields and sets verified=false (pending admin review)",
+    "step_6": "Admin approves/rejects from dashboard, sets verified=true",
+    "step_7": "Approved events appear on Event Board within 1 hour",
+    "expiry_logic": "Events auto-expire (is_active=false) after end_date passes (cron job daily at midnight NPT)"
+  }
+}
