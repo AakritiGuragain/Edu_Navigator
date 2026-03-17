@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 import json
+import re
 from datetime import datetime
 
 app = Flask(__name__)
@@ -775,44 +776,148 @@ def api_chat():
     data = request.get_json()
     message = data.get('message', '').lower()
     
-    # Simple rule-based logic for the AI advisor
-    response = ""
+    if not current_user.is_authenticated:
+        # Fallback for non-authenticated users
+        if "best" in message or "top" in message or "recommend" in message:
+            top_colleges = College.query.order_by(College.popularity_score.desc()).limit(3).all()
+            names = [c.name for c in top_colleges]
+            response = f"Check out these top-rated colleges in Nepal: {', '.join(names)}. Log in to get personalized recommendations and save your chat history!"
+        elif "fee" in message or "cost" in message or "budget" in message:
+            response = "The fees vary by program. Generally, government colleges are much more affordable (NPR 2-4 lakhs total) compared to private or foreign-affiliated ones (NPR 8-15 lakhs)."
+        elif "hostel" in message:
+            response = "Most major constituent campuses have on-campus hostels, though seats are limited. Look for the 🏠 badge on college cards!"
+        elif "event" in message or "upcoming" in message or "happen" in message:
+            response = "Check out our new Event Board for upcoming tech fests, seminars, and more!"
+        else:
+            response = "I am your Education Navigator AI! I can help you find colleges. For a personalized experience and Chat Memory, please sign up and build your profile!"
+        return jsonify({'response': response})
+        
+    profile_data = current_user.get_profile_dict()
+    chat_history = profile_data.get('chat_history', [])
     
-    if "best" in message or "top" in message or "recommend" in message:
-        # Get recommendations based on current user or general top colleges
-        if current_user.is_authenticated:
+    response = ""
+    profile_updated = False
+    
+    # 1. Update memory context from the new message
+    gpa_match = re.search(r'(?:my\s+)?gpa\s+(?:is\s+)?([0-4](?:\.\d+)?)', message)
+    if not gpa_match:
+        gpa_match = re.search(r'([0-4](?:\.\d+)?)\s+gpa', message)
+    if gpa_match:
+        try:
+            gpa = float(gpa_match.group(1))
+            if 0 <= gpa <= 4.0:
+                profile_data['gpa'] = gpa
+                profile_updated = True
+        except ValueError:
+            pass
+            
+    # Budget extraction
+    budget_match = re.search(r'(?:budget|fee|fees|cost).*?(?:is|around|max)?\s*(\d{1,3}(?:,\d{3})*(?:000|k|lakhs?))', message)
+    if budget_match:
+        val_str = budget_match.group(1).replace(',', '')
+        val = 0
+        if 'k' in val_str: val = float(val_str.replace('k', '')) * 1000
+        elif 'lakh' in val_str: val = float(val_str.replace('lakhs', '').replace('lakh', '')) * 100000
+        else:
+            try: val = float(val_str)
+            except: pass
+        if val > 0:
+            profile_data['max_fees'] = val
+            profile_updated = True
+            
+    # Subjects extraction
+    subjects = ['computer science', 'engineering', 'business', 'management', 'medical', 'nursing', 'arts', 'science', 'it']
+    found_subjects = [sub for sub in subjects if sub in message and ("study" in message or "interest" in message or "want" in message or "like" in message)]
+    if found_subjects:
+        prefs = set(profile_data.get('preferences', []))
+        for sub in found_subjects:
+            prefs.add(sub.title())
+        profile_data['preferences'] = list(prefs)
+        profile_updated = True
+
+    if profile_updated:
+        current_user.profile = json.dumps(profile_data)
+        db.session.commit()
+        response += "I've updated your profile with the new details! "
+
+    # 2. Add message to memory
+    chat_history.append({"role": "user", "content": message})
+    if len(chat_history) > 10:
+        chat_history = chat_history[-10:]
+        
+    # Analyze conversational state
+    last_bot_msg = ""
+    for msg in reversed(chat_history[:-1]):
+        if msg['role'] == 'assistant':
+            last_bot_msg = msg['content'].lower()
+            break
+            
+    # Personalization contexts
+    has_gpa = profile_data.get('gpa', 0.0) > 0
+    has_prefs = len(profile_data.get('preferences', [])) > 0
+    context_parts = []
+    if has_gpa: context_parts.append(f"your GPA of {profile_data['gpa']}")
+    if has_prefs: context_parts.append(f"your interest in {', '.join(profile_data['preferences'])}")
+    if profile_data.get('max_fees'): context_parts.append(f"budget of NPR {profile_data['max_fees']}")
+    context_str = " and ".join(context_parts) if context_parts else "your basic profile"
+
+    # Generate customized response based on memory and profile
+    if "recommend" in message or "best" in message or "top" in message or "college" in message:
+        recs = get_recommendations(current_user, limit=3)
+        if recs:
+            names = [r['college'] for r in recs]
+            response += f"Based on {context_str}, I highly recommend checking out: {', '.join(names)}! They closely match your academic and personal preferences."
+        else:
+            response += "Can you tell me your GPA, field of interest, or budget so I can give you personalized college recommendations?"
+            
+    elif "gpa" in message:
+        if profile_data.get('gpa'):
+            response += f"Got it! With your GPA of {profile_data['gpa']}, I can start matching you with programs. Would you like some college recommendations?"
+        else:
+            response += "What is your GPA? If you tell me, I'll memorize it and use it finding the perfect colleges for you."
+            
+    elif "fee" in message or "cost" in message or "budget" in message:
+        if profile_data.get('max_fees'):
+            response += f"Noted! I'll remember your budget is NPR {profile_data['max_fees']} for future recommendations. Need a list of colleges within that budget?"
+        else:
+            response += "What is your maximum budget per year? Share it, and I'll keep it in mind so you only see affordable colleges!"
+            
+    elif "profile" in message or "my info" in message or "what do you know" in message:
+        if context_parts:
+            response += f"From our past conversations and your profile, I have personalized your preferences to: {context_str}."
+        else:
+            response += "Your profile is still quite empty! Tell me your GPA, interested subjects, or budget!"
+            
+    elif "yes" in message or "sure" in message or "please" in message:
+        if "recommendations" in last_bot_msg or "colleges" in last_bot_msg:
             recs = get_recommendations(current_user, limit=3)
             if recs:
                 names = [r['college'] for r in recs]
-                response = f"Based on your profile, I recommend looking at {', '.join(names)}. They match your GPA and subject interests!"
+                response += f"Here you go! Continuing from where we left off, my top picks for you are: {', '.join(names)}. Let me know what you want to do next!"
             else:
-                response = "I'd love to help! Could you update your profile with your GPA and interests so I can give you a better recommendation?"
+                response += "I need a bit more info like GPA or subjects to give good recommendations first!"
         else:
-            top_colleges = College.query.order_by(College.popularity_score.desc()).limit(3).all()
-            names = [c.name for c in top_colleges]
-            response = f"Check out these top-rated colleges in Nepal: {', '.join(names)}."
+            response += "Great! How else can I assist you with your education journey today?"
             
-    elif "fee" in message or "cost" in message or "budget" in message:
-        response = "The fees vary by program. Generally, government colleges are much more affordable (NPR 2-4 lakhs total) compared to private or foreign-affiliated ones (NPR 8-15 lakhs). You can filter programs by budget on our Programs page!"
-        
-    elif "hostel" in message:
-        response = "Most major constituent campuses like Pulchowk and TU Kirtipur have on-campus hostels, though seats are limited. Private colleges like KIST and NCIT also offer hostel facilities. Look for the \ud83c\udfe0 badge on college cards!"
-        
-    elif "event" in message or "upcoming" in message or "happen" in message:
-        upcoming_events = Event.query.filter(Event.verified == True).limit(3).all()
+    elif "event" in message or "upcoming" in message:
+        upcoming_events = Event.query.filter(Event.verified == True).limit(2).all()
         if upcoming_events:
             names = [e.title for e in upcoming_events]
-            response = f"There are some exciting events coming up! Check out: {', '.join(names)}. You can see the full list on our new Event Board!"
+            response += f"There are some exciting upcoming events: {', '.join(names)}."
         else:
-            response = "We don't have any verified upcoming events right now, but stay tuned! You can browse the Community Event Board for recent submissions."
-
-    elif "ioe" in message or "engineering" in message:
-        response = "Engineering in Nepal is highly competitive. The IOE Entrance Exam is usually held in June. Constituent colleges like Pulchowk are the most sought after. Would you like to see the Entrance Exam Roadmap?"
-        
+            response += "No upcoming events right now, but I'll remember you're interested!"
+            
     else:
-        response = "I am your Education Navigator AI! I can help you find colleges, understand fee structures, or prepare for entrance exams. Try asking 'What are the best engineering colleges?' or 'Which colleges have hostels?'"
-
-    return jsonify({'response': response})
+        if not response:
+            response = f"I'm keeping track of {context_str}. You can ask me for college recommendations, ask about scholarships, or just tell me more details like your GPA or budget to refine your profile!"
+            
+    # Save bot message to memory
+    chat_history.append({"role": "assistant", "content": response.strip()})
+    profile_data['chat_history'] = chat_history
+    current_user.profile = json.dumps(profile_data)
+    db.session.commit()
+    
+    return jsonify({'response': response.strip()})
 
 
 @app.route('/cv_builder')
