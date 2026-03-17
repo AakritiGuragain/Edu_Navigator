@@ -189,7 +189,7 @@
             colleges.forEach(c => {
                 html += `
                     <td class="college-header-cell">
-                        <img src="${c.image_url || 'https://via.placeholder.com/300x150?text=No+Image'}" class="college-img" onerror="this.src='https://via.placeholder.com/300x150?text=Campus'">
+                        <img src="${c.logo_url || c.image_url || '/static/images/logo1.png'}" class="college-img" onerror="this.src='/static/images/logo1.png'">
                         <div class="college-name">${c.name}</div>
                         <button class="remove-btn" onclick="removeCollege(${c.id})">Remove</button>
                     </td>`;

@@ -217,7 +217,7 @@
                 if (college.image_url && college.image_url.startsWith('http')) {
                     imageHtml = `
                     <div class="college-image-container" style="position:relative;">
-                        <img src="${college.image_url}" alt="${name}" class="college-image" onerror="this.parentElement.style.display='none'">
+                        <img src="${college.logo_url || college.image_url || '/static/images/logo1.png'}" alt="${name}" class="college-image" onerror="this.src='/static/images/logo1.png'">
                         <div style="position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.6); color:white; padding:4px 8px; border-radius:4px; font-size:0.8rem;">
                             ${popularityStars}
                         </div>

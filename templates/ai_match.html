@@ -223,8 +223,8 @@
                     const compareUrl = m.college_id ? '{{ url_for("compare") }}?ids=' + m.college_id : '{{ url_for("colleges") }}';
                     const badgeClass = i === 0 ? 'top' : 'other';
                     const initials = collegeName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
-                    const logoHtml = m.logo_url && m.logo_url.startsWith('http')
-                        ? '<img src="' + m.logo_url.replace(/"/g, '&quot;') + '" alt="">'
+                    const logoHtml = m.logo_url && (m.logo_url.startsWith('http') || m.logo_url.startsWith('/'))
+                        ? '<img src="' + m.logo_url.replace(/"/g, '&quot;') + '" alt="" onerror="this.src=\'/static/images/logo1.png\'">'
                         : '<span>' + initials + '</span>';
                     html += '<a href="' + compareUrl + '" class="match-row">';
                     html += '<div class="match-logo">' + logoHtml + '</div>';

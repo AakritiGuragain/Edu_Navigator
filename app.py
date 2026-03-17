@@ -1111,6 +1111,8 @@ def seed_sample_colleges():
         scholarship_available=True,
         popularity_score=95,
         total_students=2500,
+        logo_url='/static/images/logos/Pulchowk_Campus__TU-IOE.jpg',
+        image_url='/static/images/logos/Pulchowk_Campus__TU-IOE.jpg'
     )
     db.session.add(c1)
     db.session.flush()
@@ -1132,6 +1134,8 @@ def seed_sample_colleges():
         scholarship_available=True,
         popularity_score=88,
         total_students=1200,
+        logo_url='/static/images/logos/KU_School_of_Management__KUSOM.png',
+        image_url='/static/images/logos/KU_School_of_Management__KUSOM.png'
     )
     db.session.add(c2)
     db.session.flush()
