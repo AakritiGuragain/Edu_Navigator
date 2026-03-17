@@ -711,6 +711,50 @@ footer {
 }
 
 .dashboard-nav a:hover { background: var(--medium-blue); }
+
+.dashboard-ai-cta {
+    margin: 0 40px 30px;
+    padding: 24px;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+    border-radius: 16px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.dashboard-ai-cta h3 { margin: 0 0 8px; font-size: 1.2rem; }
+.dashboard-ai-cta p { margin: 0; opacity: 0.95; font-size: 0.95rem; }
+.dashboard-ai-cta-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.dashboard-ai-cta-btns a {
+    background: white;
+    color: #1e3a8a;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+}
+.dashboard-ai-cta-btns a:last-child {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.dashboard-progress-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    padding: 0 40px;
+    margin-bottom: 50px;
+}
 .dashboard-nav a.danger { background: #c0392b; }
 .dashboard-nav a.danger:hover { background: #e74c3c; }
 
@@ -1485,4 +1529,139 @@ footer {
 .event-poster[data-poster] {
     background-size: cover;
     background-position: center;
+}
+
+/* ==============================
+   RESPONSIVE - ALL DEVICES
+============================== */
+html {
+    overflow-x: hidden;
+}
+/* Touch targets min 44px for accessibility */
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .nav-center {
+        position: static;
+        transform: none;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    .nav-right {
+        margin-left: 0;
+    }
+    nav a {
+        padding: 10px 14px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .form-section {
+        padding: 0 16px;
+        margin: 24px auto;
+    }
+    .form-card {
+        padding: 24px 20px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    .btn, .btn-full {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+    .search-bar {
+        padding: 16px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-bar input,
+    .search-bar select {
+        min-width: 100%;
+    }
+    .programs-grid {
+        padding: 16px;
+    }
+    .program-card {
+        flex: 1 1 100%;
+    }
+    .dashboard-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .dashboard-nav a {
+        padding: 12px 20px;
+        min-height: 44px;
+        text-align: center;
+    }
+    .dashboard-ai-cta {
+        margin: 0 16px 24px;
+        padding: 20px 16px;
+    }
+    .dashboard-ai-cta-btns {
+        width: 100%;
+        justify-content: stretch;
+    }
+    .dashboard-ai-cta-btns a {
+        flex: 1;
+        justify-content: center;
+    }
+    .dashboard-progress-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+        margin-bottom: 30px;
+    }
+    .dashboard-progress-grid .card:first-child h3 + div {
+        margin: 0 auto;
+    }
+}
+@media (max-width: 480px) {
+    .hero h1 { font-size: 1.75rem; }
+    .hero p { font-size: 1rem; }
+    .page-hero h1 { font-size: 1.5rem; }
+}
+
+/* Chat widget responsive */
+@media (max-width: 480px) {
+    #chat-widget-container {
+        right: 16px;
+        bottom: 16px;
+    }
+    #chat-widget-container #chat-window {
+        width: calc(100vw - 32px) !important;
+        max-width: 400px;
+        right: 0;
+        bottom: 70px;
+    }
+    #chat-widget-container .chat-quick-btn {
+        padding: 8px 12px;
+        min-height: 44px;
+    }
+}
+
+/* AI Match page content width */
+@media (max-width: 768px) {
+    .ai-match-hero + div {
+        padding: 0 16px !important;
+        margin: 24px auto !important;
+    }
+}
+
+/* Profile AI Match CTA responsive */
+@media (max-width: 768px) {
+    .profile-ai-match-cta {
+        margin: 24px 16px 0;
+        padding: 20px 16px;
+    }
 }

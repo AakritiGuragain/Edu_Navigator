@@ -78,14 +78,14 @@
     </div>
 
     <!-- AI MATCH CTA (standalone feature) -->
-    <div style="margin: 0 40px 30px; padding: 24px; background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%); border-radius: 16px; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div class="dashboard-ai-cta">
         <div>
-            <h3 style="margin: 0 0 8px; font-size: 1.2rem;">AI College Matcher — Your Unique Advantage</h3>
-            <p style="margin: 0; opacity: 0.95; font-size: 0.95rem;">We match you by GPA, budget, interests, scholarship need & location. A separate system from the chat.</p>
+            <h3>AI College Matcher — Your Unique Advantage</h3>
+            <p>We match you by GPA, budget, interests, scholarship need and location. A separate system from the chat.</p>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <a href="{{ url_for('ai_match') }}" style="background: white; color: #1e3a8a; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">Get My Matches</a>
-            <a href="{{ url_for('profile') }}" style="background: rgba(255,255,255,0.2); color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 1px solid rgba(255,255,255,0.4);">Edit Profile</a>
+        <div class="dashboard-ai-cta-btns">
+            <a href="{{ url_for('ai_match') }}">Get My Matches</a>
+            <a href="{{ url_for('profile') }}">Edit Profile</a>
         </div>
     </div>
 
@@ -102,7 +102,7 @@
     </div>
 
     <!-- SMART PROGRESS SECTION -->
-    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; padding: 0 40px; margin-bottom: 50px;">
+    <div class="dashboard-progress-grid">
         <div class="card" style="text-align: center; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <h3 style="margin-bottom: 20px;">Your Readiness</h3>
             <div style="position: relative; width: 150px; height: 150px;">

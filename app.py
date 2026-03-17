@@ -461,7 +461,8 @@ def profile():
     profile_data = current_user.get_profile_dict()
 
     if form.validate_on_submit():
-        prefs = [p.strip() for p in form.preferences.data.split(',') if p.strip()]
+        raw_prefs = form.preferences.data or ''
+        prefs = [p.strip() for p in str(raw_prefs).split(',') if p.strip()]
         profile_data['preferences'] = prefs
         profile_data['location'] = form.location.data.strip()
         
@@ -482,8 +483,9 @@ def profile():
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('profile'))
 
-    # Pre-populate form
-    form.preferences.data = ', '.join(profile_data.get('preferences', []))
+    # Pre-populate form (handle list or legacy string)
+    prefs_raw = profile_data.get('preferences', [])
+    form.preferences.data = ', '.join(prefs_raw) if isinstance(prefs_raw, list) else (prefs_raw or '')
     form.gpa.data = str(profile_data.get('gpa', '')) if profile_data.get('gpa', 0.0) != 0.0 else ''
     form.wants_scholarship.data = 'yes' if profile_data.get('wants_scholarship') else 'no'
     form.location.data = profile_data.get('location', '')

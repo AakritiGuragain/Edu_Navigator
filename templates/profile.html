@@ -9,6 +9,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .profile-ai-match-cta {
+            max-width: 680px;
+            margin: 24px auto 0;
+            padding: 24px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+        }
+        .profile-ai-match-cta h3 { margin: 0 0 8px; font-size: 1.2rem; }
+        .profile-ai-match-cta p { margin: 0 0 16px; opacity: 0.95; font-size: 0.95rem; }
+        .profile-ai-match-cta .btn { background: white; color: #1e3a8a; }
+    </style>
 </head>
 
 <body>
@@ -42,6 +56,7 @@
                 <div class="nav-right">
                 {% if current_user.is_authenticated %}
                 <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('profile') }}" class="active">Profile</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
                 {% else %}
                 <a href="{{ url_for('login') }}">Login</a>
@@ -126,12 +141,18 @@
             </form>
         </div>
 
+        <div class="profile-ai-match-cta">
+            <h3>AI College Matcher</h3>
+            <p>Your profile powers personalized college recommendations. View your matches ranked by GPA, budget, interests, and scholarship needs.</p>
+            <a href="{{ url_for('ai_match') }}" class="btn">View My AI Matches</a>
+        </div>
+
         <div style="text-align:center; margin-top:20px;">
-            <a href="{{ url_for('dashboard') }}" style="color:#5B88B2;font-weight:600;text-decoration:none;">← Back to
-                Dashboard</a>
+            <a href="{{ url_for('dashboard') }}" style="color:#5B88B2;font-weight:600;text-decoration:none;">Back to Dashboard</a>
         </div>
     </div>
 
+    {% include 'chat_widget.html' %}
     <!-- FOOTER -->
     <footer>
         <p>© 2026 Education Navigator</p>
