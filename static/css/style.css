@@ -104,7 +104,24 @@ header {
 /* Navbar links */
 nav {
     display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+.nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
     gap: 10px;
+    margin-left: auto;
 }
 
 nav a {
