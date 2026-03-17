@@ -152,7 +152,7 @@
     
     <script>
         const collegeIds = "{{ college_ids }}".split(',').filter(id => id.length > 0);
-        
+
         async function fetchCompareData() {
             if (collegeIds.length === 0) {
                 renderEmpty();
@@ -232,14 +232,6 @@
                 const h = c.hostel;
                 const status = h && h.available ? `<span class="yes-check">✓ Available</span><br><small>${h.on_campus ? 'On-Campus' : 'Off-Campus'}</small>` : `<span class="no-cross">✗ Not Available</span>`;
                 html += `<td>${status}</td>`;
-            });
-            html += `</tr>`;
-
-            // Row: Popularity
-            html += `<tr><th>Student Rating</th>`;
-            colleges.forEach(c => {
-                const stars = '⭐'.repeat(Math.round(c.popularity_score / 20) || 1);
-                html += `<td>${stars} (${c.popularity_score}/100)</td>`;
             });
             html += `</tr>`;
 

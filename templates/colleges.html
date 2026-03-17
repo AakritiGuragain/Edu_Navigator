@@ -156,7 +156,10 @@
     <script>
         // Pass server-side JSON to client-side safely
         const collegesData = {{ colleges_json | safe }};
+        const feesData = {{ fees_json | safe }};
         console.log("Colleges Data loaded:", collegesData);
+        console.log("Fee matrix loaded:", feesData);
+
         const grid = document.getElementById('dynamicCollegeGrid');
         let map;
         let markers = [];
@@ -224,6 +227,7 @@
                     </div>`;
                 }
 
+
                 const typeLower = (type || '').toLowerCase();
                 const typeClass = typeLower.includes('government') ? 'badge-gov'
                     : typeLower.includes('private') && typeLower.includes('foreign') ? 'badge-foreign'
@@ -243,13 +247,21 @@
                 // Ensure each card has a consistent programs area height by showing placeholders
                 let programItems = [];
                 if (programs.length > 0) {
-                    programItems = programs.slice(0, 3).map(p => {
+                    programItems = programs.slice(0, 4).map(p => {
                         const feeStr = p.fees > 0 ? `<span class="fee">(NPR ${Number(p.fees).toLocaleString()})</span>` : '';
                         return `<li><span class="program-name">${p.name}</span> ${feeStr}</li>`;
                     });
                 } else {
                     programItems = ['<li class="placeholder">Information coming soon</li>'];
                 }
+
+                const feeInfo = feesData[name] || {};
+                const feeItems = Object.entries(feeInfo).filter(([k,v]) => v && String(v).trim()).map(([k, v]) => `<li>${k}: ${v}</li>`);
+                const feeHtml = feeItems.length ? `
+                    <div class="fee-info">
+                        <strong>Fee (from spreadsheet)</strong>
+                        <ul class="fee-list">${feeItems.join('')}</ul>
+                    </div>` : '';
 
                 const tourBtn = college.virtual_tour_url ?
                     `<a href="${college.virtual_tour_url}" target="_blank" class="btn btn-secondary" style="display:flex; align-items:center; justify-content:center; gap:8px;">
@@ -271,6 +283,7 @@
                             ${affiliationBadge}
                         </div>
                         <p class="description">${college.description ? college.description.substring(0, 120) + '...' : ''}</p>
+                        ${feeHtml}
                         <div>
                             <strong>Top Programs</strong>
                             <ul class="program-list">

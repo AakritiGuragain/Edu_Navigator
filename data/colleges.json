@@ -1115,7 +1115,7 @@
           "name": "BBA (Digital Marketing)",
           "category": "Management",
           "duration_years": 4,
-          "total_fee_npr": 1000000,
+          "total_fee_npr": 1300000,
           "seats": 60,
           "entrance_required": true,
           "entrance_exam": "Internal Selection"
@@ -1134,6 +1134,15 @@
           "category": "Management",
           "duration_years": 4,
           "total_fee_npr": 1000000,
+          "seats": 60,
+          "entrance_required": true,
+          "entrance_exam": "Internal Selection"
+        },
+       {
+          "name": "BSIT",
+          "category": "IT",
+          "duration_years": 4,
+          "total_fee_npr": 1600000,
           "seats": 60,
           "entrance_required": true,
           "entrance_exam": "Internal Selection"

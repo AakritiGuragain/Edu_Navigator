@@ -461,6 +461,17 @@ input:checked + .slider .slider-text:after {
     color: var(--text-secondary);
 }
 
+.college-card .fee-info {
+    margin-bottom: 12px;
+}
+
+.college-card .fee-list {
+    margin: 6px 0 0 0;
+    padding-left: 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
 .college-card ul.program-list li {
     margin-bottom: 6px;
     font-size: 0.9rem;

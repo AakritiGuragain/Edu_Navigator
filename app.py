@@ -511,12 +511,65 @@ def profile():
     return render_template('profile.html', form=form)
 
 
+def load_university_fees():
+    """Load fee data from the Excel sheet and return a map of college -> fee info."""
+    try:
+        import openpyxl
+    except ImportError:
+        # openpyxl is optional; if missing, skip fee display.
+        return {}
+
+    fee_file = os.path.join(app.root_path, 'data', 'University Fees.xlsx')
+    if not os.path.exists(fee_file):
+        return {}
+
+    wb = openpyxl.load_workbook(fee_file, data_only=True)
+    sheet = wb.active
+    rows = list(sheet.iter_rows(values_only=True))
+    if not rows or len(rows) < 4:
+        return {}
+
+    # Find header row (search for 'S.n')
+    header_idx = None
+    for i, r in enumerate(rows[:10]):
+        if r and r[0] and str(r[0]).strip().lower() in ('s.n', 's.n.', 's.n'):
+            header_idx = i
+            break
+
+    if header_idx is None or header_idx + 1 >= len(rows):
+        return {}
+
+    headers = [str(c).strip() if c is not None else '' for c in rows[header_idx]]
+    fee_columns = {i: h for i, h in enumerate(headers) if h and h.lower() not in ('s.n', 'sn', 'serial', 'colleges')}
+
+    fee_data = {}
+    for row in rows[header_idx+1:]:
+        if not row or not row[1]:
+            continue
+        college_name = str(row[1]).strip()
+        if not college_name:
+            continue
+        row_data = {}
+        for idx, col_name in fee_columns.items():
+            value = row[idx] if idx < len(row) else None
+            if value is None:
+                continue
+            text = str(value).strip()
+            if not text or text.lower() in ('nan', 'none'):
+                continue
+            row_data[col_name] = text
+        if row_data:
+            fee_data[college_name] = row_data
+    return fee_data
+
+
 @app.route('/institutions')
 @app.route('/colleges')
 def colleges():
     all_colleges = College.query.order_by(College.name).all()
     colleges_data = [c.to_dict(include_programs=True, include_hostel=True) for c in all_colleges]
-    return render_template('colleges.html', colleges_json=json.dumps(colleges_data))
+    fees_data = load_university_fees()
+    return render_template('colleges.html', colleges_json=json.dumps(colleges_data), fees_json=json.dumps(fees_data))
 
 
 @app.route('/programs')
@@ -1167,6 +1220,31 @@ def seed_sample_colleges():
     db.session.commit()
 
 
+def ensure_college_program(college_name, program_name, **kwargs):
+    """Ensure a specific program exists for a college, adding it if missing."""
+    college = College.query.filter(College.name.ilike(f"%{college_name}%")).first()
+    if not college:
+        return False
+    existing = next((p for p in college.programs if p.name and p.name.strip().lower() == program_name.strip().lower()), None)
+    if existing:
+        return False
+
+    program = Program(
+        name=program_name,
+        college_id=college.id,
+        description=kwargs.get('description', program_name),
+        duration=kwargs.get('duration', '4 Years'),
+        fees=kwargs.get('fees', 0.0),
+        gpa_requirement=kwargs.get('gpa_requirement'),
+        field=kwargs.get('field', 'IT'),
+        entrance_required=kwargs.get('entrance_required', True),
+        entrance_exam=kwargs.get('entrance_exam', 'Internal Selection')
+    )
+    db.session.add(program)
+    db.session.commit()
+    return True
+
+
 # ─────────────────────────────────────────────
 #   MAIN
 # ─────────────────────────────────────────────
@@ -1175,4 +1253,15 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         seed_sample_colleges()
+        # Ensure King's College includes the IT program (BSIT) so it shows up in the comparison view.
+        ensure_college_program(
+            college_name="King's College",
+            program_name='BSIT',
+            description='Bachelor of Science in Information Technology',
+            duration='4 Years',
+            fees=1600000,
+            field='IT',
+            entrance_required=True,
+            entrance_exam='Internal Selection'
+        )
     app.run(host='0.0.0.0', debug=True, port=5001)
