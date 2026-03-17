@@ -20,7 +20,8 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB max upload
 
 ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
+db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -314,111 +315,45 @@ class CVUploadForm(FlaskForm):
 
 
 # ─────────────────────────────────────────────
-#   RECOMMENDATION ENGINE
+#   AI MATCHING ENGINE (USP)
 # ─────────────────────────────────────────────
+
+def _fetch_programs_with_colleges():
+    """Fetch all programs with their colleges (runs in app context where db is bound)."""
+    from sqlalchemy.orm import joinedload
+    programs = Program.query.options(joinedload(Program.college)).all()
+    return [(p, p.college) for p in programs if p.college]
+
 
 def get_recommendations(user, limit=10):
     """
-    Score every program against the user's profile preferences using the weighted algorithm:
-      - GPA Match (40%)
-      - Budget vs Fees (30%)
-      - Program Match (20%)
-      - Scholarship Availability (10%)
-    Returns a sorted list of top programs as dicts.
-    Returns a sorted list of top programs as dicts.
+    Uses the AI matcher to get personalized college-program recommendations
+    based on GPA, budget, preferences, scholarship need, and location.
     """
-    weights = {'gpa': 40, 'budget': 30, 'program': 20, 'scholarship': 10}
-    
-    profile = user.get_profile_dict()
-    student_gpa = profile.get('gpa', 0.0)
-    preferences = [p.strip().lower() for p in profile.get('preferences', []) if p.strip()]
-    wants_scholarship = profile.get('wants_scholarship', False)
-    try:
-        max_fees = float(profile.get('max_fees', 0))
-    except (ValueError, TypeError):
-        max_fees = 0.0
-
-    programs = Program.query.all()
-    scored = []
-    
-    for program in programs:
-        college = program.college
-        # 1. GPA Match (Weight 40%)
-        req_gpa = program.gpa_requirement or 0.0
-        if req_gpa == 0:
-            gpa_score = 100
-        elif student_gpa >= req_gpa:
-            gpa_score = 100
-        else:
-            gap = req_gpa - student_gpa
-            gpa_score = max(0, 100 - (gap * 50))
-            
-        # 2. Budget vs Fees (Weight 30%)
-        fees = program.fees or 0.0
-        if fees == 0 or max_fees == 0:
-            budget_score = 100
-        elif fees <= max_fees:
-            budget_score = 100
-        else:
-            excess = fees - max_fees
-            budget_penalty = (excess / max_fees) * 100
-            budget_score = max(0, 100 - budget_penalty)
-            
-        # 3. Program/Field Match (Weight 20%)
-        # Check against field or name
-        name_lower = program.name.lower()
-        field_lower = (program.field or '').lower()
-        desc_lower = (program.description or '').lower()
-        
-        if not preferences:
-            program_score = 100
-        else:
-            match_found = any(p in name_lower or p in field_lower or p in desc_lower for p in preferences)
-            program_score = 100 if match_found else 0
-                
-        # 4. Scholarship & Popularity (Weight 10%)
-        # Bonus for popularity score (0-100) and scholarship
-        pop_score = college.popularity_score if college else 50
-        scholarship_bonus = 20 if (college and college.scholarship_available and wants_scholarship) else 0
-        final_meta_score = min(100, (pop_score * 0.8) + scholarship_bonus)
-
-        # Total Weighting
-        total_score = (
-            (gpa_score * 0.4) + 
-            (budget_score * 0.3) + 
-            (program_score * 0.2) + 
-            (final_meta_score * 0.1)
-        )
-        
-        if wants_scholarship:
-            if col_scholarship:
-                scholarship_score = 100
-            else:
-                scholarship_score = 0
-        else:
-            scholarship_score = 100
-            
-        # Total Score
-        total_score = (
-            (gpa_score * weights['gpa'] / 100) +
-            (budget_score * weights['budget'] / 100) +
-            (program_score * weights['program'] / 100) +
-            (scholarship_score * weights['scholarship'] / 100)
-        )
-        
-        if total_score > 0 or not preferences:
-            p_dict = program.to_dict()
-            p_dict['compatibility_score'] = round(total_score, 2)
-            scored.append((total_score, p_dict))
-
-    # Sort by score descending first, then by program name
-    scored.sort(key=lambda x: (-x[0], x[1]['name']))
-    return [p_dict for _, p_dict in scored[:limit]]
+    from ai_matcher import get_ai_matches
+    programs_data = _fetch_programs_with_colleges()
+    return get_ai_matches(user, limit=limit, include_reasons=False, programs_data=programs_data)
 
 
 # ─────────────────────────────────────────────
 #   PAGE ROUTES
 # ─────────────────────────────────────────────
+
+_seed_done = False
+
+@app.before_request
+def _maybe_seed():
+    global _seed_done
+    if _seed_done:
+        return
+    try:
+        db.create_all()
+        if College.query.count() == 0:
+            seed_sample_colleges()
+    except Exception:
+        pass
+    _seed_done = True
+
 
 @app.route('/')
 def index():
@@ -739,19 +674,23 @@ def api_upload_resume():
             
         profile_data = current_user.get_profile_dict()
         
-        # Simple extraction logic
+        # Simple extraction logic for AI matcher compatibility
         extracted = {}
-        if "engineer" in content or "civil" in content: extracted["subject_interest"] = "Engineering"
-        elif "computer" in content or "it" in content or "software" in content: extracted["subject_interest"] = "Information Technology"
-        elif "medical" in content or "doctor" in content: extracted["subject_interest"] = "Medical"
-        elif "management" in content or "business" in content: extracted["subject_interest"] = "Management"
-        
-        # GPA Extraction (looks for numbers like 3.x or 4.0)
+        subj = None
+        if "engineer" in content or "civil" in content: subj = "Engineering"
+        elif "computer" in content or "it" in content or "software" in content: subj = "Computer Science"
+        elif "medical" in content or "doctor" in content: subj = "Medical"
+        elif "management" in content or "business" in content: subj = "Management"
+        if subj:
+            prefs = list(profile_data.get("preferences", []) or [])
+            if subj not in prefs:
+                prefs.append(subj)
+            extracted["preferences"] = prefs
+
         gpa_match = re.search(r'([0-4]\.\d+)', content)
         if gpa_match:
             extracted["gpa"] = float(gpa_match.group(1))
 
-        # Update profile
         profile_data.update(extracted)
         current_user.profile = json.dumps(profile_data)
         db.session.commit()
@@ -763,6 +702,12 @@ def api_upload_resume():
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/ai-match')
+def ai_match():
+    """Standalone AI College Matcher page — separate from the chatbot."""
+    return render_template('ai_match.html')
 
 
 @app.route('/scholarships')
@@ -861,14 +806,12 @@ def api_chat():
     if profile_data.get('max_fees'): context_parts.append(f"budget of NPR {profile_data['max_fees']}")
     context_str = " and ".join(context_parts) if context_parts else "your basic profile"
 
-    # Generate customized response based on memory and profile
-    if "recommend" in message or "best" in message or "top" in message or "college" in message:
-        recs = get_recommendations(current_user, limit=3)
-        if recs:
-            names = [r['college'] for r in recs]
-            response += f"Based on {context_str}, I highly recommend checking out: {', '.join(names)}! They closely match your academic and personal preferences."
-        else:
-            response += "Can you tell me your GPA, field of interest, or budget so I can give you personalized college recommendations?"
+    # Generate customized response — chatbot passes match requests to the AI Matcher (separate system)
+    match_page_link = '<a href="/ai-match" style="color:#1e40af;font-weight:600;">AI Match page</a>'
+    if "recommend" in message or "best" in message or "top" in message or "match" in message or "find" in message:
+        response += f"I've passed your request to our AI College Matcher. Go to the {match_page_link} to see your personalized college recommendations."
+    elif "college" in message and ("suggest" in message or "which" in message or "help" in message):
+        response += f"For personalized college suggestions, use our AI College Matcher. Visit the {match_page_link} to get matches tailored to your profile."
             
     elif "gpa" in message:
         if profile_data.get('gpa'):
@@ -889,13 +832,8 @@ def api_chat():
             response += "Your profile is still quite empty! Tell me your GPA, interested subjects, or budget!"
             
     elif "yes" in message or "sure" in message or "please" in message:
-        if "recommendations" in last_bot_msg or "colleges" in last_bot_msg:
-            recs = get_recommendations(current_user, limit=3)
-            if recs:
-                names = [r['college'] for r in recs]
-                response += f"Here you go! Continuing from where we left off, my top picks for you are: {', '.join(names)}. Let me know what you want to do next!"
-            else:
-                response += "I need a bit more info like GPA or subjects to give good recommendations first!"
+        if "ai match" in last_bot_msg or "match" in last_bot_msg:
+            response += "Great! Go to the AI Match page to see your personalized college list. You can also check your dashboard for a preview."
         else:
             response += "Great! How else can I assist you with your education journey today?"
             
@@ -916,7 +854,7 @@ def api_chat():
     profile_data['chat_history'] = chat_history
     current_user.profile = json.dumps(profile_data)
     db.session.commit()
-    
+
     return jsonify({'response': response.strip()})
 
 
@@ -1074,6 +1012,27 @@ def api_recommendations():
     return jsonify(results)
 
 
+@app.route('/api/ai-match', methods=['GET'])
+def api_ai_match():
+    """
+    AI-powered college matching: returns personalized matches with compatibility
+    scores and match reasons. Supports search by college name, program, or field.
+    """
+    from ai_matcher import get_ai_matches, get_match_summary
+    limit = min(50, request.args.get('limit', 15, type=int))
+    search = request.args.get('q', '').strip()
+    user = current_user if current_user.is_authenticated else None
+    profile = user.get_profile_dict() if user else {}
+    programs_data = _fetch_programs_with_colleges()
+    matches = get_ai_matches(user, limit=limit, include_reasons=True, search_query=search or None, programs_data=programs_data)
+    summary = get_match_summary(profile)
+    return jsonify({
+        'matches': matches,
+        'profile_summary': summary,
+        'count': len(matches)
+    })
+
+
 @app.route('/api/profile', methods=['GET'])
 @login_required
 def api_get_profile():
@@ -1113,10 +1072,83 @@ def api_cv_templates():
 
 
 # ─────────────────────────────────────────────
+#   SEED SAMPLE DATA
+# ─────────────────────────────────────────────
+
+def seed_sample_colleges():
+    """Add sample colleges and programs if database is empty."""
+    if College.query.first():
+        return
+    # IOE Pulchowk - flagship engineering college
+    c1 = College(
+        name="IOE Pulchowk Campus",
+        full_name="Institute of Engineering, Pulchowk Campus",
+        short_name="Pulchowk",
+        type="Government",
+        affiliation="Tribhuvan University",
+        established_year=1972,
+        description="Premier engineering college in Nepal. Offers BE programs in various disciplines.",
+        scholarship_available=True,
+        popularity_score=95,
+        total_students=2500,
+    )
+    db.session.add(c1)
+    db.session.flush()
+    loc1 = Location(college_id=c1.id, city="Lalitpur", district="Lalitpur", province="Bagmati", latitude=27.6710, longitude=85.3240)
+    db.session.add(loc1)
+    db.session.add(Program(name="BE Computer Engineering", college_id=c1.id, description="Bachelor in Computer Engineering", duration="4 Years", fees=450000, gpa_requirement=3.2, field="Computer Science", entrance_required=True, entrance_exam="IOE Entrance"))
+    db.session.add(Program(name="BE Civil Engineering", college_id=c1.id, description="Bachelor in Civil Engineering", duration="4 Years", fees=420000, gpa_requirement=3.0, field="Engineering", entrance_required=True, entrance_exam="IOE Entrance"))
+    db.session.add(Program(name="BE Electronics & Communication", college_id=c1.id, description="Bachelor in Electronics", duration="4 Years", fees=440000, gpa_requirement=3.1, field="Engineering", entrance_required=True, entrance_exam="IOE Entrance"))
+
+    # Kathmandu University - private
+    c2 = College(
+        name="Kathmandu University School of Management",
+        full_name="KUSOM",
+        short_name="KUSOM",
+        type="Private",
+        affiliation="Kathmandu University",
+        established_year=1993,
+        description="Leading management school offering BBA, MBA programs.",
+        scholarship_available=True,
+        popularity_score=88,
+        total_students=1200,
+    )
+    db.session.add(c2)
+    db.session.flush()
+    loc2 = Location(college_id=c2.id, city="Lalitpur", district="Lalitpur", province="Bagmati", latitude=27.6150, longitude=85.5380)
+    db.session.add(loc2)
+    db.session.add(Program(name="BBA", college_id=c2.id, description="Bachelor of Business Administration", duration="4 Years", fees=850000, gpa_requirement=2.8, field="Management"))
+    db.session.add(Program(name="BBM", college_id=c2.id, description="Bachelor of Business Management", duration="4 Years", fees=820000, gpa_requirement=2.8, field="Management"))
+
+    # St. Xavier's - liberal arts
+    c3 = College(
+        name="St. Xavier's College",
+        full_name="St. Xavier's College, Maitighar",
+        short_name="SXC",
+        type="Private",
+        affiliation="Tribhuvan University",
+        established_year=1988,
+        description="Liberal arts and science college in Kathmandu.",
+        scholarship_available=True,
+        popularity_score=82,
+        total_students=3000,
+    )
+    db.session.add(c3)
+    db.session.flush()
+    loc3 = Location(college_id=c3.id, city="Kathmandu", district="Kathmandu", province="Bagmati", latitude=27.7000, longitude=85.3167)
+    db.session.add(loc3)
+    db.session.add(Program(name="BSc Computer Science", college_id=c3.id, description="Bachelor of Science in Computer Science", duration="4 Years", fees=550000, gpa_requirement=2.9, field="Computer Science"))
+    db.session.add(Program(name="BBA", college_id=c3.id, description="Bachelor of Business Administration", duration="4 Years", fees=520000, gpa_requirement=2.8, field="Management"))
+
+    db.session.commit()
+
+
+# ─────────────────────────────────────────────
 #   MAIN
 # ─────────────────────────────────────────────
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        seed_sample_colleges()
     app.run(host='0.0.0.0', debug=True, port=5001)

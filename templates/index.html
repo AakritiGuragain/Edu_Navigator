@@ -32,6 +32,7 @@
                 <div class="nav-center">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('colleges') }}">Institutions</a>
+                <a href="{{ url_for('ai_match') }}">AI Match</a>
                 <a href="{{ url_for('exams') }}">Exams</a>
                 <div class="dropdown">
                     <a href="#">Resources ▾</a>
@@ -71,7 +72,29 @@
 <section class="hero">
     <h1>Navigate Your Education Journey</h1>
     <p>Find the best Colleges, programs and opportunities in Nepal.</p>
+</section>
 
+<!-- ==============================
+     AI MATCH USP
+============================== -->
+<section class="ai-match-usp" style="background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%); color: white; padding: 50px 40px; margin: 0;">
+    <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+        <span style="background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Our Unique Advantage</span>
+        <h2 style="margin: 20px 0 16px; font-size: 2rem;">AI College Matcher</h2>
+        <p style="font-size: 1.1rem; opacity: 0.95; line-height: 1.6; margin-bottom: 24px;">
+            Our smart engine matches you with colleges based on <strong>your GPA</strong>, <strong>budget</strong>, <strong>field of interest</strong>, <strong>location preference</strong>, and whether you need a <strong>scholarship</strong>. No more endless searching — get personalized recommendations in seconds.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('ai_match') }}" class="btn" style="background: white; color: #1e3a8a; padding: 12px 24px; font-weight: 600;">Get My Matches</a>
+            <a href="{{ url_for('profile') }}" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 24px;">Edit Profile</a>
+            {% else %}
+            <a href="{{ url_for('register') }}" class="btn" style="background: white; color: #1e3a8a; padding: 12px 24px; font-weight: 600;">Sign Up for Free</a>
+            <a href="{{ url_for('login') }}" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 12px 24px;">Login</a>
+            {% endif %}
+        </div>
+        <p style="font-size: 0.85rem; margin-top: 20px; opacity: 0.8;">💬 The chat can answer questions; the AI Matcher handles personalized college matching.</p>
+    </div>
 </section>
 
 <!-- ==============================
@@ -153,6 +176,7 @@
     <p>© 2026 Education Navigator</p>
 </footer>
 
+    {% include 'chat_widget.html' %}
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI College Matcher – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .ai-match-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            color: white;
+            padding: 36px 24px;
+            text-align: center;
+            margin-top: 0;
+        }
+        .ai-match-hero h1 { margin: 0 0 8px; font-size: 1.5rem; }
+        .ai-match-hero p { opacity: 0.95; max-width: 520px; margin: 0 auto 16px; font-size: 0.95rem; line-height: 1.4; }
+        .match-list {
+            background: #faf9f7;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e8e6e3;
+        }
+        .match-row {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: #faf9f7;
+            border-bottom: 1px solid #e8e6e3;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.15s;
+        }
+        .match-row:last-child { border-bottom: none; }
+        .match-row:hover { background: #f5f3f0; }
+        .match-logo {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #475569;
+            overflow: hidden;
+        }
+        .match-logo img { width: 100%; height: 100%; object-fit: cover; }
+        .match-content {
+            flex: 1;
+            margin-left: 16px;
+            min-width: 0;
+        }
+        .match-college-name { font-size: 1rem; font-weight: 700; color: #334155; }
+        .match-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .match-badge.top { background: #22c55e; color: white; border: none; }
+        .match-badge.other { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .empty-profile-cta {
+            background: #eff6ff;
+            border: 2px dashed #3b82f6;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            color: #1e40af;
+        }
+        .ai-match-search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .ai-match-search input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .ai-match-search input:focus {
+            outline: none;
+            border-color: #1e3a8a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="inner-header">
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <div class="nav-center">
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('colleges') }}">Institutions</a>
+                    <a href="{{ url_for('ai_match') }}" class="active">AI Match</a>
+                    <a href="{{ url_for('exams') }}">Exams</a>
+                    <div class="dropdown">
+                        <a href="#">Resources ▾</a>
+                        <div class="dropdown-content">
+                            <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
+                            <a href="{{ url_for('events') }}">Upcoming Events</a>
+                            <a href="{{ url_for('cv_templates') }}">CV Templates</a>
+                            <a href="{{ url_for('contact') }}">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                    <div class="theme-toggle-wrapper">
+                        <span class="theme-toggle-label">DARKMODE</span>
+                        <label class="theme-switch">
+                            <input type="checkbox" id="themeCheckbox">
+                            <span class="slider"><span class="slider-text"></span></span>
+                        </label>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <div class="ai-match-hero" style="padding-top: 100px;">
+        <h1>AI College Matcher</h1>
+        <p>Our smart engine matches you with colleges based on your GPA, budget, field of interest, location, and scholarship needs. Search and filter to find the best fit.</p>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('profile') }}" style="color: rgba(255,255,255,0.9); text-decoration: underline;">Edit your profile</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn" style="background: white; color: #1e3a8a;">Login to get matches</a>
+        {% endif %}
+    </div>
+
+    <div style="max-width: 640px; margin: 32px auto; padding: 0 20px;">
+        <div class="ai-match-search">
+            <input type="text" id="search-input" placeholder="Search colleges or programs by name, field..." />
+            <button type="button" id="search-btn" class="btn">Search</button>
+            <button type="button" id="clear-btn" class="btn" style="background: #94a3b8;">Clear</button>
+        </div>
+        <div id="match-results">
+            <p style="text-align: center; color: #64748b;">Loading your matches...</p>
+        </div>
+    </div>
+
+    {% include 'chat_widget.html' %}
+    <footer>
+        <p>© 2026 Education Navigator</p>
+    </footer>
+
+    <script>
+        (function() {
+            const container = document.getElementById('match-results');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+            const clearBtn = document.getElementById('clear-btn');
+
+            function buildResultsHtml(matches, summary, searchTerm) {
+                if (matches.length === 0) {
+                    if (searchTerm) {
+                        return '<div class="empty-profile-cta"><h3>No results for "' + searchTerm + '"</h3><p>Try a different search term (college name, program, or field).</p></div>';
+                    }
+                    return `
+                        <div class="empty-profile-cta">
+                            <h3>No matches yet</h3>
+                            <p>Add your GPA, interests, budget, and preferences in your profile so we can match you with the best colleges.</p>
+                            <a href="{{ url_for('profile') if current_user.is_authenticated else url_for('register') }}" class="btn" style="margin-top: 16px;">{{ 'Complete your profile' if current_user.is_authenticated else 'Sign up & set preferences' }}</a>
+                        </div>
+                    `;
+                }
+                const seen = {};
+                const byCollege = [];
+                for (const m of matches) {
+                    const cid = m.college_id || m.college;
+                    if (!seen[cid]) {
+                        seen[cid] = true;
+                        byCollege.push(m);
+                    }
+                }
+                let html = '<h2 style="margin-bottom: 16px; font-size: 1.25rem;">Your Top Matches</h2>';
+                if (summary.summary) {
+                    html += '<p style="color: #64748b; margin-bottom: 16px; font-size: 0.9rem;">Based on: ' + summary.summary + '</p>';
+                }
+                html += '<div class="match-list">';
+                byCollege.forEach((m, i) => {
+                    const score = m.compatibility_score != null ? Math.round(m.compatibility_score) : '-';
+                    const collegeName = (m.college || 'College').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    const compareUrl = m.college_id ? '{{ url_for("compare") }}?ids=' + m.college_id : '{{ url_for("colleges") }}';
+                    const badgeClass = i === 0 ? 'top' : 'other';
+                    const initials = collegeName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+                    const logoHtml = m.logo_url && m.logo_url.startsWith('http')
+                        ? '<img src="' + m.logo_url.replace(/"/g, '&quot;') + '" alt="">'
+                        : '<span>' + initials + '</span>';
+                    html += '<a href="' + compareUrl + '" class="match-row">';
+                    html += '<div class="match-logo">' + logoHtml + '</div>';
+                    html += '<div class="match-content"><span class="match-college-name">' + collegeName + '</span></div>';
+                    html += '<span class="match-badge ' + badgeClass + '">' + score + '% MATCH</span>';
+                    html += '</a>';
+                });
+                html += '</div>';
+                return html;
+            }
+
+            async function loadMatches(searchTerm) {
+                container.innerHTML = '<p style="text-align: center; color: #64748b;">Loading...</p>';
+                try {
+                    let url = '/api/ai-match?limit=50';
+                    if (searchTerm) url += '&q=' + encodeURIComponent(searchTerm);
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    const matches = data.matches || [];
+                    const summary = data.profile_summary || {};
+                    container.innerHTML = buildResultsHtml(matches, summary, searchTerm);
+                } catch (err) {
+                    container.innerHTML = '<p style="color: #ef4444;">Unable to load matches. Please try again later.</p>';
+                }
+            }
+
+            function doSearch() {
+                const q = searchInput.value.trim();
+                loadMatches(q || null);
+            }
+
+            searchBtn.addEventListener('click', doSearch);
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                loadMatches(null);
+                searchInput.focus();
+            });
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') doSearch();
+            });
+
+            loadMatches(null);
+        })();
+    </script>
+</body>
+</html>
