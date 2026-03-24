@@ -5,6 +5,7 @@ qualifications, GPA, preferences, budget, and scholarship needs.
 """
 
 import json
+import re
 from typing import Optional
 
 
@@ -104,7 +105,13 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
         match_reasons.append("Add interests in your profile for better program matches")
     else:
         searchable = f"{name_lower} {field_lower} {desc_lower}"
-        matches = [p for p in preferences if p in searchable]
+        matches = []
+        for p in preferences:
+            # Match whole words to avoid partial matches (e.g. 'it' matching 'with')
+            pattern = r'\b' + re.escape(p) + r'\b'
+            if re.search(pattern, searchable):
+                matches.append(p)
+                
         if matches:
             program_score = 100
             match_reasons.append(f"Matches your interest: {', '.join(m.title() for m in matches)}")
@@ -142,6 +149,11 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
         + loc_score * weights["location"]
         + pop_boost
     )
+
+    # Heavily penalize programs that completely mismatch stated interests
+    if preferences and program_score == 0:
+        total_score *= 0.2
+
     total_score = min(100, round(total_score, 1))
 
     return {
@@ -187,6 +199,12 @@ def get_ai_matches(user, limit: int = 10, include_reasons: bool = True, search_q
         program_dict = program.to_dict()
         college_dict = college.to_dict(include_programs=False, include_hostel=False)
         scores = compute_match_scores(profile, program_dict, college_dict)
+
+        # Hard filter: if relying on profile preferences (no explicit search),
+        # completely exclude programs that do not match the stated interests at all.
+        prefs = profile.get("preferences", [])
+        if prefs and not search_lower and scores["program_score"] == 0:
+            continue
 
         program_dict["compatibility_score"] = scores["compatibility_score"]
         program_dict["college_location"] = ""
