@@ -34,7 +34,6 @@
                         <a href="{{ url_for('index') }}">Home</a>
                         <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
                         <a href="{{ url_for('events') }}">Upcoming Events</a>
-                        <a href="{{ url_for('cv_templates') }}">CV Templates</a>
                         <a href="{{ url_for('contact') }}">Contact Us</a>
                     </div>
                 </div>
@@ -74,7 +73,7 @@
     <!-- WELCOME BANNER -->
     <div class="dashboard-welcome" style="padding-top:90px;">
         <h1>Welcome back, {{ current_user.username }}! </h1>
-        <p>Your personalized education dashboard — explore colleges, programs, and CV resources.</p>
+        <p>Your personalized education dashboard — explore colleges and programs.</p>
     </div>
 
     <!-- AI MATCH CTA (standalone feature) -->
@@ -97,7 +96,6 @@
         <a href="{{ url_for('events') }}"> Event Board</a>
         <a href="{{ url_for('exams') }}"> Entrance Exams</a>
         <a href="{{ url_for('scholarships') }}"> Scholarship Radar</a>
-        <a href="{{ url_for('cv_templates') }}"> CV Templates</a>
         <a href="{{ url_for('logout') }}" class="danger"> Logout</a>
     </div>
 
@@ -120,10 +118,6 @@
         <div class="card" style="padding: 30px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="margin: 0;">Goal Milestones 🎯</h3>
-                <label for="magicMatchInput" class="btn" style="background:#8b5cf6; margin:0; cursor:pointer; font-size:0.85rem;">
-                    ✨ Magic Match (Upload Resume)
-                </label>
-                <input type="file" id="magicMatchInput" style="display:none;" accept=".pdf,.doc,.docx,.txt" onchange="handleMagicMatch(this)">
             </div>
             <div style="margin-top: 20px;">
                 {% for m in milestones %}
@@ -149,41 +143,6 @@
             }
         });
 
-        async function handleMagicMatch(input) {
-            if (!input.files || input.files.length === 0) return;
-            
-            const file = input.files[0];
-            const formData = new FormData();
-            formData.append('resume', file);
-            
-            // Show loading state
-            const label = document.querySelector('label[for="magicMatchInput"]');
-            const originalText = label.innerText;
-            label.innerText = "⏳ Parsing Resume...";
-            label.style.opacity = "0.7";
-            
-            try {
-                const response = await fetch('/api/upload_resume', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert(`Magic Match Success! 🚀\nExtracted: ${JSON.stringify(result.extracted)}\nRefreshing your recommendations...`);
-                    window.location.reload();
-                } else {
-                    alert(`Error: ${result.error}`);
-                    label.innerText = originalText;
-                    label.style.opacity = "1";
-                }
-            } catch (err) {
-                console.error(err);
-                alert("An error occurred during Magic Match. Please try again.");
-                label.innerText = originalText;
-                label.style.opacity = "1";
-            }
-        }
     </script>
 
     <!-- RECOMMENDATIONS -->

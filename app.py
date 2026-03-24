@@ -219,21 +219,6 @@ class Program(db.Model):
         }
 
 
-class CVTemplate(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    filename = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'filename': self.filename,
-            'description': self.description,
-        }
-
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -314,12 +299,6 @@ class ProfileForm(FlaskForm):
     wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
     submit = SubmitField('Update Profile')
 
-
-class CVUploadForm(FlaskForm):
-    name = StringField('Template Name', validators=[DataRequired()])
-    description = TextAreaField('Description')
-    file = FileField('CV Template File (PDF, DOC, DOCX)', validators=[DataRequired()])
-    submit = SubmitField('Upload Template')
 
 
 # ─────────────────────────────────────────────
@@ -426,9 +405,8 @@ def get_readiness_score(user):
     if profile_data.get('budget_max'): score += 10
     
     # 2. Key Actions (40%)
-    # Check if user has uploaded a CV (stub for now based on if they have a CVTemplate interaction or similar)
-    # Since we don't have a 'activities' table yet, we'll use a simple heuristic
-    if user.email: score += 10 # Sign up bonus
+    # Sign up bonus
+    if user.email: score += 10
     
     # Check if they have specific preferences set
     if profile_data.get('hostel_needed'): score += 10
@@ -436,9 +414,6 @@ def get_readiness_score(user):
     # Milestone: Exams Explored (simulated)
     # We could add an 'activity_log' in the future, for now let's check profile complexity
     if len(profile_data) > 5: score += 20
-    
-    # Milestone: CV Uploaded
-    # Let's assume the user model has a cv_path or similar in the future.
     
     return min(100, score)
 
@@ -452,8 +427,7 @@ def dashboard():
     milestones = [
         {"title": "Complete Smart Profile", "completed": readiness >= 30, "points": 30},
         {"title": "Explore Entrance Roadmap", "completed": True, "points": 20}, # Everyone gets this for free for now
-        {"title": "Research 3+ Colleges", "completed": len(recommendations) >= 3, "points": 20},
-        {"title": "Prepare & Upload CV", "completed": False, "points": 30}
+        {"title": "Research 3+ Colleges", "completed": len(recommendations) >= 3, "points": 20}
     ]
     
     return render_template('dashboard.html', 
@@ -578,52 +552,6 @@ def programs():
     return redirect(url_for('colleges'))
 
 
-@app.route('/cv_templates')
-def cv_templates():
-    templates = CVTemplate.query.all()
-    return render_template('cv_templates.html', templates=templates)
-
-
-@app.route('/upload_cv', methods=['GET', 'POST'])
-@login_required
-def upload_cv():
-    form = CVUploadForm()
-    if form.validate_on_submit():
-        file = form.file.data
-        if not allowed_file(file.filename):
-            flash('Only PDF, DOC, and DOCX files are allowed.', 'error')
-            return render_template('upload_cv.html', form=form)
-        filename = secure_filename(file.filename)
-        # Avoid filename collision
-        base, ext = os.path.splitext(filename)
-        counter = 1
-        target = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        while os.path.exists(target):
-            filename = f"{base}_{counter}{ext}"
-            target = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            counter += 1
-        file.save(target)
-        template = CVTemplate(
-            name=form.name.data,
-            filename=filename,
-            description=form.description.data,
-            uploaded_by=current_user.id
-        )
-        db.session.add(template)
-        db.session.commit()
-        flash('CV Template uploaded successfully!', 'success')
-        return redirect(url_for('cv_templates'))
-    return render_template('upload_cv.html', form=form)
-
-
-@app.route('/download_cv/<int:template_id>')
-def download_cv(template_id):
-    template = db.session.get(CVTemplate, template_id)
-    if template is None:
-        flash('Template not found.', 'error')
-        return redirect(url_for('cv_templates'))
-    return send_from_directory(app.config['UPLOAD_FOLDER'], template.filename, as_attachment=True)
-
 
 # Entrance Exam Readiness Module Data
 EXAMS_DATA = {
@@ -722,59 +650,6 @@ def api_compare():
     
     return jsonify([c.to_dict(include_programs=True, include_hostel=True) for c in ordered_colleges])
 
-
-@app.route('/api/upload_resume', methods=['POST'])
-@login_required
-def api_upload_resume():
-    if 'resume' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
-    
-    file = request.files['resume']
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-
-    # For this demonstration, we'll "read" the resume by scanning for keywords
-    # In a production app, we would use pdfplumber or an AI API
-    content = ""
-    try:
-        # Basic text scan if it's a text file, else simulated scan
-        if file.filename.endswith('.txt'):
-            content = file.read().decode('utf-8').lower()
-        else:
-            # Simulated AI extraction for PDF/Doc based on filename/metadata
-            # We'll assume the user is helpful for this demo
-            content = file.filename.lower() + " bachelor engineering 3.8 gpa computer science"
-            
-        profile_data = current_user.get_profile_dict()
-        
-        # Simple extraction logic for AI matcher compatibility
-        extracted = {}
-        subj = None
-        if "engineer" in content or "civil" in content: subj = "Engineering"
-        elif "computer" in content or "it" in content or "software" in content: subj = "Computer Science"
-        elif "medical" in content or "doctor" in content: subj = "Medical"
-        elif "management" in content or "business" in content: subj = "Management"
-        if subj:
-            prefs = list(profile_data.get("preferences", []) or [])
-            if subj not in prefs:
-                prefs.append(subj)
-            extracted["preferences"] = prefs
-
-        gpa_match = re.search(r'([0-4]\.\d+)', content)
-        if gpa_match:
-            extracted["gpa"] = float(gpa_match.group(1))
-
-        profile_data.update(extracted)
-        current_user.profile = json.dumps(profile_data)
-        db.session.commit()
-        
-        return jsonify({
-            'success': True, 
-            'message': 'Magic Match complete! Your profile has been updated.',
-            'extracted': extracted
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/ai-match')
