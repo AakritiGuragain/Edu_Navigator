@@ -44,19 +44,26 @@ def _normalize_preferences(prefs) -> list:
     return [str(p).strip().lower() for p in prefs if str(p).strip()]
 
 
+def safe_float(val, default=0.0):
+    try:
+        if val is None: return default
+        return float(val)
+    except (ValueError, TypeError):
+        return default
+
 def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) -> dict:
     """
     Compute individual component scores and total compatibility.
     Returns dict with scores and human-readable match_reasons.
     """
-    student_gpa = float(profile.get("gpa", 0) or 0)
+    student_gpa = safe_float(profile.get("gpa", 0))
     preferences = _normalize_preferences(profile.get("preferences"))
     wants_scholarship = profile.get("wants_scholarship", False)
-    max_fees = float(profile.get("max_fees", 0) or 0)
+    max_fees = safe_float(profile.get("max_fees", 0))
     pref_location = (profile.get("location") or "").strip()
 
-    req_gpa = float(program_dict.get("gpa_requirement", 0) or 0)
-    fees = float(program_dict.get("fees", 0) or 0)
+    req_gpa = safe_float(program_dict.get("gpa_requirement", 0))
+    fees = safe_float(program_dict.get("fees", 0))
     name_lower = (program_dict.get("name") or "").lower()
     field_lower = (program_dict.get("field") or "").lower()
     desc_lower = (program_dict.get("description") or "").lower()
@@ -84,12 +91,12 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
         match_reasons.append(f"GPA gap: you have {student_gpa}, program requires {req_gpa}")
 
     # 2. Budget vs Fees (25%)
-    if fees == 0 or max_fees == 0:
+    if fees == 0:
         budget_score = 100
-        if fees > 0:
-            match_reasons.append(f"Program fee NPR {fees:,.0f} — set budget in profile for better matching")
-        else:
-            match_reasons.append("Fee info not available")
+        match_reasons.append("Fee info not available or program is free")
+    elif max_fees == 0:
+        budget_score = 0
+        match_reasons.append(f"Program fee is NPR {fees:,.0f} but your budget is 0")
     elif fees <= max_fees:
         budget_score = 100
         match_reasons.append(f"Within your budget: NPR {fees:,.0f} ≤ NPR {max_fees:,.0f}")
@@ -154,7 +161,15 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
     if preferences and program_score == 0:
         total_score *= 0.2
 
-    total_score = min(100, round(total_score, 1))
+    # Hard Requirements
+    if req_gpa > 0 and student_gpa < req_gpa:
+        total_score = 0
+        match_reasons.insert(0, f"Does not meet minimum GPA requirement of {req_gpa}")
+    elif field_lower == "engineering" and student_gpa < 2.4:
+        total_score = 0
+        match_reasons.insert(0, f"Engineering requires a minimum GPA, but you have {student_gpa}")
+
+    total_score = min(100, max(0, round(total_score, 1)))
 
     return {
         "compatibility_score": total_score,

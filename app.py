@@ -276,7 +276,7 @@ def load_user(user_id):
 # ─────────────────────────────────────────────
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
@@ -352,18 +352,59 @@ def contact():
     return render_template('contact.html')
 
 
+LOGIN_ATTEMPTS = {}
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard'))
+        
+    if request.method == 'POST':
+        email_raw = request.form.get('email', '')
+        password = request.form.get('password', '')
+        
+        email = email_raw.strip().lower()
+        
+        errors = False
+        if not email and not password:
+            flash('Email required error', 'error')
+            flash('Password required error', 'error')
+            errors = True
+        elif not email:
+            flash('Email required error', 'error')
+            errors = True
+        elif not password:
+            flash('Password required error', 'error')
+            errors = True
+        elif '@' not in email or '.' not in email.split('@')[-1]:
+            flash('Email format error', 'error')
+            errors = True
+            
+        if errors:
+            return render_template('login.html', form=LoginForm())
+
+        # rate limiting
+        attempts = LOGIN_ATTEMPTS.get(email, 0)
+        if attempts >= 5:
+            flash('Too many failed attempts', 'error')
+            return render_template('login.html', form=LoginForm())
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('User not found', 'error')
+            return render_template('login.html', form=LoginForm())
+            
+        if not user.check_password(password):
+            LOGIN_ATTEMPTS[email] = attempts + 1
+            flash('Invalid credentials', 'error')
+            return render_template('login.html', form=LoginForm())
+            
+        LOGIN_ATTEMPTS.pop(email, None)
+        login_user(user)
+        next_page = request.args.get('next')
+        return redirect(next_page or url_for('dashboard'))
+
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('dashboard'))
-        flash('Invalid username or password', 'error')
     return render_template('login.html', form=form)
 
 
