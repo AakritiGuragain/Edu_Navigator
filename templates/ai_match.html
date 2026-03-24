@@ -105,6 +105,42 @@
             .match-content { margin-left: 12px; min-width: 0; flex: 1; }
             .match-college-name { font-size: 0.95rem; }
             .match-badge { font-size: 0.75rem; padding: 4px 10px; }
+            .match-badge { font-size: 0.75rem; padding: 4px 10px; }
+            .ai-match-layout { flex-direction: column; }
+            .ai-match-main, .gpa-calculator { width: 100%; max-width: 100%; }
+        }
+        .ai-match-layout {
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .ai-match-main {
+            flex: 1;
+            max-width: 640px;
+            width: 100%;
+        }
+        .gpa-calculator {
+            width: 300px;
+            background: #faf9f7;
+            border: 1px solid #e8e6e3;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+        .gpa-calculator h3 { margin-top: 0; margin-bottom: 16px; font-size: 1.15rem; color: #1e3a8a; }
+        .gpa-calculator label { font-size: 0.9rem; color: #475569; display: block; margin-bottom: 8px; font-weight: 500; }
+        .gpa-calculator input {
+            width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; 
+            margin-bottom: 16px; font-size: 1rem; box-sizing: border-box;
+        }
+        .gpa-calculator input:focus { outline: none; border-color: #1e3a8a; }
+        .gpa-calculator .result-box {
+            margin-top: 20px; padding: 16px; background: #eff6ff; border-radius: 8px; text-align: center; border: 1px dashed #bfdbfe;
         }
     </style>
 </head>
@@ -166,14 +202,28 @@
         {% endif %}
     </div>
 
-    <div style="max-width: 640px; margin: 32px auto; padding: 0 20px;">
-        <div class="ai-match-search">
-            <input type="text" id="search-input" placeholder="Search colleges or programs by name, field..." />
-            <button type="button" id="search-btn" class="btn">Search</button>
-            <button type="button" id="clear-btn" class="btn" style="background: #94a3b8;">Clear</button>
+    <div class="ai-match-layout">
+        <div class="ai-match-main">
+            <div class="ai-match-search">
+                <input type="text" id="search-input" placeholder="Search colleges or programs by name, field..." />
+                <button type="button" id="search-btn" class="btn">Search</button>
+                <button type="button" id="clear-btn" class="btn" style="background: #94a3b8;">Clear</button>
+            </div>
+            <div id="match-results">
+                <p style="text-align: center; color: #64748b;">Loading your matches...</p>
+            </div>
         </div>
-        <div id="match-results">
-            <p style="text-align: center; color: #64748b;">Loading your matches...</p>
+
+        <div class="gpa-calculator">
+            <h3>% to GPA Converter</h3>
+            <label for="percInput">Percentage (%)</label>
+            <input type="number" id="percInput" placeholder="e.g. 85" min="0" max="100" step="0.1">
+            <button onclick="convertToGPA()" class="btn" style="width: 100%; border-radius: 8px; font-size: 1rem;">Convert to GPA</button>
+            <div class="result-box">
+                <span style="font-size: 0.9rem; color: #1e40af; display: block; margin-bottom: 4px;">Estimated GPA</span>
+                <strong id="gpaResult" style="font-size: 1.8rem; color: #1e3a8a;">--</strong>
+            </div>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 16px; text-align: center;">Based on standard NEB grading system.</p>
         </div>
     </div>
 
@@ -267,6 +317,26 @@
 
             loadMatches(null);
         })();
+
+        // GPA Converter Logic (NEB standard approx)
+        function convertToGPA() {
+            let p = parseFloat(document.getElementById('percInput').value);
+            let result = '--';
+            
+            if (!isNaN(p) && p >= 0 && p <= 100) {
+                if (p >= 90) result = '4.0 <span style="font-size: 1rem;">(A+)</span>';
+                else if (p >= 80) result = '3.6 <span style="font-size: 1rem;">(A)</span>';
+                else if (p >= 70) result = '3.2 <span style="font-size: 1rem;">(B+)</span>';
+                else if (p >= 60) result = '2.8 <span style="font-size: 1rem;">(B)</span>';
+                else if (p >= 50) result = '2.4 <span style="font-size: 1rem;">(C+)</span>';
+                else if (p >= 40) result = '2.0 <span style="font-size: 1rem;">(C)</span>';
+                else if (p >= 35) result = '1.6 <span style="font-size: 1rem;">(D)</span>';
+                else result = '<span style="font-size: 1.2rem;">NG (No Grade)</span>';
+            } else if (p > 100 || p < 0) {
+                result = '<span style="font-size: 1rem;">Invalid %</span>';
+            }
+            document.getElementById('gpaResult').innerHTML = result;
+        }
     </script>
 </body>
 </html>
