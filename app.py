@@ -387,6 +387,61 @@ def get_recommendations(user, limit=10):
 
 _seed_done = False
 
+def seed_sample_events():
+    """Auto-import events from events.json if database is empty."""
+    if Event.query.first():
+        return
+    
+    try:
+        events_path = os.path.join(app.root_path, 'events.json')
+        if not os.path.exists(events_path):
+            return
+        
+        with open(events_path, 'r') as f:
+            data = json.load(f)
+        
+        events_list = data.get('events', [])
+        
+        for ev_data in events_list:
+            college_name = ev_data.get('college_name')
+            college = None
+            
+            # Try to match college - will be None if no colleges exist yet (that's ok)
+            if college_name:
+                college = College.query.filter(
+                    (College.name.ilike(college_name)) | 
+                    (College.short_name.ilike(ev_data.get('college_short_name', '')))
+                ).first()
+
+            event = Event(
+                event_id=ev_data.get('event_id'),
+                college_id=college.id if college else None,
+                college_name=college_name,
+                title=ev_data.get('title'),
+                type=ev_data.get('type'),
+                start_date=ev_data.get('schedule', {}).get('start_date'),
+                end_date=ev_data.get('schedule', {}).get('end_date'),
+                start_time=ev_data.get('schedule', {}).get('start_time'),
+                end_time=ev_data.get('schedule', {}).get('end_time'),
+                venue_name=ev_data.get('venue', {}).get('name'),
+                address=ev_data.get('venue', {}).get('address'),
+                google_maps_link=ev_data.get('venue', {}).get('google_maps_link'),
+                description=ev_data.get('details', {}).get('description'),
+                registration_link=ev_data.get('details', {}).get('registration_link'),
+                is_open_to_public=ev_data.get('is_open_to_public', True),
+                verified=ev_data.get('verified', False),
+                poster_url=ev_data.get('media', {}).get('poster_url'),
+                is_featured=ev_data.get('is_featured', False),
+                tags=','.join(ev_data.get('tags', [])) if ev_data.get('tags') else ''
+            )
+            db.session.add(event)
+        
+        db.session.commit()
+    except Exception as e:
+        # Log error but don't crash
+        print(f"Event seeding error: {e}")
+
+
 @app.before_request
 def _maybe_seed():
     global _seed_done
@@ -396,6 +451,8 @@ def _maybe_seed():
         db.create_all()
         if College.query.count() == 0:
             seed_sample_colleges()
+        if Event.query.count() == 0:
+            seed_sample_events()
     except Exception:
         pass
     _seed_done = True
