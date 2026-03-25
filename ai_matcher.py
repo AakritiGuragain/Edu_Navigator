@@ -196,6 +196,11 @@ def get_ai_matches(user, limit: int = 10, include_reasons: bool = True, search_q
     if not programs_data:
         return []
 
+    # Return no results if GPA is 2.0 or less, or 0
+    gpa = float(profile.get("gpa", 0) or 0)
+    if gpa <= 2.0:
+        return []
+
     results = []
     search_lower = (search_query or "").strip().lower()
 
