@@ -216,14 +216,30 @@
                     <a href="{{ url_for('ai_match') }}">AI Match</a>
                     <a href="{{ url_for('forum') }}" class="active">Community</a>
                     <a href="{{ url_for('exams') }}">Exams</a>
+                    <div class="dropdown">
+                        <a href="#">Resources ▾</a>
+                        <div class="dropdown-content">
+                            <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
+                            <a href="{{ url_for('events') }}">Upcoming Events</a>
+                            <a href="{{ url_for('contact') }}">Contact Us</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="nav-right">
                     {% if current_user.is_authenticated %}
                         <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('profile') }}">Profile</a>
                         <a href="{{ url_for('logout') }}">Logout</a>
                     {% else %}
                         <a href="{{ url_for('login') }}">Login</a>
                     {% endif %}
+                    <div class="theme-toggle-wrapper">
+                        <span class="theme-toggle-label">DARKMODE</span>
+                        <label class="theme-switch">
+                            <input type="checkbox" id="themeCheckbox">
+                            <span class="slider"><span class="slider-text"></span></span>
+                        </label>
+                    </div>
                 </div>
             </nav>
         </div>
