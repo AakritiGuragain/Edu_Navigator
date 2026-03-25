@@ -242,6 +242,21 @@
             const clearBtn = document.getElementById('clear-btn');
 
             function buildResultsHtml(matches, summary, searchTerm) {
+                if (summary.error) {
+                    let errorMessage = 'This specific combination of GPA and subject grades is not considered valid for standard admissions.';
+                    if (summary.error.includes('Exceeds')) {
+                        errorMessage = 'According to the NEB standard, a GPA above 4.0 is not recognized as a passing or valid grade.';
+                    } else if (summary.error.includes('Passing')) {
+                        errorMessage = 'According to NEB standards, having a D grade with a GPA below 2.0 is not considered a passing grade.';
+                    }
+                    return `
+                        <div class="empty-profile-cta" style="background: #fef2f2; border: 2px dashed #ef4444; color: #991b1b;">
+                            <h3 style="color: #b91c1c;">⚠️ ${summary.error}</h3>
+                            <p>${errorMessage}</p>
+                            <a href="{{ url_for('profile') }}" class="btn" style="margin-top: 16px; background: #dc2626;">Fix Profile Grade</a>
+                        </div>
+                    `;
+                }
                 if (matches.length === 0) {
                     if (searchTerm) {
                         return '<div class="empty-profile-cta"><h3>No results for "' + searchTerm + '"</h3><p>Try a different search term (college name, program, or field).</p></div>';
@@ -254,15 +269,8 @@
                         </div>
                     `;
                 }
-                const seen = {};
-                const byCollege = [];
-                for (const m of matches) {
-                    const cid = m.college_id || m.college;
-                    if (!seen[cid]) {
-                        seen[cid] = true;
-                        byCollege.push(m);
-                    }
-                }
+                // No longer grouping by college to ensure every matching program is visible
+                const byCollege = matches;
                 let html = '<h2 style="margin-bottom: 16px; font-size: 1.25rem;">Your Top Matches</h2>';
                 if (summary.summary) {
                     html += '<p style="color: #64748b; margin-bottom: 16px; font-size: 0.9rem;">Based on: ' + summary.summary + '</p>';
@@ -277,9 +285,13 @@
                     const logoHtml = m.logo_url && (m.logo_url.startsWith('http') || m.logo_url.startsWith('/'))
                         ? '<img src="' + m.logo_url.replace(/"/g, '&quot;') + '" alt="" onerror="this.src=\'/static/images/logo1.png\'">'
                         : '<span>' + initials + '</span>';
+                    const programName = (m.name || 'Program').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                     html += '<a href="' + compareUrl + '" class="match-row">';
                     html += '<div class="match-logo">' + logoHtml + '</div>';
-                    html += '<div class="match-content"><span class="match-college-name">' + collegeName + '</span></div>';
+                    html += '<div class="match-content">';
+                    html += '<span class="match-college-name">' + programName + '</span>';
+                    html += '<div style="font-size: 0.85rem; color: #64748b; margin-top: 2px;">' + collegeName + '</div>';
+                    html += '</div>';
                     html += '<span class="match-badge ' + badgeClass + '">' + score + '% MATCH</span>';
                     html += '</a>';
                 });

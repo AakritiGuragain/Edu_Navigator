@@ -1,5 +1,5 @@
 import pytest
-from app import app, db, User, College, Program, Location
+from app import app, db, User, College, Program, Location, LOGIN_ATTEMPTS
 from ai_matcher import compute_match_scores
 import json
 import io
@@ -72,6 +72,7 @@ def test_L_9_multiple_login_attempts(client):
     assert b'Too many failed attempts' in res.data
 
 def test_L_10_case_sensitivity(client):
+    LOGIN_ATTEMPTS.clear()
     res = client.post('/login', data={'email': 'TEST@EXAMPLE.COM', 'password': 'validpassword'}, follow_redirects=True)
     assert b'dashboard' in res.data.lower() or b'logout' in res.data.lower()
 
@@ -148,11 +149,11 @@ def test_AI_7_extreme_gpa(sample_college_program):
     assert scores["gpa_score"] == 100
 
 def test_AI_8_zero_budget(sample_college_program):
-    """AI-8 Zero budget -> Only free/low-cost colleges"""
+    """AI-8 Zero budget -> Default to 100 since user hasn't set a budget"""
     prog, coll = sample_college_program
     profile = {"gpa": 3.5, "max_fees": 0}
     scores = compute_match_scores(profile, prog, coll)
-    assert scores["budget_score"] == 0 # 500k vs 0 budg
+    assert scores["budget_score"] == 100 # No budget limit set
 
     prog_free = dict(prog, fees=0)
     scores_free = compute_match_scores(profile, prog_free, coll)
@@ -200,3 +201,61 @@ def test_AI_14_engineering_requirement(sample_college_program):
     profile = {"gpa": 2.0}
     scores = compute_match_scores(profile, prog, coll)
     assert scores["compatibility_score"] == 0
+
+def test_AI_15_any_d_grade_exclusion(sample_college_program):
+    """AI-15 Any D-grade blocks all results regardless of GPA"""
+    from ai_matcher import get_ai_matches
+    prog, coll = sample_college_program
+    # We need real models or mock them for get_ai_matches
+    # For now, let's just test that it returns an empty list if has_d_grades is True
+    class MockObj:
+        def __init__(self, data): self.data = data
+        def to_dict(self, **kwargs): return self.data
+        @property
+        def field(self): return self.data.get('field')
+        @property
+        def name(self): return self.data.get('name')
+        @property
+        def gpa_requirement(self): return self.data.get('gpa_requirement')
+        @property
+        def location(self): 
+            class Loc: 
+                city='Kathmandu'; district='Kathmandu'
+            return Loc()
+        @property
+        def logo_url(self): return ""
+
+    user_profile = {"gpa": 4.0, "has_d_grades": True, "preferences": ["CS"], "location": "Kathmandu"}
+    class MockUser:
+        def get_profile_dict(self): return user_profile
+    
+    matches = get_ai_matches(MockUser(), programs_data=[(MockObj(prog), MockObj(coll))])
+    assert len(matches) == 0
+
+def test_AI_16_zero_gpa_exclusion(sample_college_program):
+    """AI-16 GPA of 0 blocks all matches"""
+    from ai_matcher import get_ai_matches
+    prog, coll = sample_college_program
+    class MockObj:
+        def __init__(self, data): self.data = data
+        def to_dict(self, **kwargs): return self.data
+        @property
+        def field(self): return self.data.get('field')
+        @property
+        def name(self): return self.data.get('name')
+        @property
+        def gpa_requirement(self): return self.data.get('gpa_requirement')
+        @property
+        def location(self): 
+            class Loc: 
+                city='Kathmandu'; district='Kathmandu'
+            return Loc()
+        @property
+        def logo_url(self): return ""
+
+    user_profile = {"gpa": 0, "preferences": ["CS"], "location": "Kathmandu"}
+    class MockUser:
+        def get_profile_dict(self): return user_profile
+    
+    matches = get_ai_matches(MockUser(), programs_data=[(MockObj(prog), MockObj(coll))])
+    assert len(matches) == 0

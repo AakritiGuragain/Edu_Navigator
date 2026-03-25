@@ -337,13 +337,13 @@ class RegisterForm(FlaskForm):
 class ProfileForm(FlaskForm):
     photo = FileField('Profile Photo', validators=[Optional()])
     preferences = StringField('Subject Interests (comma-separated)',
-                               validators=[Optional()],
+                               validators=[DataRequired()],
                                description='e.g. Computer Science, Engineering, Business')
-    gpa = StringField('GPA', validators=[Optional()], render_kw={"type": "number", "step": "0.1", "min": "0", "max": "4.0", "placeholder": "e.g. 3.5"})
-    location = StringField('Preferred Location', validators=[Optional()])
-    max_fees = StringField('Max Annual Fees (NPR)', validators=[Optional()], render_kw={"type": "number", "step": "1000", "min": "0", "placeholder": "e.g. 800000"})
-    wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
-    has_d_grades = SelectField('Have any "D" grades?', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
+    gpa = StringField('GPA', validators=[DataRequired()], render_kw={"type": "number", "step": "0.1", "min": "0", "placeholder": "e.g. 3.5"})
+    location = StringField('Preferred Location', validators=[DataRequired()])
+    max_fees = StringField('Max Annual Fees (NPR)', validators=[DataRequired()], render_kw={"type": "number", "step": "1000", "min": "0", "placeholder": "e.g. 800000"})
+    wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[DataRequired()])
+    has_d_grades = SelectField('Have any "D" grades?', choices=[('no', 'No'), ('yes', 'Yes')], validators=[DataRequired()])
     submit = SubmitField('Update Profile')
 
 

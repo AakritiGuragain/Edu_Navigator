@@ -237,8 +237,11 @@
             // Row: Programs
             html += `<tr><th>Top Programs</th>`;
             colleges.forEach(c => {
-                const progs = c.programs.slice(0, 4).map(p => `<li>${p.name}</li>`).join('');
-                html += `<td><ul style="padding-left:15px; font-size:0.85rem;">${progs}</ul></td>`;
+                const progs = c.programs.slice(0, 12).map(p => {
+                    const fieldTag = p.field ? ` <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">(${p.field})</span>` : '';
+                    return `<li>${p.name}${fieldTag}</li>`;
+                }).join('');
+                html += `<td><ul style="padding-left:15px; font-size:0.85rem; line-height: 1.5;">${progs}</ul></td>`;
             });
             html += `</tr>`;
 

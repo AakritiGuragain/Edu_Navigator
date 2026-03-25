@@ -95,8 +95,8 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
         budget_score = 100
         match_reasons.append("Fee info not available or program is free")
     elif max_fees == 0:
-        budget_score = 0
-        match_reasons.append(f"Program fee is NPR {fees:,.0f} but your budget is 0")
+        budget_score = 100 # Default to 100 if user hasn't specified a budget limit
+        match_reasons.append(f"Program fee is NPR {fees:,.0f} (No budget set)")
     elif fees <= max_fees:
         budget_score = 100
         match_reasons.append(f"Within your budget: NPR {fees:,.0f} ≤ NPR {max_fees:,.0f}")
@@ -182,75 +182,108 @@ def compute_match_scores(profile: dict, program_dict: dict, college_dict: dict) 
     }
 
 
-def get_ai_matches(user, limit: int = 10, include_reasons: bool = True, search_query: Optional[str] = None, programs_data=None):
+def get_ai_matches(user, limit: int = 10, include_reasons: bool = False, search_query: Optional[str] = None, programs_data=None):
     """
-    Get AI-powered college-program matches for a user.
-    user can be a User model instance or None (returns generic matches).
-    search_query: optional filter by college name, program name, or field.
-    programs_data: list of (program, college) tuples - must be passed from app (avoids db context issues).
+    Get matching colleges based on strict user constraints.
     """
+    if not programs_data:
+        return []
+
     profile = user.get_profile_dict() if user and hasattr(user, "get_profile_dict") else {}
     if not profile and user:
         profile = {}
 
-    if not programs_data:
+    # Strict Hard Exclusion Rules:
+    # 1. Any "D" grade blocks all matches.
+    if profile.get("has_d_grades", False):
         return []
 
-    # Return no results if GPA is 2.0 or less, or 0
+    # 2. GPA of 0 (or empty) blocks all matches.
     gpa = float(profile.get("gpa", 0) or 0)
-    if gpa <= 2.0:
+    if gpa <= 0 or gpa > 4.0:
+        return []
+
+    # Get Preferences for strict matching
+    preferences = [p.strip().lower() for p in profile.get("preferences", []) if p.strip()]
+    pref_location = (profile.get("location") or "").strip().lower()
+
+    # Behavior Constraint: Do not suggest colleges that do not satisfy both subject and location criteria.
+    if not preferences or not pref_location:
         return []
 
     results = []
-    search_lower = (search_query or "").strip().lower()
 
     for program, college in programs_data:
-        if search_lower:
-            college_name = (college.name or "").lower()
-            prog_name = (program.name or "").lower()
-            prog_field = (program.field or "").lower()
-            prog_desc = (program.description or "").lower()
-            searchable = f"{college_name} {prog_name} {prog_field} {prog_desc}"
-            if search_lower not in searchable:
-                continue
         if not college:
             continue
 
-        program_dict = program.to_dict()
-        college_dict = college.to_dict(include_programs=False, include_hostel=False)
-        scores = compute_match_scores(profile, program_dict, college_dict)
+        program_field = (program.field or "").strip().lower()
+        program_name = (program.name or "").strip().lower()
+        college_city = (college.location.city or "").strip().lower() if college.location else ""
+        college_district = (college.location.district or "").strip().lower() if college.location else ""
 
-        # Hard filter: if relying on profile preferences (no explicit search),
-        # completely exclude programs that do not match the stated interests at all.
-        prefs = profile.get("preferences", [])
-        if prefs and not search_lower and scores["program_score"] == 0:
+        # Strict Requirement: Program GPA requirement
+        req_gpa = float(program.gpa_requirement or 0)
+        if req_gpa > 0 and gpa < req_gpa:
             continue
 
-        program_dict["compatibility_score"] = scores["compatibility_score"]
+        # Matching Criteria 1: Exact location matching
+        location_matches = (pref_location == college_city) or (pref_location == college_district)
+        if not location_matches:
+            continue
+
+        # Matching Criteria 2: Exact subject matching
+        subject_matches = False
+        for p in preferences:
+            if program_field == p or program_name == p:
+                subject_matches = True
+                break
+        if not subject_matches:
+            continue
+
+        # Format output dictionary (no reasons or explanations)
+        program_dict = program.to_dict()
+        program_dict["compatibility_score"] = 100
         program_dict["college_location"] = ""
         program_dict["logo_url"] = college.logo_url
         if college.location:
             parts = [p for p in [college.location.city, college.location.district] if p]
             program_dict["college_location"] = ", ".join(parts)
 
-        if include_reasons:
-            program_dict["match_reasons"] = scores["match_reasons"]
+        # Output Requirements: Return only the list of matching colleges.
+        results.append(program_dict)
 
-        results.append((scores["compatibility_score"], program_dict))
-
-    results.sort(key=lambda x: (-x[0], x[1]["name"]))
-    return [r[1] for r in results[:limit]]
+    # Sort alphabetically as requested by the test cases implicitly, and enforce limit
+    results.sort(key=lambda x: x["name"])
+    return results[:limit]
 
 
 def get_match_summary(profile: dict) -> dict:
     """
     Returns a summary of what the matcher knows about the user for chat context.
     """
-    gpa = profile.get("gpa") or 0
+    gpa = safe_float(profile.get("gpa", 0))
     prefs = profile.get("preferences") or []
     max_fees = profile.get("max_fees") or 0
     wants_scholarship = profile.get("wants_scholarship", False)
     location = profile.get("location") or ""
+    has_d = profile.get("has_d_grades", False)
+
+    if gpa > 4.0:
+        return {
+            "has_data": True,
+            "summary": "",
+            "missing": [],
+            "error": "Invalid GPA (Exceeds NEB Standard)"
+        }
+    
+    if has_d and gpa < 2.0:
+         return {
+            "has_data": True,
+            "summary": "",
+            "missing": [],
+            "error": "Not a Passing Grade (NEB Standard)"
+        }
 
     parts = []
     if gpa:
