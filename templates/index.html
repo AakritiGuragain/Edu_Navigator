@@ -16,23 +16,17 @@
 
 <body>
 
-    <!-- ==============================
-     HEADER + NAVBAR
-============================== -->
-    <header>
+    <header class="inner-header">
         <div class="navbar-container">
-            <!-- Left side: logo + title -->
             <div class="logo">
                 <a href="{{ url_for('index') }}">
                     <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
                     Education Navigator
                 </a>
             </div>
-
-            <!-- Right side: links -->
             <nav>
                 <div class="nav-center">
-                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('index') }}"class= "active">Home</a>
                     <a href="{{ url_for('colleges') }}">Institutions</a>
                 <a href="{{ url_for('ai_match') }}">AI Match</a>
                 <a href="{{ url_for('forum') }}">Community</a>
@@ -40,9 +34,8 @@
                     <div class="dropdown">
                         <a href="#">Resources ▾</a>
                         <div class="dropdown-content">
-                            <a href="{{ url_for('index') }}">Home</a>
-                            <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
-                            <a href="{{ url_for('events') }}">Upcoming Events</a>
+                            <a href="{{ url_for('scholarships') }}">Scholarships</a>
+                            <a href="{{ url_for('events') }}">Events</a>
                             <a href="{{ url_for('contact') }}">Contact Us</a>
                         </div>
                     </div>
@@ -59,9 +52,7 @@
                         <span class="theme-toggle-label">DARKMODE</span>
                         <label class="theme-switch">
                             <input type="checkbox" id="themeCheckbox">
-                            <span class="slider">
-                                <span class="slider-text"></span>
-                            </span>
+                            <span class="slider"><span class="slider-text"></span></span>
                         </label>
                     </div>
                 </div>

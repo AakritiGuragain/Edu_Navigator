@@ -228,7 +228,7 @@ nav a.active {
     }
 }
 
-/* Custom Dark Mode Toggle */
+/* Custom Dark Mode Toggle button */
 .theme-toggle-wrapper {
     display: flex;
     flex-direction: column;

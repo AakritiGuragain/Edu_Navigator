@@ -201,7 +201,8 @@
     </style>
 </head>
 <body>
-    <header>
+
+    <header class="inner-header">
         <div class="navbar-container">
             <div class="logo">
                 <a href="{{ url_for('index') }}">
@@ -213,25 +214,25 @@
                 <div class="nav-center">
                     <a href="{{ url_for('index') }}">Home</a>
                     <a href="{{ url_for('colleges') }}">Institutions</a>
-                    <a href="{{ url_for('ai_match') }}">AI Match</a>
-                    <a href="{{ url_for('forum') }}" class="active">Community</a>
-                    <a href="{{ url_for('exams') }}">Exams</a>
+                <a href="{{ url_for('ai_match') }}">AI Match</a>
+                <a href="{{ url_for('forum') }}"class="active">Community</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
                     <div class="dropdown">
                         <a href="#">Resources ▾</a>
                         <div class="dropdown-content">
-                            <a href="{{ url_for('scholarships') }}">Scholarships Radar</a>
-                            <a href="{{ url_for('events') }}">Upcoming Events</a>
+                            <a href="{{ url_for('scholarships') }}">Scholarships</a>
+                            <a href="{{ url_for('events') }}">Events</a>
                             <a href="{{ url_for('contact') }}">Contact Us</a>
                         </div>
                     </div>
                 </div>
                 <div class="nav-right">
                     {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-                        <a href="{{ url_for('profile') }}">Profile</a>
-                        <a href="{{ url_for('logout') }}">Logout</a>
+                    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                    <a href="{{ url_for('profile') }}">Profile</a>
+                    <a href="{{ url_for('logout') }}">Logout</a>
                     {% else %}
-                        <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('login') }}">Login</a>
                     {% endif %}
                     <div class="theme-toggle-wrapper">
                         <span class="theme-toggle-label">DARKMODE</span>
