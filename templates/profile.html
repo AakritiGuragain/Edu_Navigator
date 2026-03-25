@@ -207,6 +207,12 @@
                     <small>Do you need scholarship?</small>
                 </div>
 
+                <div class="form-group">
+                    {{ form.has_d_grades.label }}
+                    {{ form.has_d_grades() }}
+                    <small>Have you received a "D" grade in any subject?</small>
+                </div>
+
                 <button type="submit" class="btn btn-full">Save Preferences</button>
             </form>
         </div>

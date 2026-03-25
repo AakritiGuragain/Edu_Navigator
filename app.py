@@ -297,6 +297,7 @@ class ProfileForm(FlaskForm):
     location = StringField('Preferred Location', validators=[Optional()])
     max_fees = StringField('Max Annual Fees (NPR)', validators=[Optional()], render_kw={"type": "number", "step": "1000", "min": "0", "placeholder": "e.g. 800000"})
     wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
+    has_d_grades = SelectField('Have any "D" grades?', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
     submit = SubmitField('Update Profile')
 
 
@@ -505,6 +506,7 @@ def profile():
             profile_data['gpa'] = 0.0
             
         profile_data['wants_scholarship'] = form.wants_scholarship.data == 'yes'
+        profile_data['has_d_grades'] = form.has_d_grades.data == 'yes'
 
         try:
             profile_data['max_fees'] = float(form.max_fees.data) if form.max_fees.data else 0
@@ -521,6 +523,7 @@ def profile():
     form.preferences.data = ', '.join(prefs_raw) if isinstance(prefs_raw, list) else (prefs_raw or '')
     form.gpa.data = str(profile_data.get('gpa', '')) if profile_data.get('gpa', 0.0) != 0.0 else ''
     form.wants_scholarship.data = 'yes' if profile_data.get('wants_scholarship') else 'no'
+    form.has_d_grades.data = 'yes' if profile_data.get('has_d_grades') else 'no'
     form.location.data = profile_data.get('location', '')
     form.max_fees.data = str(profile_data.get('max_fees', '')) if profile_data.get('max_fees', 0) != 0 else ''
     return render_template('profile.html', form=form)
