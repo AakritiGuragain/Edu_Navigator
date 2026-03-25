@@ -198,9 +198,9 @@ def get_ai_matches(user, limit: int = 10, include_reasons: bool = False, search_
     if profile.get("has_d_grades", False):
         return []
 
-    # 2. GPA of 0 (or empty) blocks all matches.
+    # 2. GPA of 2.0 or less, or invalid (> 4.0) blocks all matches.
     gpa = float(profile.get("gpa", 0) or 0)
-    if gpa <= 0 or gpa > 4.0:
+    if gpa <= 2.0 or gpa > 4.0:
         return []
 
     # Get Preferences for strict matching
