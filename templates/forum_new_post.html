@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Discussion – Community Forum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { background: #f1f5f9; }
+
+        .page-pad { padding-top: 90px; }
+
+        .new-post-container {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 40px 25px 80px;
+        }
+        .page-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: #122C4F;
+            margin-bottom: 5px;
+        }
+        .page-subtitle {
+            color: #64748b;
+            margin-bottom: 35px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(18,44,79,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .form-group { margin-bottom: 25px; }
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            color: #0f172a;
+            background: #f8fafc;
+            transition: border-color 0.2s;
+        }
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #5B88B2;
+            background: white;
+        }
+        .form-group textarea { min-height: 220px; resize: vertical; }
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #122C4F, #1e4d82);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(18,44,79,0.25);
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(18,44,79,0.35);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        .back-link:hover { color: #122C4F; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <div class="nav-center">
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('colleges') }}">Institutions</a>
+                    <a href="{{ url_for('ai_match') }}">AI Match</a>
+                    <a href="{{ url_for('forum') }}" class="active">Community</a>
+                    <a href="{{ url_for('exams') }}">Exams</a>
+                </div>
+                <div class="nav-right">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-pad"></div>
+
+    <div class="new-post-container">
+        <h1 class="page-title">Start a Discussion</h1>
+        <p class="page-subtitle">Share your question or insight with fellow students.</p>
+        
+        <div class="form-card">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    {{ form.category_id.label }}
+                    {{ form.category_id() }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.title.label }}
+                    {{ form.title(placeholder="What's the topic of your discussion?") }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.content.label }}
+                    {{ form.content(placeholder="Provide details, context, or your question. The more you share, the better advice you'll get!") }}
+                </div>
+                
+                <button type="submit" class="btn-submit">{{ form.submit.label }}</button>
+            </form>
+        </div>
+        
+        <a href="{{ url_for('forum') }}" class="back-link">← Back to Community Forum</a>
+    </div>
+
+    <footer>
+        <p>© 2026 Education Navigator · Empowering Students Across Nepal</p>
+    </footer>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const catId = urlParams.get('category');
+        if (catId) {
+            const sel = document.getElementById('category_id');
+            if (sel) sel.value = catId;
+        }
+    </script>
+</body>
+</html>

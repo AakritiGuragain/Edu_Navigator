@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forum – Education Navigator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { background: #f1f5f9; }
+        
+        .forum-hero {
+            background: linear-gradient(135deg, #122C4F 0%, #1e4d82 60%, #5B88B2 100%);
+            color: white;
+            padding: 100px 40px 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .forum-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(91,136,178,0.15) 0%, transparent 60%);
+            animation: pulse 6s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .forum-hero h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .forum-hero p {
+            font-size: 1.15rem;
+            opacity: 0.85;
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .forum-stats {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            margin-top: 20px;
+        }
+        .forum-stat {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .forum-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 40px auto 60px;
+            padding: 0 25px;
+        }
+        
+        /* Sidebar */
+        .forum-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .sidebar-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .sidebar-card h3 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 15px;
+        }
+        .btn-new-post {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #122C4F, #1e4d82);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(18,44,79,0.3);
+        }
+        .btn-new-post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(18,44,79,0.4);
+        }
+        .cat-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #334155;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .cat-link:hover, .cat-link.active {
+            background: #f0f7ff;
+            color: #1e3a8a;
+        }
+        .cat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        
+        /* Main Content */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: #122C4F;
+        }
+        .post-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 30px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.25s;
+        }
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(18,44,79,0.1);
+            border-color: #93c5fd;
+        }
+        .post-category-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .post-title-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .post-excerpt {
+            color: #64748b;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .post-footer {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+        .post-footer span { display: flex; align-items: center; gap: 5px; }
+        .avatar {
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #122C4F, #5B88B2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .empty-state {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 30px;
+            text-align: center;
+            border: 2px dashed #e2e8f0;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        .empty-state h3 { color: #334155; margin-bottom: 10px; }
+        .empty-state p { color: #94a3b8; margin-bottom: 20px; }
+
+        @media (max-width: 900px) {
+            .forum-layout { grid-template-columns: 1fr; margin-top: 20px; }
+            .forum-hero { padding: 100px 25px 60px; }
+            .forum-hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <div class="nav-center">
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('colleges') }}">Institutions</a>
+                    <a href="{{ url_for('ai_match') }}">AI Match</a>
+                    <a href="{{ url_for('forum') }}" class="active">Community</a>
+                    <a href="{{ url_for('exams') }}">Exams</a>
+                </div>
+                <div class="nav-right">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="forum-hero">
+        <h1>Student Community</h1>
+        <p>Discuss entrance exams, college life, and help fellow students navigate their academic journey.</p>
+        <div class="forum-stats">
+            <div class="forum-stat">💬 {{ recent_posts|length }} Recent Discussions</div>
+            <div class="forum-stat">📂 {{ categories|length }} Categories</div>
+            <div class="forum-stat">🎓 Students Helping Students</div>
+        </div>
+    </div>
+
+    <div class="forum-layout">
+        <!-- Sidebar -->
+        <aside class="forum-sidebar">
+            <a href="{{ url_for('forum_new_post') }}" class="btn-new-post">
+                ✏️ &nbsp; Start a Discussion
+            </a>
+            
+            <div class="sidebar-card">
+                <h3>Categories</h3>
+                {% set icons = ['📝', '🏫', '🎒', '💰'] %}
+                {% set colors = ['#dbeafe', '#d1fae5', '#fef3c7', '#ede9fe'] %}
+                {% for category in categories %}
+                <a href="{{ url_for('forum_category', category_id=category.id) }}" class="cat-link">
+                    <div class="cat-icon" style="background: #dbeafe;">
+                        {% if loop.index == 1 %}📝
+                        {% elif loop.index == 2 %}🏫
+                        {% elif loop.index == 3 %}🎒
+                        {% else %}💰{% endif %}
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">{{ category.name }}</div>
+                        <div style="font-size:0.77rem; color:#94a3b8;">{{ category.posts|length }} posts</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="sidebar-card" style="background: linear-gradient(135deg, #122C4F, #1e4d82); color: white; border: none;">
+                <h3 style="color: rgba(255,255,255,0.6);">Pro Tip</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6; color: rgba(255,255,255,0.85);">Use the forum to ask seniors about entrance exams and get first-hand experience from current students.</p>
+            </div>
+        </aside>
+
+        <!-- Main Feed -->
+        <main>
+            <div class="section-header">
+                <h2>Recent Discussions</h2>
+                <a href="{{ url_for('forum_new_post') }}" class="btn" style="font-size: 0.9rem; padding: 8px 18px;">+ New Post</a>
+            </div>
+
+            {% if not recent_posts %}
+            <div class="empty-state">
+                <span class="icon">💬</span>
+                <h3>No discussions yet</h3>
+                <p>Be the first to start a conversation in the community!</p>
+                <a href="{{ url_for('forum_new_post') }}" class="btn">Start a Discussion</a>
+            </div>
+            {% endif %}
+
+            {% for post in recent_posts %}
+            <a href="{{ url_for('forum_post', post_id=post.id) }}" class="post-card">
+                <div class="post-category-tag">📂 {{ post.category.name }}</div>
+                <div class="post-title-text">{{ post.title }}</div>
+                <div class="post-excerpt">{{ post.content[:180] }}{% if post.content|length > 180 %}...{% endif %}</div>
+                <div class="post-footer">
+                    <span>
+                        <div class="avatar">{{ post.user.username[0].upper() }}</div>
+                        {{ post.user.username }}
+                    </span>
+                    <span>📅 {{ post.created_at.strftime('%b %d, %Y') }}</span>
+                    <span>💬 {{ post.comments|length }} replies</span>
+                </div>
+            </a>
+            {% endfor %}
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 Education Navigator · Empowering Students Across Nepal</p>
+    </footer>
+</body>
+</html>

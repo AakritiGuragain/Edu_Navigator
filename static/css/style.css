@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&display=swap');
+
 /* ==============================
    COLOR PALETTE & THEMES
 ============================== */
@@ -6,25 +8,22 @@
     --brand-primary: #122C4F;
     --brand-secondary: #5B88B2;
 
-    /* Default Light Theme */
-    --bg-primary: #FBF9E4;
-    /* Restored light-cream */
-    --bg-secondary: #FFFFFF;
-    --text-primary: #000000;
-    /* Restored high-contrast black */
+    /* Base Theme */
+    --bg-primary: #f1f5f9;
+    --bg-secondary: #ffffff;
+    --text-primary: #0f172a;
     --text-secondary: #475569;
     --border-color: #e2e8f0;
     --card-bg: #FFFFFF;
-    --nav-bg: rgba(18, 44, 79, 0.85);
-    /* Restored transparency */
+    --nav-bg: rgba(18, 44, 79, 0.9);
 
     /* Premium Fonts */
     --font-serif: 'DM Serif Display', 'Playfair Display', serif;
 
     /* Legacy support */
     --dark-blue: #122C4F;
-    --light-cream: #FBF9E4;
-    --black: #000000;
+    --light-cream: #f1f5f9;
+    --black: #0f172a;
     --medium-blue: #5B88B2;
 }
 
@@ -53,6 +52,8 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -69,17 +70,19 @@ h2,
 ============================== */
 header {
     background-color: var(--nav-bg);
-    position: absolute;
+    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     z-index: 1000;
     transition: background-color 0.3s;
     height: 70px;
-    padding: 0 20px;
+    padding: 0 30px;
     display: flex;
     align-items: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .navbar-container {
@@ -131,19 +134,45 @@ nav {
 }
 
 nav a {
-    color: var(--light-cream);
+    color: rgba(255,255,255,0.80);
     text-decoration: none;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 6px 12px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding: 7px 14px;
+    border-radius: 30px;
+    transition: all 0.2s ease;
     display: inline-block;
+    letter-spacing: 0.2px;
 }
 
 nav a:hover {
-    background-color: rgba(91, 136, 178, 0.5);
-    color: var(--light-cream);
+    background-color: rgba(255,255,255,0.12);
+    color: #ffffff;
+}
+
+nav a.active {
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* Prominent Login/Logout Buttons in Navbar */
+.nav-right a[href*="login"],
+.nav-right a[href*="logout"] {
+    background: white;
+    color: #122C4F;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.nav-right a[href*="login"]:hover,
+.nav-right a[href*="logout"]:hover {
+    background: #f0f7ff;
+    color: #122C4F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
 /* Dropdown Menu */
@@ -210,11 +239,7 @@ nav a:hover {
 }
 
 .theme-toggle-label {
-    font-size: 0.65rem;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-    color: #fff;
-    text-transform: uppercase;
+    display: none;
 }
 
 .theme-switch {
@@ -325,28 +350,47 @@ input:checked+.slider .slider-text:after {
    BUTTONS
 ============================== */
 .btn {
-    background-color: var(--medium-blue);
-    color: var(--light-cream);
-    padding: 10px 20px;
+    background: linear-gradient(135deg, #122C4F, #1e4d82);
+    color: #fff;
+    padding: 9px 22px;
     border: none;
-    border-radius: 8px;
+    border-radius: 30px;
     cursor: pointer;
-    font-size: 16px;
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.3px;
+    transition: all 0.22s ease;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 3px 10px rgba(18,44,79,0.22);
 }
 
 .btn:hover {
-    background-color: var(--dark-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(18,44,79,0.32);
+    color: #fff;
+    background: linear-gradient(135deg, #1a3a6b, #2563eb);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(18,44,79,0.2);
 }
 
 .btn-secondary {
-    background-color: #f1f5f9;
-    color: var(--dark-blue);
-    border: 1px solid rgba(18, 44, 79, 0.15);
+    background: #ffffff;
+    color: #122C4F;
+    border: 1.5px solid #dbe4f0;
+    box-shadow: 0 2px 6px rgba(18,44,79,0.08);
 }
 
 .btn-secondary:hover {
-    background-color: #e2e8f0;
+    background: #f0f7ff;
+    border-color: #5B88B2;
+    color: #122C4F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(18,44,79,0.12);
 }
 
 /* ==============================
@@ -397,11 +441,11 @@ input:checked+.slider .slider-text:after {
 .cv-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: 16px;
     padding: 24px;
     text-align: left;
-    transition: transform 0.3s ease, background-color 0.3s, border-color 0.3s;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 2px 12px rgba(18,44,79,0.06);
 }
 
 /* Force uniform height across college cards and ensure action buttons stay at the bottom */
@@ -578,7 +622,9 @@ input:checked+.slider .slider-text:after {
 .card:hover,
 .college-card:hover,
 .cv-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(18,44,79,0.1);
+    border-color: #bfdbfe;
 }
 
 /* College Card Specific */
@@ -608,11 +654,22 @@ input:checked+.slider .slider-text:after {
    FOOTER
 ============================== */
 footer {
-    background-color: var(--dark-blue);
-    color: var(--light-cream);
+    background: linear-gradient(135deg, #0c1f3a, #122C4F);
+    color: rgba(255,255,255,0.75);
     text-align: center;
-    padding: 20px;
-    margin-top: 40px;
+    padding: 30px 20px;
+    margin-top: 60px;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+}
+
+footer a {
+    color: #5B88B2;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #93c5fd;
 }
 
 /* ==============================
@@ -844,23 +901,24 @@ footer {
 .form-group label {
     display: block;
     font-weight: 600;
-    margin-bottom: 6px;
-    color: #333;
-    font-size: 0.92rem;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 0.88rem;
+    letter-spacing: 0.3px;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
     width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid #d0d7de;
-    border-radius: 8px;
+    padding: 11px 15px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.95rem;
-    background: #fafafa;
+    background: #f8fafc;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    color: #333;
+    color: #0f172a;
 }
 
 .form-group input:focus,
@@ -869,7 +927,7 @@ footer {
     outline: none;
     border-color: #5B88B2;
     box-shadow: 0 0 0 3px rgba(91, 136, 178, 0.15);
-    background: #fff;
+    background: #ffffff;
 }
 
 .form-group small {
@@ -881,8 +939,17 @@ footer {
 
 .btn-full {
     width: 100%;
-    padding: 12px;
+    padding: 13px;
     font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(18,44,79,0.25);
+}
+
+.btn-full:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(18,44,79,0.35);
 }
 
 .auth-link {
@@ -906,11 +973,18 @@ footer {
    INNER HEADER (non-hero pages)
 ============================== */
 .inner-header {
-    background: var(--dark-blue);
+    background: rgba(18, 44, 79, 0.9);
+    backdrop-filter: blur(8px);
     height: 70px;
     padding: 0 20px;
     display: flex;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
 .inner-header .navbar-container {

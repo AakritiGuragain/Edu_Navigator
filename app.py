@@ -264,6 +264,52 @@ class Event(db.Model):
             'tags': [t.strip() for t in self.tags.split(',')] if self.tags else []
         }
 
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    college_id = db.Column(db.Integer, db.ForeignKey('college.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='reviews')
+    college = db.relationship('College', backref='reviews')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.user.username if self.user else 'Anonymous',
+            'rating': self.rating,
+            'comment': self.comment,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M')
+        }
+
+class ForumCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255))
+    posts = db.relationship('ForumPost', backref='category', lazy=True)
+
+class ForumPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('forum_category.id'), nullable=False)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='posts')
+    comments = db.relationship('ForumComment', backref='post', lazy=True, cascade='all, delete-orphan')
+
+class ForumComment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('forum_post.id'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = db.relationship('User', backref='comments')
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -299,6 +345,18 @@ class ProfileForm(FlaskForm):
     wants_scholarship = SelectField('Needs Scholarship', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
     has_d_grades = SelectField('Have any "D" grades?', choices=[('no', 'No'), ('yes', 'Yes')], validators=[Optional()])
     submit = SubmitField('Update Profile')
+
+
+class PostForm(FlaskForm):
+    category_id = SelectField('Category', coerce=int, validators=[DataRequired()])
+    title = StringField('Title', validators=[DataRequired(), Length(max=200)])
+    content = TextAreaField('Content', validators=[DataRequired()])
+    submit = SubmitField('Post Discussion')
+
+
+class CommentForm(FlaskForm):
+    content = TextAreaField('Your Comment', validators=[DataRequired()])
+    submit = SubmitField('Post Comment')
 
 
 
@@ -1061,6 +1119,77 @@ def api_update_profile():
 def api_cv_templates():
     templates = CVTemplate.query.all()
     return jsonify([t.to_dict() for t in templates])
+
+
+# --- Community & Reviews API ---
+@app.route('/api/colleges/<int:college_id>/reviews', methods=['GET'])
+def colleges_reviews_api(college_id):
+    reviews = Review.query.filter_by(college_id=college_id).order_by(Review.created_at.desc()).all()
+    return jsonify([r.to_dict() for r in reviews])
+
+@app.route('/api/reviews', methods=['POST'])
+@login_required
+def reviews_api():
+    data = request.get_json()
+    if not data or 'college_id' not in data or 'rating' not in data:
+        return jsonify({'error': 'Invalid data'}), 400
+    
+    review = Review(
+        user_id=current_user.id,
+        college_id=data['college_id'],
+        rating=int(data['rating']),
+        comment=data.get('comment', '')
+    )
+    db.session.add(review)
+    db.session.commit()
+    return jsonify({'message': 'Review added', 'review': review.to_dict()})
+
+@app.route('/forum')
+def forum():
+    categories = ForumCategory.query.all()
+    # Get 5 most recent posts
+    recent_posts = ForumPost.query.order_by(ForumPost.created_at.desc()).limit(5).all()
+    return render_template('forum.html', categories=categories, recent_posts=recent_posts)
+
+@app.route('/forum/category/<int:category_id>')
+def forum_category(category_id):
+    category = ForumCategory.query.get_or_404(category_id)
+    posts = ForumPost.query.filter_by(category_id=category_id).order_by(ForumPost.created_at.desc()).all()
+    return render_template('forum_category.html', category=category, posts=posts)
+
+@app.route('/forum/post/<int:post_id>', methods=['GET', 'POST'])
+def forum_post(post_id):
+    post = ForumPost.query.get_or_404(post_id)
+    form = CommentForm()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            return redirect(url_for('login'))
+        comment = ForumComment(
+            user_id=current_user.id,
+            post_id=post.id,
+            content=form.content.data
+        )
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('forum_post', post_id=post.id))
+    return render_template('forum_post.html', post=post, form=form)
+
+@app.route('/forum/new', methods=['GET', 'POST'])
+@login_required
+def forum_new_post():
+    form = PostForm()
+    form.category_id.choices = [(c.id, c.name) for c in ForumCategory.query.all()]
+    if form.validate_on_submit():
+        post = ForumPost(
+            user_id=current_user.id,
+            category_id=form.category_id.data,
+            title=form.title.data,
+            content=form.content.data
+        )
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('forum_post', post_id=post.id))
+    return render_template('forum_new_post.html', form=form)
 
 
 # ─────────────────────────────────────────────

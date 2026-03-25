@@ -27,6 +27,7 @@
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('colleges') }}">Institutions</a>
                 <a href="{{ url_for('ai_match') }}">AI Match</a>
+                <a href="{{ url_for('forum') }}">Community</a>
                 <a href="{{ url_for('exams') }}">Exams</a>
                 <div class="dropdown">
                     <a href="#">Resources ▾</a>
@@ -77,14 +78,14 @@
     </div>
 
     <!-- AI MATCH CTA (standalone feature) -->
-    <div class="dashboard-ai-cta">
+    <div class="dashboard-ai-cta" style="margin: 30px 30px 0; padding: 28px 35px; background: linear-gradient(135deg, #0c1f3a 0%, #122C4F 60%, #1e4d82 100%); border-radius: 18px; border: 1px solid rgba(91,136,178,0.3); box-shadow: 0 8px 30px rgba(18,44,79,0.2);">
         <div>
-            <h3>AI College Matcher — Your Unique Advantage</h3>
-            <p>We match you by GPA, budget, interests, scholarship need and location. A separate system from the chat.</p>
+            <h3 style="color: white; font-size: 1.2rem; margin-bottom: 6px;">🎯 AI College Matcher — Your Unique Advantage</h3>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin: 0;">We match you by GPA, budget, interests, scholarship need and location. A separate system from the chat.</p>
         </div>
         <div class="dashboard-ai-cta-btns">
-            <a href="{{ url_for('ai_match') }}">Get My Matches</a>
-            <a href="{{ url_for('profile') }}">Edit Profile</a>
+            <a href="{{ url_for('ai_match') }}" class="btn" style="background: white; color: #122C4F; font-weight: 700; box-shadow: 0 3px 12px rgba(0,0,0,0.2);">Get My Matches</a>
+            <a href="{{ url_for('profile') }}" class="btn" style="background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.5); box-shadow: none;">Edit Profile</a>
         </div>
     </div>
 

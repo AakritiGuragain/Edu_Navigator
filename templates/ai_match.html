@@ -11,14 +11,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .ai-match-hero {
-            background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+            background: linear-gradient(135deg, #0c1f3a 0%, #122C4F 60%, #1e4d82 100%);
             color: white;
-            padding: 36px 24px;
+            padding: 50px 24px 40px;
             text-align: center;
             margin-top: 0;
+            box-shadow: inset 0 20px 40px -20px rgba(0,0,0,0.5);
         }
-        .ai-match-hero h1 { margin: 0 0 8px; font-size: 1.5rem; }
-        .ai-match-hero p { opacity: 0.95; max-width: 520px; margin: 0 auto 16px; font-size: 0.95rem; line-height: 1.4; }
+        .ai-match-hero h1 { margin: 0 0 12px; font-size: 2.2rem; font-family: 'DM Serif Display', serif; display: inline-block; padding: 0 0 8px; border-bottom: 2px solid rgba(255,255,255,0.2); }
+        .ai-match-hero p { color: rgba(255,255,255,0.85); max-width: 600px; margin: 0 auto 24px; font-size: 1.05rem; line-height: 1.6; }
         .match-list {
             background: #faf9f7;
             border-radius: 12px;
@@ -159,8 +160,9 @@
                 <div class="nav-center">
                     <a href="{{ url_for('index') }}">Home</a>
                     <a href="{{ url_for('colleges') }}">Institutions</a>
-                    <a href="{{ url_for('ai_match') }}" class="active">AI Match</a>
-                    <a href="{{ url_for('exams') }}">Exams</a>
+                <a href="{{ url_for('ai_match') }}" class="active">AI Match</a>
+                <a href="{{ url_for('forum') }}">Community</a>
+                <a href="{{ url_for('exams') }}">Exams</a>
                     <div class="dropdown">
                         <a href="#">Resources ▾</a>
                         <div class="dropdown-content">
@@ -196,9 +198,9 @@
         <h1>AI College Matcher</h1>
         <p>Our smart engine matches you with colleges based on your GPA, budget, field of interest, location, and scholarship needs. Search and filter to find the best fit.</p>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('profile') }}" style="color: rgba(255,255,255,0.9); text-decoration: underline;">Edit your profile</a>
+        <a href="{{ url_for('profile') }}" class="btn" style="background: transparent; color: white; border: 1.5px solid rgba(255,255,255,0.5); padding: 10px 24px; box-shadow: none;">Edit your profile</a>
         {% else %}
-        <a href="{{ url_for('login') }}" class="btn" style="background: white; color: #1e3a8a;">Login to get matches</a>
+        <a href="{{ url_for('login') }}" class="btn" style="background: white; color: #122C4F; font-weight: 700;">Login to get matches</a>
         {% endif %}
     </div>
 

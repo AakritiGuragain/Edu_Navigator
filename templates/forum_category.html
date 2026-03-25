@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }} – Community Forum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { background: #f1f5f9; }
+
+        .page-header {
+            background: linear-gradient(135deg, #122C4F 0%, #1e4d82 60%, #5B88B2 100%);
+            padding: 100px 40px 60px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #f1f5f9;
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+        .page-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 12px;
+        }
+        .breadcrumb a { color: white; text-decoration: none; opacity: 0.8; }
+        .breadcrumb a:hover { opacity: 1; }
+        .page-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .page-header p { opacity: 0.85; max-width: 550px; }
+        .header-actions { margin-top: 25px; }
+        .btn-light {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 22px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+        .btn-light:hover { background: rgba(255,255,255,0.3); }
+
+        .content-area {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 25px 60px;
+        }
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .content-header h2 {
+            font-family: 'DM Serif Display', serif;
+            color: #122C4F;
+            font-size: 1.6rem;
+        }
+        .post-count-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+        .post-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 28px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: all 0.25s;
+        }
+        .post-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(18,44,79,0.1);
+            border-color: #93c5fd;
+        }
+        .post-title-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .post-excerpt {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .post-footer {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-top: 14px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.82rem;
+            color: #94a3b8;
+        }
+        .post-footer span { display: flex; align-items: center; gap: 5px; }
+        .avatar {
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #122C4F, #5B88B2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .empty-state {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 30px;
+            text-align: center;
+            border: 2px dashed #e2e8f0;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        .empty-state h3 { color: #334155; margin-bottom: 10px; }
+        .empty-state p { color: #94a3b8; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="{{ url_for('index') }}">
+                    <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" class="logo-img">
+                    Education Navigator
+                </a>
+            </div>
+            <nav>
+                <div class="nav-center">
+                    <a href="{{ url_for('index') }}">Home</a>
+                    <a href="{{ url_for('colleges') }}">Institutions</a>
+                    <a href="{{ url_for('ai_match') }}">AI Match</a>
+                    <a href="{{ url_for('forum') }}" class="active">Community</a>
+                    <a href="{{ url_for('exams') }}">Exams</a>
+                </div>
+                <div class="nav-right">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}">Login</a>
+                    {% endif %}
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="breadcrumb">
+                <a href="{{ url_for('forum') }}">Community</a> &rsaquo; {{ category.name }}
+            </div>
+            <h1>{{ category.name }}</h1>
+            <p>{{ category.description }}</p>
+            <div class="header-actions">
+                <a href="{{ url_for('forum_new_post') }}?category={{ category.id }}" class="btn-light">✏️ Start a Discussion</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div class="content-header">
+            <h2>Discussions</h2>
+            <span class="post-count-badge">{{ posts|length }} posts</span>
+        </div>
+
+        {% if not posts %}
+        <div class="empty-state">
+            <span class="icon">💬</span>
+            <h3>No discussions yet in {{ category.name }}</h3>
+            <p>Start the first conversation and help fellow students!</p>
+            <a href="{{ url_for('forum_new_post') }}?category={{ category.id }}" class="btn">Start a Discussion</a>
+        </div>
+        {% endif %}
+
+        {% for post in posts %}
+        <a href="{{ url_for('forum_post', post_id=post.id) }}" class="post-card">
+            <div class="post-title-text">{{ post.title }}</div>
+            <div class="post-excerpt">{{ post.content[:180] }}{% if post.content|length > 180 %}...{% endif %}</div>
+            <div class="post-footer">
+                <span>
+                    <div class="avatar">{{ post.user.username[0].upper() }}</div>
+                    {{ post.user.username }}
+                </span>
+                <span>📅 {{ post.created_at.strftime('%b %d, %Y') }}</span>
+                <span>💬 {{ post.comments|length }} replies</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    <footer>
+        <p>© 2026 Education Navigator · Empowering Students Across Nepal</p>
+    </footer>
+</body>
+</html>
